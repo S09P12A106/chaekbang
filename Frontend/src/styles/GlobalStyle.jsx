@@ -1,5 +1,4 @@
-import { createGlobalStyle } from "styled-components";
-import colors from './constants/colors';
+import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
 	
@@ -35,11 +34,10 @@ const GlobalStyle = createGlobalStyle`
 
   // 전체 컨테이너 가로 넓이
   .container {
-    width: 1340px; 
-    padding-left: 30px; 
-    padding-right: 30px; 
+    width: 960px; 
+    margin: 0 auto;
   }
 
-`;
+`
 
-export default GlobalStyle;
+export default GlobalStyle

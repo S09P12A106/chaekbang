@@ -31,6 +31,10 @@ const GlobalStyle = createGlobalStyle`
     outline: none;
   }
 
+  button {
+    border: none;
+  }
+
 
   // 전체 컨테이너 가로 넓이
   .container {

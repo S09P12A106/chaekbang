@@ -1,0 +1,42 @@
+image: gradle:alpine
+
+variables:
+  GRADLE_OPTS: '-Dorg.gradle.caching=true -Dorg.gradle.daemon=false'
+  GRADLE_USER_HOME: $CI_PROJECT_DIR/Backend/.gradle
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" || $CI_MERGE_REQUEST_TARGET_SOURCE_NAME=~ /^feature/'
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - cd ./Backend
+  script:
+    - gradle build
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/Backend/build/libs/*.jar
+  
+unit-test:
+  stage: test
+  before_script:
+    - cd ./Backend
+  script:
+    - gradle test
+  allow_failure: true
+
+send-message:
+  stage: test
+  when: on_failure
+  image:
+    name: curlimages/curl:latest
+  script:
+    - >
+      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${message_title}\", \"text\": ${message_content}, \"fields\" : [{\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
+        

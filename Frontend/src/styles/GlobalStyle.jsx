@@ -38,7 +38,7 @@ const GlobalStyle = createGlobalStyle`
 
   // 전체 컨테이너 가로 넓이
   .container {
-    width: 960px; 
+    max-width: 960px; 
     margin: 0 auto;
   }
 

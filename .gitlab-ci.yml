@@ -1,0 +1,56 @@
+
+stages:
+  - alert_merge_request
+  - build
+  - test
+  #- deploy
+
+send-merge-request-alert:
+  stage: alert_merge_request
+  image:
+    name: curlimages/curl:latest
+  script:
+    - echo 'Merge Request has been occurred'
+    - >
+      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${merge_request_alert_message_title}\", \"text\": ${merge_request_alert_message_content}, \"fields\" : [{\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME=~ '/^develop/BE'
+
+
+image: gradle:alpine
+
+variables:
+  GRADLE_OPTS: '-Dorg.gradle.caching=true -Dorg.gradle.daemon=false'
+  GRADLE_USER_HOME: $CI_PROJECT_DIR/Backend/.gradle
+
+
+build:
+  only: 
+      - "develop/BE"
+  stage: build
+  before_script:
+    - cd ./Backend
+  script:
+    - gradle build
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/Backend/build/libs/*.jar
+  
+unit-test:
+  only: 
+      - "develop/BE"
+  stage: test
+  before_script:
+    - cd ./Backend
+  script:
+    - gradle test
+
+send-result-message:
+  stage: test
+  when: on_failure
+  image:
+    name: curlimages/curl:latest
+  script:
+    - >
+      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${failure_message_title}\", \"text\": ${failure_message_content}, \"fields\" : [{\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
+        

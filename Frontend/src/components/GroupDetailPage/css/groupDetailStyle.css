@@ -1,0 +1,13 @@
+.form-answer {
+  resize: none;
+  width: 25rem;
+  border: 1px solid #808080;
+}
+
+.form-question {
+  font-size: 1.2rem;
+}
+
+.mt-none {
+  margin-top: 0;
+}

@@ -9,6 +9,11 @@ const COLORS = {
   BLACK: '#202020',
   GREY: '#7B7B7B',
   WHITE: '#ffffff',
+
+  MODAL_CANCEL_GREY: '#A3A2A2',
+  MODAL_CANCEL_BORDER: '#BDBDBD',
+
+  MENU_TAB_UNDERLINE: '#DEDEDE',
 }
 
 export default COLORS

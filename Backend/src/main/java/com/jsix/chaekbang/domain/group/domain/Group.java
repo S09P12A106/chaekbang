@@ -1,12 +1,23 @@
 package com.jsix.chaekbang.domain.group.domain;
 
+import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -28,6 +39,9 @@ public class Group extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String question;
 
+    @Column(nullable = false)
+    private Long leaderId;
+
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean opened;
 
@@ -40,21 +54,41 @@ public class Group extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(100) default 'defaultImageUrl'")
     private String imageUrl;
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
+    private List<GroupTag> groupTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
+    private List<GroupUser> groupUsers = new ArrayList<>();
+
     @Builder
-    private Group(String title, String detail, String question, String imageUrl) {
+    private Group(String title, String detail, String question, String imageUrl, Long leaderId) {
         this.title = title;
         this.detail = detail;
         this.question = question;
         this.imageUrl = imageUrl;
+        this.leaderId = leaderId;
     }
 
-    public static Group createGroup(String title, String detail, String imageUrl, String question) {
-        return Group.builder()
-                    .title(title)
-                    .detail(detail)
-                    .question(question)
-                    .imageUrl(imageUrl)
-                    .build();
+    public static Group createGroup(String title, String detail, String imageUrl, String question,
+            User leader) {
+        Group group = Group.builder()
+                           .title(title)
+                           .detail(detail)
+                           .question(question)
+                           .imageUrl(imageUrl)
+                           .leaderId(leader.getId())
+                           .build();
+        group.addGroupUser(GroupUser.createGroupLeader(leader, group, LocalDateTime.now()));
+        return group;
+    }
+
+    public void addTags(List<Tag> tags) {
+        List<GroupTag> groupTags = GroupTag.createGroupTags(tags, this);
+        this.groupTags.addAll(groupTags);
+    }
+
+    public void addGroupUser(GroupUser groupUser) {
+        this.groupUsers.add(groupUser);
     }
 
     @PrePersist
@@ -64,5 +98,4 @@ public class Group extends BaseEntity {
         this.readCount = this.readCount == null ? 0 : this.readCount;
         this.imageUrl = this.imageUrl == null ? "defaultImageUrl" : this.imageUrl;
     }
-
 }

@@ -1,16 +1,21 @@
 package com.jsix.chaekbang.domain.group.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
+
     @Id
     @Column(name = "tag_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +38,10 @@ public class Tag {
                   .build();
     }
 
+    public void plusTaggedCount() {
+        this.taggedCount++;
+    }
+    
     @PrePersist
     private void setDefaultValues() {
         this.taggedCount = this.taggedCount == null ? 1 : this.taggedCount;

@@ -12,7 +12,7 @@ const Container = styled.div`
 function MainPage() {
   return (
     <MainLayout>
-      <Container className="container">
+      <Container>
         <Banner />
         <hr />
         <GroupSlider title={'인기모임'} grops={getListGroup(8)} />

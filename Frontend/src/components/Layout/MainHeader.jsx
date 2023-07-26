@@ -9,7 +9,7 @@ import NAVPROFILE from '../../assets/NAVPROFILE.png'
 import ProfileDropdown from '../HeaderPage/ProfileDropdown'
 import ToggleBtn from '../HeaderPage/ToggleBtn'
 
-function HeaderComp() {
+function MainHeader() {
   const [navProfile, setNavProfile] = useState(NAVPROFILE)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
@@ -45,7 +45,7 @@ function HeaderComp() {
         <Menu>
           <ul>
             <li>
-              <Link to="/">모임검색</Link>
+              <Link to="/search">모임검색</Link>
             </li>
             <li>
               <Link to="/">모임만들기</Link>
@@ -150,4 +150,4 @@ const LoginOrMine = styled.div`
   }
 `
 
-export default HeaderComp
+export default MainHeader

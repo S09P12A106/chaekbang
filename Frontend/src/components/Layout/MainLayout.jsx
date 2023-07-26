@@ -1,13 +1,13 @@
 import React from 'react'
-import HeaderComp from './HeaderComp'
-import FooterComp from './FooterComp'
+import MainHeader from './MainHeader'
+import MainFooter from './MainFooter'
 
 const MainLayout = ({ children }) => {
   return (
     <div>
-      <HeaderComp />
+      <MainHeader />
       <main className="container">{children}</main>
-      <FooterComp />
+      <MainFooter />
     </div>
   )
 }

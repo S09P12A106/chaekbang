@@ -14,6 +14,7 @@ const COLORS = {
 
   BLACK: '#202020',
   GREY: '#7B7B7B',
+  GREY_BOARD: '#BDBDBD',
   WHITE: '#ffffff',
 
   MODAL_CANCEL_GREY: '#A3A2A2',

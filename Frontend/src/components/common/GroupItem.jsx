@@ -18,12 +18,14 @@ const Container = styled.div`
 `
 const Image = styled.img`
   max-width: 220px;
+  cursor: pointer;
   border-radius: 20px;
 `
 
 const Title = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
+  cursor: pointer;
   margin: 5px 0px 0px 5px;
 `
 
@@ -50,6 +52,7 @@ const ShowUser = styled.div`
 `
 const ViewCount = styled.div`
   display: inline-flex;
+  align-items: center;
 `
 
 function GroupItem({ group }) {
@@ -69,10 +72,8 @@ function GroupItem({ group }) {
       </ShowUserCountBlock>
       <TagList>
         {group.tags &&
-          group.tags.map((tag) => (
-            <>
-              <Tag value={tag.tag} />
-            </>
+          group.tags.map((tag, index) => (
+            <Tag value={tag.tag} key={index}></Tag>
           ))}
       </TagList>
     </Container>

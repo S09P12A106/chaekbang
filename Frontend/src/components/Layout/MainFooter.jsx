@@ -4,7 +4,7 @@ import { styled } from 'styled-components'
 import COLORS from '../../constants/colors'
 import YTLOGO from '../../assets/YTLOGO.png'
 
-function FooterComp() {
+function MainFooter() {
   return (
     <Footer>
       <Footerbar>
@@ -101,4 +101,4 @@ const ServiceContainer = styled.div`
   }
 `
 
-export default FooterComp
+export default MainFooter

@@ -33,7 +33,7 @@ function backApiInstance(additionalHeader) {
  */
 function apiInstance(baseUrl, additionalHeader) {
   const instance = axios.create({
-    baseURL: url,
+    baseURL: baseUrl,
     Headers: {
       ...defaultHeader,
       ...additionalHeader,

@@ -6,8 +6,8 @@ import COLORS from '../../constants/colors'
 const Container = styled.div`
   display: inline-block;
   background-color: ${(props) =>
-    props.active ? COLORS.THEME_COLOR2 : COLORS.WHITE};
-  color: ${(props) => (props.active ? COLORS.WHITE : COLORS.THEME_COLOR2)};
+    props.$active ? COLORS.THEME_COLOR2 : COLORS.WHITE};
+  color: ${(props) => (props.$active ? COLORS.WHITE : COLORS.THEME_COLOR2)};
   font-size: 0.7rem;
 
   padding: 3px 10px 3px 8px;
@@ -27,7 +27,7 @@ function Tag({ value }) {
   const [active, setActive] = useState(false)
   const text = `#${value}`
   return (
-    <Container active={active} onClick={() => setActive(!active)}>
+    <Container $active={active} onClick={() => setActive(!active)}>
       {text}
     </Container>
   )

@@ -11,4 +11,4 @@ async function getGroupMembers(groupId, success, fail) {
   await backApi.get(`/api/group/${groupId}/members`).then(success).catch(fail)
 }
 
-export { getGroupDetail, getGroupMembers, getSampleStr }
+export { getGroupDetail, getGroupMembers }

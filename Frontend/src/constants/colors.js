@@ -6,6 +6,12 @@ const COLORS = {
   THEME_COLOR3: '#58b6b6',
   THEME_COLOR4: '#1f8e94',
 
+  BRIGHTBLACK: '#606060',
+  BLACK: '#202020',
+  BRIGHTGREY: '#e8e8e8',
+  GREY: '#7B7B7B',
+  WHITE: '#ffffff',
+
   BLACK: '#202020',
   GREY: '#7B7B7B',
   WHITE: '#ffffff',
@@ -15,5 +21,4 @@ const COLORS = {
 
   MENU_TAB_UNDERLINE: '#DEDEDE',
 }
-
 export default COLORS

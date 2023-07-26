@@ -9,6 +9,7 @@ import {
   groupMarvel,
   groupMemberCount,
 } from '../components/GroupDetailPage/sampleData'
+import MainLayout from '../components/Layout/MainLayout'
 
 const menuForUser = ['상세 정보', '인원 정보']
 
@@ -26,20 +27,24 @@ function GroupDetailPage() {
   }
 
   return (
-    <div>
+    <MainLayout>
       <GroupProfile
         group={groupMarvel}
         count={groupMemberCount}
         setModalOpen={openModal}
       />
-      <GroupDetail group={groupMarvel} users={sampleGroupMembers} menu={menuForUser}/>
+      <GroupDetail
+        group={groupMarvel}
+        users={sampleGroupMembers}
+        menu={menuForUser}
+      />
       <Modal isOpen={isOpen} width={'30rem'}>
         <GroupApplyForm
           question={groupMarvel.question}
           setModalOpen={closeModal}
         />
       </Modal>
-    </div>
+    </MainLayout>
   )
 }
 

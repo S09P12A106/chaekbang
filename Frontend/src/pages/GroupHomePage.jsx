@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import GroupProfile from '../components/GroupDetailPage/GroupProfile'
+import GroupHomeProfile from '../components/GroupHomePage/GroupHomeProfile'
 import GroupHomeDetail from '../components/GroupHomePage/GroupHomeDetail'
 import {
   sampleGroupMembers,
@@ -16,7 +16,11 @@ const GroupHomePage = () => {
   return (
     <MainLayout>
       <div className="container">
-        <GroupProfile group={groupMarvel} count={groupMemberCount} />
+        <GroupHomeProfile
+          group={groupMarvel}
+          count={groupMemberCount}
+          isLeader={isLeader()}
+        />
         <GroupHomeDetail
           group={groupMarvel}
           users={sampleGroupMembers}
@@ -25,6 +29,11 @@ const GroupHomePage = () => {
       </div>
     </MainLayout>
   )
+}
+
+function isLeader() {
+  // TODO: redux에서 로그인 아이디 가져와서 리더인지 판별 로직 구현하기
+  return true
 }
 
 export default GroupHomePage

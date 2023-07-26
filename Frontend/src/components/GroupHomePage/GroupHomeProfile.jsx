@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import LeaderInfo from './LeaderInfo'
-import { serviceColor } from './groupDetailColors'
+import LeaderInfo from '../GroupDetailPage/LeaderInfo'
+import { serviceColor } from '../GroupDetailPage/groupDetailColors'
 import COLORS from '../../constants/colors'
 
-const GroupProfile = ({ group, count, setModalOpen }) => {
+const GroupHomeProfile = ({ group, count, isLeader }) => {
   return (
     <ProfileGridBox>
       <div>
@@ -30,18 +30,14 @@ const GroupProfile = ({ group, count, setModalOpen }) => {
 
         <LeaderInfo leader={group.leader} />
 
-        <GroupApplyButtons>
-          <GroupButton
-            color={COLORS.THEME_COLOR4}
-            text="white"
-            onClick={() => setModalOpen(true)}
-          >
-            신청하기
-          </GroupButton>
-          <GroupButton color={serviceColor.button2} text="black">
-            예약하기
-          </GroupButton>
-        </GroupApplyButtons>
+        {!isLeader && (
+          <GroupApplyButtons>
+            {/* TODO: 색깔 상수로 바꾸기 */}
+            <GroupButton color="red" text="white">
+              모임 나가기
+            </GroupButton>
+          </GroupApplyButtons>
+        )}
       </div>
     </ProfileGridBox>
   )
@@ -102,4 +98,4 @@ const GroupButton = styled.span`
   cursor: pointer;
 `
 
-export default React.memo(GroupProfile)
+export default React.memo(GroupHomeProfile)

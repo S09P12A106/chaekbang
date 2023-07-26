@@ -27,7 +27,7 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
   }
 
   return (
-    <FromContainer>
+    <FormContainer>
       <h1 className="mt-none">함께하기</h1>
       <p className="form-question">{question}</p>
       <textarea
@@ -42,7 +42,7 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
         ({userAnswer.length}/{GTOUP_APPLY_ANSWER_LIMIT})
       </InputLengthInfo>
       {/* <input className="form-answer" type="text" placeholder="입력해주세요." /> */}
-      <FromButtonContainer>
+      <FormButtonContainer>
         <FormButton
           color={COLORS.WHITE}
           text={COLORS.MODAL_CANCEL_GREY}
@@ -58,15 +58,15 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
         >
           신청하기
         </FormButton>
-      </FromButtonContainer>
-    </FromContainer>
+      </FormButtonContainer>
+    </FormContainer>
   )
 }
 
-const FromContainer = styled.div`
+const FormContainer = styled.div`
   padding: 2.5rem;
 `
-const FromButtonContainer = styled.div`
+const FormButtonContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 2rem;

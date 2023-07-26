@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import MemberInfo from './MemberInfo'
+import { GROUP_DETAIL_CONTAINER_PADDING } from './constant/groupDetailConstant'
 
 const GroupMembersInfo = ({ users, leader }) => {
   const userOfLeader = users.filter(
@@ -27,7 +28,7 @@ const GroupMembersInfo = ({ users, leader }) => {
 }
 
 const GroupMembersInfoContainer = styled.div`
-  padding: 0 4rem;
+  padding: ${GROUP_DETAIL_CONTAINER_PADDING};
 `
 
 const MembersContainer = styled.div`

@@ -10,6 +10,8 @@ import {
   groupMemberCount,
 } from '../components/GroupDetailPage/sampleData'
 
+const menuForUser = ['상세 정보', '인원 정보']
+
 function GroupDetailPage() {
   const [isOpen, setModalOpen] = useState(false)
 
@@ -30,7 +32,7 @@ function GroupDetailPage() {
         count={groupMemberCount}
         setModalOpen={openModal}
       />
-      <GroupDetail group={groupMarvel} users={sampleGroupMembers} />
+      <GroupDetail group={groupMarvel} users={sampleGroupMembers} menu={menuForUser}/>
       <Modal isOpen={isOpen} width={'30rem'}>
         <GroupApplyForm
           question={groupMarvel.question}

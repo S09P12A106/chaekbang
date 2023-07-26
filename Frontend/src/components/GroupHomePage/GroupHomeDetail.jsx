@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import MenuTab from '../common/MenuTab'
-import GroupDetailInfo from './GroupDetailInfo'
-import GroupMembersInfo from './GroupMembersInfo'
+import GroupDetailInfo from '../GroupDetailPage/GroupDetailInfo'
+import GroupMembersInfo from '../GroupDetailPage/GroupMembersInfo'
+import MeetingsInfo from './MeetingsInfo'
 
-const GroupDetail = ({ group, users, menu }) => {
+const GroupHomeDetail = ({ group, users, menu }) => {
   const [activeTab, setActiveTab] = useState(0)
 
   const tabComponents = {
     0: <GroupDetailInfo detail={group.detail} />,
     1: <GroupMembersInfo users={users.users} leader={group.leader} />,
+    2: <MeetingsInfo />,
   }
 
   const TabInfo = tabComponents[activeTab]
@@ -22,4 +24,4 @@ const GroupDetail = ({ group, users, menu }) => {
   )
 }
 
-export default React.memo(GroupDetail)
+export default React.memo(GroupHomeDetail)

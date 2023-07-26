@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { GROUP_DETAIL_CONTAINER_PADDING } from './constant/groupDetailConstant'
 
 const GroupDetailInfo = ({ detail }) => {
   return (
@@ -11,7 +12,7 @@ const GroupDetailInfo = ({ detail }) => {
 }
 
 const DetailInfoContainer = styled.div`
-  padding: 0 4rem;
+  padding: ${GROUP_DETAIL_CONTAINER_PADDING};
 `
 
 export default GroupDetailInfo

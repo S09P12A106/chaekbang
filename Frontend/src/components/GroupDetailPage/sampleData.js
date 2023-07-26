@@ -65,4 +65,65 @@ const groupMarvel = {
 
 const groupMemberCount = 10
 
-export { sampleMenus, sampleGroupMembers, groupMarvel, groupMemberCount }
+const sampleMeetings = {
+  meetings: [
+    {
+      title: '트롤 스타로드를 부처의 마음으로 이해해보자',
+      startedAt: '2023-07-28 14:30:00',
+      closedAt: '',
+    },
+    {
+      title: '토르의 부서진 망치를 찾아',
+      startedAt: '2023-07-27 14:00:00',
+      closedAt: '',
+    },
+    {
+      title: '캡틴 아메리카의 방패를 찾아',
+      startedAt: '2023-07-27 10:00:00',
+      closedAt: '',
+    },
+    {
+      title: '나는 그날 이후로...',
+      startedAt: '2023-07-24 21:00:00',
+      closedAt: '',
+    },
+    {
+      title: '고양이는 왜 젤리를 가지고 있나',
+      startedAt: '2023-07-23 13:00:00',
+      closedAt: '2023-07-23 15:00:00',
+    },
+    {
+      title: '짜장면 vs 짬뽕',
+      startedAt: '2023-07-20 19:00:00',
+      closedAt: '2023-07-20 20:30:00',
+    },
+    {
+      title: '개발자들이 말하는 말하는 감자에 대해서...',
+      startedAt: '2023-07-20 15:00:00',
+      closedAt: '2023-07-20 16:30:00',
+    },
+    {
+      title: '싸피 탈출 대작전',
+      startedAt: '2023-07-17 11:00:00',
+      closedAt: '2023-07-17 12:00:00',
+    },
+    {
+      title: '말포이의 관점에서 바라본 해리포터',
+      startedAt: '2023-07-14 11:00:00',
+      closedAt: '2023-07-14 13:00:00',
+    },
+    {
+      title: '너에게 난 나에게 넌',
+      startedAt: '2023-07-10 15:00:00',
+      closedAt: '2023-07-10 16:00:00',
+    },
+  ],
+}
+
+export {
+  sampleMenus,
+  sampleGroupMembers,
+  groupMarvel,
+  groupMemberCount,
+  sampleMeetings,
+}

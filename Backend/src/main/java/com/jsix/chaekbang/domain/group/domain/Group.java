@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Getter
@@ -59,6 +60,12 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
     private List<GroupUser> groupUsers = new ArrayList<>();
+
+    @Formula("(select count(*) "
+            + "from group_user gu "
+            + "where gu.group_id = group_id "
+            + "and gu.status = 'ACTIVE')")
+    private Integer joinedUserCount;
 
     @Builder
     private Group(String title, String detail, String question, String imageUrl, Long leaderId) {

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,6 +23,7 @@ class UserRepositoryImplTest extends IntegrationTestSupport {
 
     @DisplayName("데이터베이스에 유저를 저장할 수 있다")
     @Test
+    @Transactional
     void save() {
         //given
         User user = User.createUser(OAuthProvider.GOOGLE, "oAuthId", "email", Gender.M, LocalDate.now(),

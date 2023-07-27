@@ -3,6 +3,7 @@ package com.jsix.chaekbang.domain.group.infra.database;
 import com.jsix.chaekbang.domain.group.application.repository.TagRepository;
 import com.jsix.chaekbang.domain.group.domain.Tag;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,5 +26,10 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public List<Tag> findByTagNameIn(List<String> tagNames) {
         return jpaTagRepository.findByTagNameIn(tagNames);
+    }
+
+    @Override
+    public Optional<Tag> findTopByOrderByTaggedCountDesc() {
+        return jpaTagRepository.findTopByOrderByTaggedCountDesc();
     }
 }

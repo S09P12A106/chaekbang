@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 class GroupRepositoryImplTest extends IntegrationTestSupport {
 
@@ -30,6 +31,7 @@ class GroupRepositoryImplTest extends IntegrationTestSupport {
 
     @DisplayName("그룹을 저장할 수 있다.")
     @Test
+    @Transactional
     void 그룹_저장() {
         // given : 유저의 저장이 선행되어야함
         User leader = User.createUser(OAuthProvider.GOOGLE, "oAuthId", "email", Gender.M,
@@ -46,6 +48,7 @@ class GroupRepositoryImplTest extends IntegrationTestSupport {
 
     @DisplayName("그룹을 저장할 때 연관관계가 있는 그룹유저, 그룹태그도 저장된다.")
     @Test
+    @Transactional
     void 그룹유저_그룹태그_저장() {
         // given : 유저와 태그의 저장이 선행되어야함
         User leader = User.createUser(OAuthProvider.GOOGLE, "oAuthId", "email", Gender.M,

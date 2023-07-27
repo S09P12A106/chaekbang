@@ -40,6 +40,17 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
 
+    //jjwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    // openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.5'
+
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.1.0'
+
     // database
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'

@@ -1,13 +1,20 @@
 package com.jsix.chaekbang.domain.user.domain;
 
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import java.time.LocalDate;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.time.LocalDate;
 
 @Table(
         uniqueConstraints = {
@@ -28,10 +35,10 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "oauth_provider", length = 10)
-    private OAuthProvider oAuthProvider;
+    private OAuthProvider oauthProvider;
 
     @Column(nullable = false, name = "oauth_id", length = 100)
-    private String oAuthId;
+    private String oauthId;
 
     @Column(nullable = false, length = 30)
     private String email;
@@ -53,10 +60,12 @@ public class User extends BaseEntity {
     private String nickname;
 
     @Builder
-    private User(OAuthProvider oAuthProvider, String oAuthId, String email, Gender gender, LocalDate birthDate,
+    private User(OAuthProvider oAuthProvider, String oAuthId,
+            String email, Gender gender,
+            LocalDate birthDate,
             String profileImageUrl, String aboutMe, String nickname) {
-        this.oAuthProvider = oAuthProvider;
-        this.oAuthId = oAuthId;
+        this.oauthProvider = oAuthProvider;
+        this.oauthId = oAuthId;
         this.email = email;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -65,7 +74,9 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public static User createUser(OAuthProvider oAuthProvider, String oAuthId, String email, Gender gender,
+    public static User createUser(OAuthProvider oAuthProvider,
+            String oAuthId, String email,
+            Gender gender,
             LocalDate birthDate, String profileImageUrl, String aboutMe, String nickname) {
         return User.builder()
                    .oAuthProvider(oAuthProvider)

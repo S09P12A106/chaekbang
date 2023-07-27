@@ -1,11 +1,11 @@
 package com.jsix.chaekbang.domain.user.infra.database;
 
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
+import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
 import com.jsix.chaekbang.domain.user.domain.User;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,5 +21,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(Long id) {
         return jpaUserRepository.findById(id);
+    }
+
+    @Override
+    public Optional<User> findByOauthProviderAndOauthId(OAuthProvider oauthProvider,
+            String oauthId) {
+        return jpaUserRepository.findByOauthProviderAndOauthId(oauthProvider, oauthId);
     }
 }

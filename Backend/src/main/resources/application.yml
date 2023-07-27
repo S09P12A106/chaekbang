@@ -11,6 +11,7 @@ spring:
   config:
     activate:
       on-profile: test
+    import: application-test.yml
   datasource:
     url: jdbc:h2:mem:~/chackbangdb;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver

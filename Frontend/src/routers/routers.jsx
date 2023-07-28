@@ -3,6 +3,7 @@ import MainPage from '../pages/MainPage'
 import React from 'react'
 import SearchPage from '../pages/SearchPage'
 import MyGroupPage from '../pages/MyGroupPage'
+import MeetingRoomPage from '../pages/MeetingRoomPage'
 
 function RouterApp() {
   return (
@@ -11,6 +12,7 @@ function RouterApp() {
         <Route path="/" element={<MainPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/mygroup" element={<MyGroupPage />} />
+        <Route path="/mr" element={<MeetingRoomPage />} />
       </Routes>
     </BrowserRouter>
   )

@@ -3,7 +3,11 @@ stages:
   - alert_merge_request
   - build
   - test
-  #- deploy
+  - send_result
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME=~ '/^develop/BE'
 
 send-merge-request-alert:
   stage: alert_merge_request
@@ -12,9 +16,7 @@ send-merge-request-alert:
   script:
     - echo 'Merge Request has been occurred'
     - >
-      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${merge_request_alert_message_title}\", \"text\": ${merge_request_alert_message_content}, \"fields\" : [{\"short\":false, \"title\":\"Merge Request Title\", \"value\":\"${CI_MERGE_REQUEST_TITLE}\"}, {\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME=~ '/^develop/BE'
+      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${merge_request_alert_message_title}\", \"text\": ${merge_request_alert_message_content}, \"fields\" : [{\"short\":true, \"title\":\"Merge Request Title\", \"value\":\"${CI_MERGE_REQUEST_TITLE}\"}, {\"short\":true, \"title\":\"Merge Request Branch\", \"value\":\"${CI_COMMIT_REF_NAME}\"}, {\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
 
 
 image: gradle:alpine
@@ -25,8 +27,6 @@ variables:
 
 
 build:
-  only: 
-      - "develop/BE"
   stage: build
   before_script:
     - cd ./Backend
@@ -36,21 +36,21 @@ build:
     paths:
       - $CI_PROJECT_DIR/Backend/build/libs/*.jar
   
+
 unit-test:
-  only: 
-      - "develop/BE"
   stage: test
   before_script:
     - cd ./Backend
   script:
     - gradle test
 
-send-result-message:
-  stage: test
+
+send-fail-message:
+  stage: send_result
   when: on_failure
   image:
     name: curlimages/curl:latest
   script:
     - >
-      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${failure_message_title}\", \"text\": ${failure_message_content}, \"fields\" : [{\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
-        
+      curl -i -X POST -H "Content-Type: application/json" -d "{\"channel\": ${channel}, \"attachments\": [{\"author_name\": \"${CI_PROJECT_NAME}\", \"author_icon\": \"${author_icon}\", \"title\": \"${failure_message_title}\", \"text\": ${failure_message_content}, \"fields\" : [{\"short\":false, \"title\":\"Test Failure Branch\", \"value\":\"${CI_COMMIT_REF_NAME}\"}, {\"short\":true, \"title\":\"UserName\", \"value\":\"${GITLAB_USER_NAME}\"}, {\"short\":true, \"title\":\"Date\", \"value\":\"${CI_JOB_STARTED_AT}\"}]}]}" "$message_url"
+

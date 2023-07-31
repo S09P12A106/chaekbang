@@ -13,4 +13,6 @@ public interface TagRepository {
     List<Tag> findByTagNameIn(List<String> tagNames);
 
     Optional<Tag> findTopByOrderByTaggedCountDesc();
+    
+    List<Tag> findTop10ByOrderByTaggedCountDesc();
 }

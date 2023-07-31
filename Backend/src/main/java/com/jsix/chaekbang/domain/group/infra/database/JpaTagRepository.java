@@ -10,4 +10,7 @@ public interface JpaTagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findByTagNameIn(List<String> tagNames);
 
     Optional<Tag> findTopByOrderByTaggedCountDesc();
+
+    List<Tag> findTop10ByOrderByTaggedCountDesc();
+
 }

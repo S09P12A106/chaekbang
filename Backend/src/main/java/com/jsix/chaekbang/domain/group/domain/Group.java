@@ -61,6 +61,7 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
     private List<GroupUser> groupUsers = new ArrayList<>();
 
+
     @Formula("(select count(*) "
             + "from group_user gu "
             + "where gu.group_id = group_id "

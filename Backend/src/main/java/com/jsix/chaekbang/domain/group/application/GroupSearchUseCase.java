@@ -4,10 +4,12 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.application.repository.TagRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.Tag;
+import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MostTaggedGroupsResponseDto;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +40,20 @@ public class GroupSearchUseCase {
         Tag tag = mostTagged.get();
         List<Group> groups = groupRepository.findMostTaggedCountByTagName(tag.getTagName());
         return MostTaggedGroupsResponseDto.fromGroupsAndTag(groups, tag);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupWithUserAndTagResponseDto> searchGroupByKeywordAndTags(
+            GroupSearchRequestDto groupSearchRequestDto) {
+
+        List<Group> searchedGroups = groupRepository.findByKeywordAndTags(
+                groupSearchRequestDto.getKeyword(),
+                groupSearchRequestDto.getTags());
+
+        return searchedGroups.stream()
+                             .map(GroupWithUserAndTagResponseDto::from)
+                             .collect(
+                                     Collectors.toList());
+
     }
 }

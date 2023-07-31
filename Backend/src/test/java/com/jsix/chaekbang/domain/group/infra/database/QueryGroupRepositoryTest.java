@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +24,41 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 class QueryGroupRepositoryTest extends IntegrationTestSupport {
 
-    @Autowired
-    QueryGroupRepository queryGroupRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    GroupRepository groupRepository;
-    @Autowired
-    TagRepository tagRepository;
+    private List<User> users;
+    private List<Tag> tags;
 
     @Autowired
-    EntityManager em;
+    private GroupRepository groupRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
-    List<User> users;
-    List<Tag> tags;
+    @Autowired
+    private QueryGroupRepository queryGroupRepository;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    void saveUsers() {
+        users = new ArrayList<>();
+        for (int idx = 0; idx < 10; idx++) {
+            User user = User.createUser(OAuthProvider.GOOGLE, "oAuthId" + idx, "email", Gender.M,
+                    LocalDate.now(), "profileImageUrl", "aboutMe", "nickname");
+            users.add(user);
+            userRepository.save(user);
+        }
+    }
+
+    void saveGroupsWithUserAndTag(List<Integer> readCounts) {
+        for (int idx = 0; idx < readCounts.size(); idx++) {
+            Group group = Group.createGroup("title", "detail", "imageUrl", "question",
+                    users.get(idx));
+            ReflectionTestUtils.setField(group, "readCount", readCounts.get(idx));
+            group.addTags(new ArrayList<>(List.of(tags.get(idx))));
+            groupRepository.save(group);
+        }
+    }
 
     @DisplayName("인기그룹을 조회할 수 있다.")
     @Test
@@ -50,7 +72,7 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
         saveUsers();
         saveTags(tagNames, taggedCount);
         saveGroupsWithUserAndTag(readCounts);
-        em.clear();
+        entityManager.clear();
         // when
         List<Group> popularGroups = queryGroupRepository.findMostReadCount();
 
@@ -73,7 +95,7 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
         saveUsers();
         saveTags(tagNames, taggedCount);
         saveGroupsWithUserAndTag(readCounts);
-        em.clear();
+        entityManager.clear();
 
         // when
         List<Group> popularGroups = queryGroupRepository.findMostReadCount();
@@ -104,7 +126,7 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
         Tag savedTag2 = tags.get(1);
         createdGroup.addTags(List.of(savedTag1, savedTag2));
         groupRepository.save(createdGroup);
-        em.clear();
+        entityManager.clear();
 
         // when
         Group recommendedGroup = queryGroupRepository.findMostTaggedCountByTagName(
@@ -128,26 +150,6 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
             tags.add(tag);
         }
         tagRepository.saveAll(tags);
-    }
-
-    void saveUsers() {
-        users = new ArrayList<>();
-        for (int idx = 0; idx < 10; idx++) {
-            User user = User.createUser(OAuthProvider.GOOGLE, "oAuthId" + idx, "email", Gender.M,
-                    LocalDate.now(), "profileImageUrl", "aboutMe", "nickname");
-            users.add(user);
-            userRepository.save(user);
-        }
-    }
-
-    void saveGroupsWithUserAndTag(List<Integer> readCounts) {
-        for (int idx = 0; idx < readCounts.size(); idx++) {
-            Group group = Group.createGroup("title", "detail", "imageUrl", "question",
-                    users.get(idx));
-            ReflectionTestUtils.setField(group, "readCount", readCounts.get(idx));
-            group.addTags(new ArrayList<>(List.of(tags.get(idx))));
-            groupRepository.save(group);
-        }
     }
 
 }

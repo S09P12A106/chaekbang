@@ -27,4 +27,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     public List<Group> findMostTaggedCountByTagName(String tagName) {
         return groupQueryRepository.findMostTaggedCountByTagName(tagName);
     }
+
+    public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds) {
+        return groupQueryRepository.findByKeywordAndTags(keyword, tagIds);
+    }
 }

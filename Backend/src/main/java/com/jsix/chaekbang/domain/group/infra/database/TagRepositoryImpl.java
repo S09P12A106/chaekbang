@@ -32,4 +32,9 @@ public class TagRepositoryImpl implements TagRepository {
     public Optional<Tag> findTopByOrderByTaggedCountDesc() {
         return jpaTagRepository.findTopByOrderByTaggedCountDesc();
     }
+
+    @Override
+    public List<Tag> findTop10ByOrderByTaggedCountDesc() {
+        return jpaTagRepository.findTop10ByOrderByTaggedCountDesc();
+    }
 }

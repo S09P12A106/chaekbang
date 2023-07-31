@@ -11,4 +11,5 @@ public interface GroupRepository {
 
     List<Group> findMostTaggedCountByTagName(String tagName);
 
+    List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds);
 }

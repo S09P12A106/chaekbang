@@ -52,7 +52,6 @@ function groupMeetingsByStartDate(meetings) {
     return result
   }, {})
 
-  console.log(groupedMeetings)
   return groupedMeetings
 }
 

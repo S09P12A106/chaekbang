@@ -53,8 +53,6 @@ const MeetingsByDate = ({ date, meetings }) => {
  * @returns {String}
  */
 function getFormattedDate(date) {
-  console.log(date)
-  console.log(typeof date)
   const dateObj = new Date(date)
   return `${dateObj.getFullYear()} . ${
     dateObj.getMonth() + 1

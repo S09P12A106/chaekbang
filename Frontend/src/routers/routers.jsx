@@ -4,6 +4,7 @@ import React from 'react'
 import SearchPage from '../pages/SearchPage'
 import MyGroupPage from '../pages/MyGroupPage'
 import MeetingRoomPage from '../pages/MeetingRoomPage'
+import MyPage from '../pages/MyPage'
 import GroupManagementPage from '../pages/GroupManagementPage'
 
 import GroupCreatePage from '../pages/GroupCreatePage'
@@ -16,6 +17,7 @@ function RouterApp() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/mygroup" element={<MyGroupPage />} />
         <Route path="/mr" element={<MeetingRoomPage />} />
+        <Route path="/mypage" element={<MyPage />} />
         <Route path="/groups/manage" element={<GroupManagementPage />} />
         <Route path="/groups/create" element={<GroupCreatePage />} />
         <Route path="/mw" element={<MeetWaiting />} />

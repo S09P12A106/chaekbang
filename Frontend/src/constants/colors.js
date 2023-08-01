@@ -21,5 +21,14 @@ const COLORS = {
   MODAL_CANCEL_BORDER: '#BDBDBD',
 
   MENU_TAB_UNDERLINE: '#DEDEDE',
+
+  // 미팅 버튼에 쓰이는 색깔들
+  BLUE: '#67BEEF',
+  SKYBLUE: '#81D7DC',
+  LIGHTGREEN: '#CADF91',
+  YELLOW: '#FFDE8A',
+  ORANGE: '#FFBD6F',
+  PINK: '#F5B3EA',
+  RED: '#FA9090',
 }
 export default COLORS

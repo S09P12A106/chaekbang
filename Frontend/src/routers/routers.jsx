@@ -4,6 +4,7 @@ import React from 'react'
 import SearchPage from '../pages/SearchPage'
 import MyGroupPage from '../pages/MyGroupPage'
 import MeetingRoomPage from '../pages/MeetingRoomPage'
+import GroupCreatePage from '../pages/GroupCreatePage'
 import MeetWaiting from '../pages/MeetWaiting'
 function RouterApp() {
   return (
@@ -13,6 +14,7 @@ function RouterApp() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/mygroup" element={<MyGroupPage />} />
         <Route path="/mr" element={<MeetingRoomPage />} />
+        <Route path="/groups/create" element={<GroupCreatePage />} />
         <Route path="/mw" element={<MeetWaiting />} />
       </Routes>
     </BrowserRouter>

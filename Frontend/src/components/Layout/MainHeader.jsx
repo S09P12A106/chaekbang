@@ -48,7 +48,7 @@ function MainHeader() {
               <Link to="/search">모임검색</Link>
             </li>
             <li>
-              <Link to="/">모임만들기</Link>
+              <Link to="/groups/create">모임만들기</Link>
             </li>
           </ul>
           <LoginOrMine>

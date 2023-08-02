@@ -29,9 +29,9 @@ variables:
 build:
   stage: build
   before_script:
-    - touch ./Backend/src/main/resources/oauth.properties
-    - echo -e "$env_variables" > ./Backend/src/main/resources/oauth.properties
-    - cat ./Backend/src/main/resources/oauth.properties
+    - touch ./Backend/src/main/resources/env_variables.properties
+    - echo -e "$env_variables" > ./Backend/src/main/resources/env_variables.properties
+    - cat ./Backend/src/main/resources/env_variables.properties
     - cd ./Backend
   script:
     - gradle build

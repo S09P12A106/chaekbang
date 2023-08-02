@@ -29,16 +29,16 @@ variables:
 build:
   stage: build
   before_script:
-    - touch ./Backend/src/main/resources/env_variables.properties
-    - echo -e "$env_variables" > ./Backend/src/main/resources/env_variables.properties
-    - cat ./Backend/src/main/resources/env_variables.properties
+    - touch ./Backend/src/main/resources/application.properties
+    - echo -e "$env_variables" > ./Backend/src/main/resources/application.properties
+    - cat ./Backend/src/main/resources/application.properties
     - cd ./Backend
   script:
     - gradle build
   artifacts:
     paths:
       - $CI_PROJECT_DIR/Backend/build/libs/*.jar
-      - $CI_PROJECT_DIR/Backend/src/main/resources/oauth.properties
+      - $CI_PROJECT_DIR/Backend/src/main/resources/application.properties
   
 
 unit-test:

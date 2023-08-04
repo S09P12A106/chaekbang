@@ -24,7 +24,7 @@ const GroupHomeProfile = ({ group, count, isLeader }) => {
 
         <TagList>
           {group.tags.map((tag, index) => {
-            return <Tag>#{tag.tagName}</Tag>
+            return <Tag index={index}>#{tag.tagName}</Tag>
           })}
         </TagList>
 

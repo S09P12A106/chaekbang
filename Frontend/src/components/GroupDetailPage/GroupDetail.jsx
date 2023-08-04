@@ -9,7 +9,7 @@ const GroupDetail = ({ group, users, menu }) => {
 
   const tabComponents = {
     0: <GroupDetailInfo detail={group.detail} />,
-    1: <GroupMembersInfo users={users.users} leader={group.leader} />,
+    1: <GroupMembersInfo users={users} leader={group.leader} />,
   }
 
   const TabInfo = tabComponents[activeTab]

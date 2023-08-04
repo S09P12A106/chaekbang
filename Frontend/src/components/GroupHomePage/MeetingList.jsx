@@ -10,9 +10,13 @@ const MeetingList = ({ meetings }) => {
       {/* 
       1. Object.entries 각 요소의 0번 인덱스는 Key, 즉 여기서 날짜
       2. 각 요소의 1번 인덱스는 value, 여기서는 해당 날짜의 미팅 배열 */}
-      {Object.entries(groupedMeetings).map((meetingPerDay) => {
+      {Object.entries(groupedMeetings).map((meetingPerDay, index) => {
         return (
-          <MeetingsByDate date={meetingPerDay[0]} meetings={meetingPerDay[1]} />
+          <MeetingsByDate
+            key={index}
+            date={meetingPerDay[0]}
+            meetings={meetingPerDay[1]}
+          />
         )
       })}
     </div>

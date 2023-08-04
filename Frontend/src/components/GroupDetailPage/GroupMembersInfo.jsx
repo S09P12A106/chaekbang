@@ -20,7 +20,7 @@ const GroupMembersInfo = ({ users, leader }) => {
       <h1>책방 손님</h1>
       <MembersContainer>
         {usersExceptLeader.map((user, index) => {
-          return <MemberInfo member={user} />
+          return <MemberInfo key={index} member={user} />
         })}
       </MembersContainer>
     </GroupMembersInfoContainer>

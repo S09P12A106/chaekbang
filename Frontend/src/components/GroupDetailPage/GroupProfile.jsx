@@ -24,7 +24,7 @@ const GroupProfile = ({ group, count, setModalOpen }) => {
 
         <TagList>
           {group.tags.map((tag, index) => {
-            return <Tag>#{tag.tagName}</Tag>
+            return <Tag key={index}>#{tag.tagName}</Tag>
           })}
         </TagList>
 

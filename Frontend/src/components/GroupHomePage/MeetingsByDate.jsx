@@ -30,10 +30,10 @@ const MeetingsByDate = ({ date, meetings }) => {
         <DateStyleLine />
       </DateBox>
       <GroupedMeetingContainer>
-        {meetings.map((meeting) => {
+        {meetings.map((meeting, index) => {
           const type = findTypeOfMeeting(meeting)
           return (
-            <MeetingContainer>
+            <MeetingContainer key={index}>
               <MeetingTitle>{meeting.title}</MeetingTitle>
               <Button color={buttonStyle[type].color}>
                 {buttonStyle[type].label}

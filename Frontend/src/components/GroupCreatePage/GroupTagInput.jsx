@@ -12,6 +12,7 @@ const InfoContainer = styled.div`
   margin-left: 40px;
   line-height: 40px;
   font-size: 15px;
+  min-width: 120px;
 `
 
 const InfoInputContainer = styled.div``

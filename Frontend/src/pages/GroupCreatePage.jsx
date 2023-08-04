@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import MainLayout from '../components/Layout/MainLayout'
 import GroupInfoInput from '../components/GroupCreatePage/GroupInfoInput'
 import GroupTagInput from '../components/GroupCreatePage/GroupTagInput'
+import GroupImageInput from '../components/GroupCreatePage/GroupImageInput'
 
 const Container = styled.div`
-  max-width: 960px;
   margin-left: 50px;
   margin-right: 50px;
 `
@@ -88,6 +88,8 @@ function GroupCreatePage() {
   })
 
   const [isValid, setValid] = useState(false)
+  const [image, setImage] = useState()
+  const [imageMessage, setImageMessage] = useState()
 
   const { title, detail, question, tagNames } = inputs
   const { titleMessage, detailMessage, questionMessage } = errorMessages
@@ -175,6 +177,7 @@ function GroupCreatePage() {
 
   const createGroup = () => {
     console.log(inputs)
+    console.log(image)
     console.log('모임 만들기')
   }
 
@@ -182,7 +185,6 @@ function GroupCreatePage() {
     <MainLayout>
       <Container>
         <GroupInfoInput
-          limitNum={30}
           errorMessage={titleMessage}
           info={'모임 이름'}
           placeholder={'모임 이름을 30자 이내로 입력해주세요.'}
@@ -206,10 +208,17 @@ function GroupCreatePage() {
           tagNames={tagNames}
         ></GroupTagInput>
         <HrTag></HrTag>
+        <GroupImageInput
+          info={'모임 배경 사진'}
+          imageMessage={imageMessage}
+          setImageMessage={setImageMessage}
+          setImage={setImage}
+        ></GroupImageInput>
+        ``
+        <HrTag></HrTag>
         <GroupInfoInput
-          limitNum={100}
           errorMessage={questionMessage}
-          info={'가입 질문 입력'}
+          info={'가입 질문'}
           placeholder={
             '모임 가입자들에게 물어볼 질문을 100자 이내로 입력해주세요.'
           }
@@ -217,7 +226,6 @@ function GroupCreatePage() {
           onChange={onChangeQuestion}
           name={'question'}
         ></GroupInfoInput>
-
         <TextContainer>
           {isValid ? (
             <GreenText>&#10003;</GreenText>

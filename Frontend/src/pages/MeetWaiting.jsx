@@ -32,16 +32,25 @@ function MeetWaiting({
 
   CONSOLE.reRender('리렌더링')
 
+  /*
   useEffect(() => {
-    if (isTokenRequested.current) {
-      const newPublisher = OV.initPublisher(undefined, videoOption)
-      setMeetingInfo((prevState) => ({
-        ...prevState,
-        mainStreamManager: newPublisher,
-        publisher: newPublisher,
-      }))
-    }
+    // if (isTokenRequested.current) {
+    //   const newPublisher = OV.initPublisher(undefined, videoOption)
+    //   setMeetingInfo((prevState) => ({
+    //     ...prevState,
+    //     mainStreamManager: newPublisher,
+    //     publisher: newPublisher,
+    //   }))
+    // }
+    CONSOLE.info('video init')
+    const newPublisher = OV.initPublisher(undefined, videoOption)
+    setMeetingInfo((prevState) => ({
+      ...prevState,
+      mainStreamManager: newPublisher,
+      publisher: newPublisher,
+    }))
   }, [videoOption])
+  */
 
   const handleRefresh = (e) => {
     CONSOLE.info('beforeunload event occured!!')
@@ -126,6 +135,7 @@ function MeetWaiting({
               ...prevState,
               mainStreamManager: publisher,
               publisher: publisher,
+              prevPublisher: undefined,
             }))
           })
         })

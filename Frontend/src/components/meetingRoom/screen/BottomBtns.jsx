@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { BoardContext } from '../context/BoardContext'
 import { styled } from 'styled-components'
+import VideoButtons from '../../common/VideoButtons'
 
 function BottomBtns() {
+  const { toggleMic, toggleCam } = useContext(BoardContext)
   return (
     <>
-      <BtmBtns>111</BtmBtns>
+      <VideoButtons toggleMic={toggleMic} toggleCam={toggleCam} />
     </>
   )
 }

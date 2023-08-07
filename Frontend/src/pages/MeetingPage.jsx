@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
+import { OpenVidu } from 'openvidu-browser'
 import MeetWaiting from './MeetWaiting'
 import MeetingRoomPage from './MeetingRoomPage'
 import CONSOLE from '../utils/consoleColors'
@@ -14,14 +15,17 @@ streamManager.addVideoElement(videoRef.current)
 - session.publish 로 나의 영상을 송출할 수 있습니다.
 - 영상 관련 옵션을 변경할 때는 새로운 옵션으로 Publisher를 다시 init해야 합니다. session의 initPublisherAsync 또는 initPublisher로 할 수 있습니다.
 */
+const OV = new OpenVidu()
 
 const MeetingPage = () => {
+  CONSOLE.reRender('MeetingPage rendered')
   /*
   - mySessionId : 세션(책방 당 하나)의 아이디
   - myUserName : 내 영상에 표시될 닉네임
   - session : 세션 객체 => 세션과의 상호작용을 담당, 세션 정보 또한 가지고 있습니다.
   - mainStreamManager: 메인 영상으로 표시될 Publisher
   - publisher : 나의 Publisher 객체
+  - prevPublisher : video option 변경시 unpublish를 위해 갖고 있는 이전 publisher
   - subscribers : 나를 제외한 책방에 참여하고 있는 접속자들의 Publisher 객체
   */
   const meetingInfoState = useState(() => {
@@ -32,9 +36,12 @@ const MeetingPage = () => {
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
+      prevPublisher: undefined,
       subscribers: [],
     }
   })
+
+  const [meetingInfo, setMeetingInfo] = meetingInfoState
 
   /**
    * 미디어 소스를 담고 있는 객체를 Promise로 반환합니다.
@@ -65,6 +72,16 @@ const MeetingPage = () => {
     insertMode: 'APPEND',
     mirror: false,
   })
+
+  useEffect(() => {
+    CONSOLE.info('video init')
+    const newPublisher = OV.initPublisher(undefined, videoOption)
+    setMeetingInfo((prevState) => ({
+      ...prevState,
+      mainStreamManager: newPublisher,
+      publisher: newPublisher,
+    }))
+  }, [videoOption])
 
   function toggleMic() {
     setVideoOption((prevOption) => ({

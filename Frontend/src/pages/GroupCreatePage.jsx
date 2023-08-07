@@ -70,7 +70,7 @@ const NotCreateButton = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  cursur: pointer;
+  cursor: pointer;
 `
 
 function GroupCreatePage() {
@@ -214,7 +214,6 @@ function GroupCreatePage() {
           setImageMessage={setImageMessage}
           setImage={setImage}
         ></GroupImageInput>
-        ``
         <HrTag></HrTag>
         <GroupInfoInput
           errorMessage={questionMessage}

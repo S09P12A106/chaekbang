@@ -4,6 +4,7 @@ import GroupInfoInput from './GroupInfoInput'
 import GroupTagInput from './GroupTagInput'
 import { getGroup } from './GroupDummy'
 import Swal from 'sweetalert2'
+import GroupImageInput from './GroupImageInput'
 
 const Container = styled.div`
   max-width: 960px;
@@ -90,7 +91,10 @@ function UpdateGroup() {
     questionMessage: '',
   })
 
-  const [isValid, setValid] = useState(false)
+  const [isValid, setValid] = useState(true)
+  const [image, setImage] = useState()
+  const [imageMessage, setImageMessage] = useState()
+  const [isImageChanged, setIsImageChanged] = useState(false)
 
   const { title, detail, question, tagNames } = inputs
   const { titleMessage, detailMessage, questionMessage } = errorMessages
@@ -176,7 +180,7 @@ function UpdateGroup() {
     })
   }
 
-  const createGroup = () => {
+  const updateGroup = () => {
     Swal.fire({
       title: '수정을 완료하시겠습니까?',
       icon: 'warning',
@@ -187,7 +191,13 @@ function UpdateGroup() {
       cancelButtonText: '취소',
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log('수정')
+        const postData = {
+          ...inputs,
+          image,
+          isImageChanged,
+        }
+        console.log(postData)
+        console.log('수정하기')
       }
     })
   }
@@ -234,6 +244,15 @@ function UpdateGroup() {
         tagNames={tagNames}
       ></GroupTagInput>
       <HrTag></HrTag>
+      <GroupImageInput
+        info={'모임 배경 사진'}
+        imageMessage={imageMessage}
+        setImageMessage={setImageMessage}
+        setImage={setImage}
+        originImageSource={dummy.imageUrl}
+        setIsImageChanged={setIsImageChanged}
+      ></GroupImageInput>
+      <HrTag></HrTag>
       <GroupInfoInput
         errorMessage={questionMessage}
         formOption={formOptions.question}
@@ -244,7 +263,7 @@ function UpdateGroup() {
 
       <ButtonContainer>
         {isValid ? (
-          <CreateButton onClick={createGroup}>모임 수정하기</CreateButton>
+          <CreateButton onClick={updateGroup}>모임 수정하기</CreateButton>
         ) : (
           <NotCreateButton>모임 수정하기</NotCreateButton>
         )}

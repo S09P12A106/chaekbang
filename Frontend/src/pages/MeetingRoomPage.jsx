@@ -6,6 +6,7 @@ import TopSpace from '../components/meetingRoom/screen/TopSpace'
 import ScreenShot from '../components/meetingRoom/screen/ScreenShot'
 import BottomBtns from '../components/meetingRoom/screen/BottomBtns'
 import { BoardContext } from '../components/meetingRoom/context/BoardContext'
+import COLORS from '../constants/colors'
 import CONSOLE from '../utils/consoleColors'
 
 function MeetingRoomPage({
@@ -56,6 +57,7 @@ function MeetingRoomPage({
 const Container = styled.div`
   display: flex;
   flex-direction: row-reverse;
+  background-color: ${COLORS.BLACK};
 `
 const SideBarContainer = styled.div`
   display: flex;
@@ -67,6 +69,7 @@ const ScreenContainer = styled.div`
   flex-grow: 1;
   flex-shrink: 0;
   flex-direction: column;
+  transition: all 0.5s ease;
 `
 
 export default MeetingRoomPage

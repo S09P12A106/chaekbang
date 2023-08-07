@@ -1,12 +1,24 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { IoIosArrowDown } from 'react-icons/io'
 import { IoIosArrowUp } from 'react-icons/io'
 import { useHandleTime } from './useHandleTime'
+import { BoardContext } from '../context/BoardContext'
 
 function TimerBoard() {
   const [isRunning, setIsRunning] = useState(false)
+
+  const { whichBtn, setWhichBtn } = useContext(BoardContext)
+  const [isToggleOpen, setIsToggleOpen] = useState(false)
+
+  useEffect(() => {
+    if (whichBtn === 3) {
+      setIsToggleOpen(true)
+    } else {
+      setIsToggleOpen(false)
+    }
+  }, [whichBtn])
 
   const {
     hour,
@@ -48,7 +60,7 @@ function TimerBoard() {
   }
 
   return (
-    <TimerContainer>
+    <TimerContainer toggle={isToggleOpen}>
       <Clock>
         {!isRunning ? (
           <Btns>
@@ -109,11 +121,20 @@ function TimerBoard() {
 }
 
 const TimerContainer = styled.div`
+  position: fixed;
+  right: ${(props) => (props.toggle ? '25px' : '-300px')};
+  top: 0px;
+  transition: all 0.5s ease;
+  width: 270px;
+  height: calc(100vh - 20px);
+
   display: flex;
   flex-direction: column;
-  margin: 10px;
-  width: 100%;
-  margin-top: 50px;
+  margin: 10px 0px;
+  padding: 50px 50px 0px 10px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: ${COLORS.WHITE};
 
   time {
     display: flex;
@@ -121,7 +142,6 @@ const TimerContainer = styled.div`
     align-items: center;
     width: 55px;
     height: 55px;
-    background-color: white;
     border-radius: 10px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     font-size: 30px;
@@ -236,13 +256,13 @@ const Buttons = styled.div`
   }
 `
 const Pause = styled.button`
-  background-color: ${COLORS.WHITE};
+  background-color: ${COLORS.RED};
 `
 const Start = styled.button`
   background-color: ${COLORS.THEME_COLOR2};
 `
 const Reset = styled.button`
-  background-color: ${COLORS.WHITE};
+  background-color: ${COLORS.BLUE};
 `
 
 export default TimerBoard

@@ -1,17 +1,14 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import SideBarBoard from './SideBarBoard'
 import { styled } from 'styled-components'
-import ChatBtn from './sideBarBtn/ChatBtn'
-import VoteBtn from './sideBarBtn/VoteBtn'
-import OpBoxBtn from './sideBarBtn/OpBoxBtn'
-import TimerBtn from './sideBarBtn/TimerBtn'
-import BackwardBtn from './sideBarBtn/BackwardBtn'
 import COLORS from '../../constants/colors'
 import CommonBtn from './sideBarBtn/CommonBtn'
 import { HiOutlineChat } from 'react-icons/hi'
 import { MdHowToVote } from 'react-icons/md'
 import { LuMailbox } from 'react-icons/lu'
 import { LuAlarmClock } from 'react-icons/lu'
+import { BoardContext } from '../meetingRoom/context/BoardContext'
+import { AiOutlineArrowRight } from 'react-icons/ai'
 
 function SideBar() {
   const [isOpen, setIsOpen] = useState(true)
@@ -22,16 +19,33 @@ function SideBar() {
     { icon: <LuAlarmClock size="30px" />, id: 4 },
   ]
 
+  const { whichBtn, setWhichBtn } = useContext(BoardContext)
+
+  // 버튼 클릭 > 사이드바보드 닫기
+  const handleToggleClose = () => {
+    setWhichBtn(5)
+  }
+
   // 버튼 클릭 > 사이드바보드 닫기
   const handleToggleOpen = () => {
-    setIsOpen((prevState) => !prevState)
+    // setIsOpen((prevState) => !prevState)
     console.log('clicked')
   }
+
+  useEffect(() => {
+    if (whichBtn != 5) setIsOpen(true)
+    else setIsOpen(false)
+  }, [whichBtn])
 
   return (
     <>
       <Nav>
-        <TopBtn>
+        <Btns>
+          {/* 접기버튼 */}
+          <CloseBtn onClick={handleToggleClose} isOpen={isOpen}>
+            <AiOutlineArrowRight size={30}></AiOutlineArrowRight>
+          </CloseBtn>
+
           {/* 기능들이 있는 버튼 */}
           {imgs.map((img, index) => (
             <CommonBtn
@@ -41,58 +55,51 @@ function SideBar() {
               numbering={index}
             />
           ))}
-        </TopBtn>
-        <BottomBtn>
-          {/* 뒤로가기 버튼 > 디자인 살짝 바뀔 수도 있어서 추후 진행 */}
-          <BackwardBtn>5</BackwardBtn>
-        </BottomBtn>
+        </Btns>
       </Nav>
 
       {/* Nav바 누르면 나오는 보드 */}
-      {isOpen && (
-        <Board>
-          <SideBarBoard></SideBarBoard>
-        </Board>
-      )}
+      <SideBarBoard></SideBarBoard>
+
+      {isOpen && <Space></Space>}
     </>
   )
 }
 
-const Board = styled.div`
-  display: flex;
-  width: 222px;
-  height: calc(100vh-20px);
-  background-color: ${COLORS.THEME_COLOR0};
-  margin: 10px 0px 10px 10px;
-  border-radius: 8px;
-`
-
 const Nav = styled.div`
   display: flex;
-  /* align-items: center; */
   flex-direction: column;
   justify-content: space-between;
 
-  height: calc(100vh - 10px);
+  height: calc(100vh - 20px);
   min-height: 450px;
   width: 65px;
-  margin: 5px;
-  background-color: ${COLORS.THEME_COLOR2};
-  border-radius: 15px;
+  margin: 10px 0px;
+  background-color: ${COLORS.WHITE};
+  border-top-left-radius: 15px; /* 왼쪽 위 모서리 */
+  border-bottom-left-radius: 15px; /* 왼쪽 아래 모서리 */
+  z-index: 999;
 `
 
-const TopBtn = styled.div`
+const Btns = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 30px 0px;
+  margin: 10px 0px;
 `
 
-const BottomBtn = styled.div`
-  display: flex;
-  flex-direction: column;
+const CloseBtn = styled.button`
+  width: 42.5px;
+  height: 42.5px;
+  justify-content: center;
   align-items: center;
-  margin: 30px 0px;
+  background-color: white;
+  transition: opacity 0.2s ease-in-out;
+  opacity: ${(props) => (props.isOpen ? '1' : '0')};
+`
+
+const Space = styled.div`
+  width: 240px;
 `
 
 export default SideBar

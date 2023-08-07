@@ -1,11 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { BiSolidRightArrow } from 'react-icons/bi'
+import { BoardContext } from '../context/BoardContext'
 
 function ChatBoard() {
   const [message, setMessage] = useState('')
   const [messageHistory, setMessageHistory] = useState([])
+  const { whichBtn } = useContext(BoardContext)
+  const [isToggleOpen, setIsToggleOpen] = useState(false)
+
+  useEffect(() => {
+    if (whichBtn === 0) {
+      setIsToggleOpen(true)
+    } else {
+      setIsToggleOpen(false)
+    }
+  }, [whichBtn])
 
   // 메세지 보내기
   const handleSendMessage = () => {
@@ -17,10 +28,7 @@ function ChatBoard() {
       // date: new Date().toLocaleTimeString(), // Get the current time
     }
 
-    // Add the new message object to the chat history
     setMessageHistory((prevMessage) => [...prevMessage, newMessage])
-
-    // Clear the message input
     setMessage('')
   }
 
@@ -35,7 +43,7 @@ function ChatBoard() {
   }
 
   return (
-    <ChatContainer>
+    <ChatContainer toggle={isToggleOpen}>
       <WhiteBoard>
         <Title>회의 중 메세지</Title>
         <MessageBoard>
@@ -71,16 +79,22 @@ function ChatBoard() {
 }
 
 const ChatContainer = styled.div`
+  position: fixed;
+  right: ${(props) => (props.toggle ? '25px' : '-300px')};
+  top: 0px;
+  transition: all 0.5s ease;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
-  height: calc(100%-20px);
+  width: 270px;
+  height: calc(100vh - 20px);
 
   border-radius: 10px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   background-color: ${COLORS.WHITE};
-  margin: 10px;
+  margin: 10px 0px;
+  padding-right: 40px;
 `
 
 const WhiteBoard = styled.div`
@@ -157,6 +171,7 @@ const Input = styled.textarea`
   border: none;
   border-radius: 15px;
   min-height: 75px;
+  width: 180px;
   background-color: #d5d5d5;
   outline: none;
   resize: none;

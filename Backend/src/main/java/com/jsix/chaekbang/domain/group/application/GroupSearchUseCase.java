@@ -4,9 +4,12 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.application.repository.TagRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.Tag;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MostTaggedGroupsResponseDto;
+import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,5 +58,19 @@ public class GroupSearchUseCase {
                              .collect(
                                      Collectors.toList());
 
+    }
+
+    @Transactional
+    public GroupDetailResponseDto searchGroupDetail(long groupId) {
+        if (groupRepository.plusReadCount(groupId) == 0) {
+            throw new NotFoundResourceException("해당 그룹이 존재하지 않습니다.");
+        }
+
+        return groupRepository.findGroupDetailByGroupId(groupId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupUserResponseDto> searchGroupUsers(long groupId) {
+        return groupRepository.findGroupUsersByGroupId(groupId);
     }
 }

@@ -1,9 +1,17 @@
 package com.jsix.chaekbang.domain.group.infra.database;
 
+
+import static com.jsix.chaekbang.domain.group.domain.QGroupUser.groupUser;
+import static com.jsix.chaekbang.domain.user.domain.QUser.user;
+
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.QGroup;
 import com.jsix.chaekbang.domain.group.domain.QGroupTag;
 import com.jsix.chaekbang.domain.group.domain.QTag;
+import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
+import com.jsix.chaekbang.domain.group.dto.QGroupDetailResponseDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.JPAExpressions;
@@ -11,9 +19,9 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 
 @Component
@@ -104,4 +112,31 @@ public class QueryGroupRepository {
         return groupTag.tag.id.in(tagIds);
     }
 
+    public GroupDetailResponseDto findGroupDetailByGroupId(long groupId) {
+        return jpaQueryFactory.select(
+                                      new QGroupDetailResponseDto(group,
+                                              user.profileImageUrl, user.aboutMe, user.nickname))
+                              .from(group)
+                              .innerJoin(user)
+                              .on(group.leaderId.eq(user.id))
+                              .join(group.groupTags, groupTag)
+                              .fetchJoin()
+                              .join(groupTag.tag, tag)
+                              .fetchJoin()
+                              .where(group.id.eq(groupId))
+                              .distinct()
+                              .fetchFirst();
+    }
+
+    public List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId) {
+        return jpaQueryFactory.select(user)
+                              .from(groupUser)
+                              .innerJoin(groupUser.user, user)
+                              .where(groupUser.group.id.eq(groupId)
+                                                       .and(groupUser.status.eq(UserStatus.ACTIVE)))
+                              .fetch()
+                              .stream()
+                              .map(GroupUserResponseDto::from)
+                              .collect(Collectors.toList());
+    }
 }

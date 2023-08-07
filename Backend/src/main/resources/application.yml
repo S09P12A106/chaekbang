@@ -8,13 +8,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  config:
+    import: application.properties
 
 ---
 spring:
   config:
     activate:
       on-profile: test
-  #    import: application-test.yml
+    import: application.properties
   datasource:
     url: jdbc:h2:mem:~/chackbangdb;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver

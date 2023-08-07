@@ -2,6 +2,8 @@ package com.jsix.chaekbang.domain.group.infra.database;
 
 import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,5 +32,20 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds) {
         return groupQueryRepository.findByKeywordAndTags(keyword, tagIds);
+    }
+
+    @Override
+    public GroupDetailResponseDto findGroupDetailByGroupId(long groupId) {
+        return groupQueryRepository.findGroupDetailByGroupId(groupId);
+    }
+
+    @Override
+    public List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId) {
+        return groupQueryRepository.findGroupUsersByGroupId(groupId);
+    }
+
+    @Override
+    public int plusReadCount(long groupId) {
+        return jpaGroupRepository.plusReadCount(groupId);
     }
 }

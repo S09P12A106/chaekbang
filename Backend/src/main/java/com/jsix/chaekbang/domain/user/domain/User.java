@@ -59,6 +59,9 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String nickname;
 
+    @Column(length = 200)
+    private String refreshToken;
+
     @Builder
     private User(OAuthProvider oAuthProvider, String oAuthId,
             String email, Gender gender,
@@ -88,5 +91,13 @@ public class User extends BaseEntity {
                    .aboutMe(aboutMe)
                    .nickname(nickname)
                    .build();
+    }
+
+    public void setRefreshToken(String token) {
+        this.refreshToken = token;
+    }
+
+    public void logout() {
+        this.refreshToken = null;
     }
 }

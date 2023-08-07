@@ -11,6 +11,8 @@ import com.jsix.chaekbang.domain.group.domain.GroupTag;
 import com.jsix.chaekbang.domain.group.domain.GroupUser;
 import com.jsix.chaekbang.domain.group.domain.Tag;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.Gender;
 import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -329,6 +332,79 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         }
 
         return savedTagId;
+    }
+
+    @DisplayName("그룹 상세정보를 조회할 수 있다.")
+    @Test
+    void 그룹_상세_조회() {
+        //given
+        saveUsers();
+        saveTags();
+        saveGroups();
+        entityManager.clear();
+
+        // groups의 첫번째 그룹을 target으로 지정
+        Group target = groups.get(0);
+
+        // 타겟 그룹의 Leader인 Users의 첫번째 유저 가져옴
+        User targetLeader = users.get(0);
+
+        // 타겟 그룹과 리더 정보로 expectedGroup 생성
+        GroupDetailResponseDto expectedGroup =
+                new GroupDetailResponseDto(target, targetLeader.getProfileImageUrl(),
+                        targetLeader.getAboutMe(),
+                        targetLeader.getNickname());
+
+        // usingRecursiveComparison에서 userCount 값 비교 제외
+        RecursiveComparisonConfiguration configuration
+                = RecursiveComparisonConfiguration.builder()
+                                                  .withIgnoredFields("userCount", "readCount")
+                                                  .build();
+        // when
+        GroupDetailResponseDto actualGroup =
+                queryGroupRepository.findGroupDetailByGroupId(
+                        target.getId());
+        System.out.println(actualGroup);
+//        then
+        assertThat(actualGroup).usingRecursiveComparison(configuration)
+                               .isEqualTo(expectedGroup);
+        // saveGroups에서 리더, 활동 중인 유저 5명 추가했으므로 6명인지 확인
+        assertThat(actualGroup.getUserCount()).isEqualTo(6);
+    }
+
+    @DisplayName("그룹에 참여 중인 인원 정보를 조회할 수 있다.")
+    @Test
+    void 그룹_인원_조회() {
+        //given
+        saveUsers();
+        saveTags();
+        saveGroups();
+        entityManager.clear();
+
+        // groups의 group 중 첫번째 그룹을 타겟으로 지정
+        Group target = groups.get(0);
+        // 그룹의 유저 중 활동 중인 상태의 유저만 가져옴
+        List<GroupUser> expectedUsers = target.getGroupUsers()
+                                              .stream()
+                                              .filter(groupUser -> groupUser.getStatus()
+                                                                            .equals(UserStatus.ACTIVE))
+                                              .toList();
+
+        //when
+        // target 그룹의 id와 같은 그룹의 유저 목록을 가져옴
+        List<GroupUserResponseDto> actualUsers
+                = queryGroupRepository.findGroupUsersByGroupId(target.getId());
+
+        //then
+        // actualUsers와 expectedUsers의 유저수 비교
+        assertThat(actualUsers.size()).isEqualTo(expectedUsers.size());
+        for (int i = 0; i < actualUsers.size(); i++) {
+            // 각 Users의 유저들의 값 비교
+            assertThat(actualUsers.get(i)).usingRecursiveComparison()
+                                          .isEqualTo(GroupUserResponseDto.from(
+                                                  expectedUsers.get(i)
+                                                               .getUser()));
+        }
     }
 
 }

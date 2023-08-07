@@ -1,4 +1,4 @@
-package com.jsix.chaekbang.domain.auth.application;
+package com.jsix.chaekbang.domain.auth.application.oidc;
 
 import com.jsix.chaekbang.domain.auth.dto.OIDCPublicKeyResponse;
 import org.springframework.cloud.openfeign.FeignClient;

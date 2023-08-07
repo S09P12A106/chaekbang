@@ -28,4 +28,9 @@ public class UserRepositoryImpl implements UserRepository {
             String oauthId) {
         return jpaUserRepository.findByOauthProviderAndOauthId(oauthProvider, oauthId);
     }
+
+    @Override
+    public boolean existByOauthProviderAndOauthId(OAuthProvider oAuthProvider, String oauthId) {
+        return jpaUserRepository.existsByOauthProviderAndOauthId(oAuthProvider, oauthId);
+    }
 }

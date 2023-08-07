@@ -7,6 +7,7 @@ import GroupApplyForm from '../components/GroupDetailPage/GroupApplyForm'
 import MainLayout from '../components/Layout/MainLayout'
 import { groupApi } from '../components/GroupDetailPage/api/groupApi'
 import ServerError from '../components/common/ServerError'
+import { groupApi } from '../components/GroupDetailPage/api/groupApi'
 
 const menuForUser = ['상세 정보', '인원 정보']
 

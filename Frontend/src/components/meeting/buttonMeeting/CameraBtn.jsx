@@ -3,13 +3,14 @@ import VIDEO_CAMERA from '../../../assets/meetingbtn/video-camera.png'
 import BtnCustom from './_Btn'
 import COLORS from '../../../constants/colors'
 
-function CameraBtn() {
+function CameraBtn({ toggleCam }) {
   const [backgroundColor, setBackgroundColor] = useState(COLORS.BLUE)
 
   const handleClick = () => {
     setBackgroundColor(
       backgroundColor === COLORS.BLUE ? COLORS.GREY : COLORS.BLUE,
     )
+    toggleCam()
   }
   return (
     <>

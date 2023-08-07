@@ -6,26 +6,45 @@ import ShareBtn from '../buttonMeeting/ShareBtn'
 import EmojiBtn from '../buttonMeeting/EmojiBtn'
 import BackGroundBtn from '../buttonMeeting/BackGroundBtn'
 import SettingBtn from '../buttonMeeting/SettingBtn'
+import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
 
-function ScreenContainer() {
+function ScreenContainer({
+  nickname,
+  streamManager,
+  isTokenRequested,
+  toggleMic,
+  toggleCam,
+}) {
+  console.log(isTokenRequested)
   return (
     <Container>
-      <Screen></Screen>
+      {isTokenRequested.current ? (
+        <div>
+          <Screen>
+            <UserVideoComponent
+              nickname={nickname}
+              streamManager={streamManager}
+            />
+          </Screen>
 
-      <Buttons>
-        {/* 카메라 버튼 */}
-        <CameraBtn></CameraBtn>
-        {/* 소리 버튼 */}
-        <SoundBtn></SoundBtn>
-        {/* 화면공유 버튼 */}
-        <ShareBtn></ShareBtn>
-        {/* 이모지 버튼 */}
-        <EmojiBtn></EmojiBtn>
-        {/* 배경전환 버튼 */}
-        <BackGroundBtn></BackGroundBtn>
-        {/* 설정 버튼 */}
-        <SettingBtn></SettingBtn>
-      </Buttons>
+          <Buttons>
+            {/* 카메라 버튼 */}
+            <CameraBtn toggleCam={toggleCam}></CameraBtn>
+            {/* 소리 버튼 */}
+            <SoundBtn toggleMic={toggleMic}></SoundBtn>
+            {/* 화면공유 버튼 */}
+            <ShareBtn></ShareBtn>
+            {/* 이모지 버튼 */}
+            <EmojiBtn></EmojiBtn>
+            {/* 배경전환 버튼 */}
+            <BackGroundBtn></BackGroundBtn>
+            {/* 설정 버튼 */}
+            <SettingBtn></SettingBtn>
+          </Buttons>
+        </div>
+      ) : (
+        <div>로딩 중입니다.</div>
+      )}
     </Container>
   )
 }
@@ -39,7 +58,6 @@ const Container = styled.div`
 
 const Screen = styled.div`
   width: 100%;
-  padding-top: 56.25%;
   background-color: grey;
 `
 

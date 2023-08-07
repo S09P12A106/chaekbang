@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.mock.web.MockMultipartFile;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -27,10 +27,16 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setGroupCreateRequestDto() {
+        // 정상적인 값 넣음
+        List<String> tagNames = new ArrayList<>();
+        tagNames.add("TAG1");
+
         dto = new GroupCreateRequestDto();
-        ReflectionTestUtils.setField(dto, "title", "TITLE");
-        ReflectionTestUtils.setField(dto, "detail", "DETAIL");
-        ReflectionTestUtils.setField(dto, "question", "QUESTION");
+        dto.setTitle("TITLE");
+        dto.setDetail("DETAIL");
+        dto.setQuestion("QUESTION");
+        dto.setTagNames(tagNames);
+        dto.setImage(null);
     }
 
     @DisplayName("공백이 포함된 태그 이름이 들어가면 에러메시지를 출력한다.")
@@ -39,8 +45,7 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
         // given
         List<String> tagNames = new ArrayList<>();
         tagNames.add("공 백");
-
-        ReflectionTestUtils.setField(dto, "tagNames", tagNames);
+        dto.setTagNames(tagNames);
 
         // when
         Set<ConstraintViolation<GroupCreateRequestDto>> validate = validatorInjected.validate(dto);
@@ -58,8 +63,7 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
         // given
         List<String> tagNames = new ArrayList<>();
         tagNames.add("탭\t탭");
-
-        ReflectionTestUtils.setField(dto, "tagNames", tagNames);
+        dto.setTagNames(tagNames);
 
         // when
         Set<ConstraintViolation<GroupCreateRequestDto>> validate = validatorInjected.validate(dto);
@@ -79,7 +83,7 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
         tagNames.add("TAG");
         tagNames.add("TAG");
 
-        ReflectionTestUtils.setField(dto, "tagNames", tagNames);
+        dto.setTagNames(tagNames);
 
         // when
         Set<ConstraintViolation<GroupCreateRequestDto>> validate = validatorInjected.validate(dto);
@@ -89,5 +93,44 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
 
         // then
         assertThat(message).isEqualTo("중복된 태그는 설정할 수 없습니다.");
+    }
+
+    @DisplayName("허용되지 않은 콘텐트 타입이 들어가면 에러메시지를 출력한다.")
+    @Test
+    void 파일_콘텐트타입_테스트() {
+        // given
+        String textContentType = "text/plain";
+        MockMultipartFile textContentTypeFile = new MockMultipartFile("file", "image.png",
+                textContentType, "file".getBytes());
+        dto.setImage(textContentTypeFile);
+
+        // when
+        Set<ConstraintViolation<GroupCreateRequestDto>> validate = validatorInjected.validate(dto);
+        String message = validate.iterator()
+                                 .next()
+                                 .getMessage();
+
+        // then
+        assertThat(message).isEqualTo("유효한 파일이 아닙니다.");
+    }
+
+    @DisplayName("허용되지 않은 확장자가 들어가면 에러메시지를 출력한다.")
+    @Test
+    void 파일_확장자_테스트() {
+        // given
+        String originalFileName = "TEXT.txt";
+        MockMultipartFile textExtensionFile = new MockMultipartFile("file", originalFileName,
+                "image/png", "IMAGE".getBytes());
+
+        dto.setImage(textExtensionFile);
+
+        // when
+        Set<ConstraintViolation<GroupCreateRequestDto>> validate = validatorInjected.validate(dto);
+        String message = validate.iterator()
+                                 .next()
+                                 .getMessage();
+
+        // then
+        assertThat(message).isEqualTo("유효한 파일이 아닙니다.");
     }
 }

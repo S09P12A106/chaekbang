@@ -1,18 +1,21 @@
 package com.jsix.chaekbang.domain.group.dto;
 
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.group.dto.valid.AllowedContentType;
 import com.jsix.chaekbang.domain.group.dto.valid.NotContainsBlank;
 import com.jsix.chaekbang.domain.group.dto.valid.NotDuplicatedTags;
 import com.jsix.chaekbang.domain.user.domain.User;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Setter
+@NoArgsConstructor
 public class GroupCreateRequestDto {
 
     @NotBlank(message = "모임 이름을 입력해주세요.")
@@ -34,8 +37,12 @@ public class GroupCreateRequestDto {
             @NotContainsBlank
                     String> tagNames;
 
-    public Group toEntityWithLeader(User user) {
-        return Group.createGroup(title, detail, "imageUrl", question, user);
-    }
+    @AllowedContentType(allowedTypes = {"image/jpg", "image/jpeg", "image/png"},
+            allowedExtensions = {"jpg", "jpeg", "png"})
+    private MultipartFile image;
 
+    public Group toEntityWithLeader(User user, String savedImageUrl) {
+        String directory = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/";
+        return Group.createGroup(title, detail, directory + savedImageUrl, question, user);
+    }
 }

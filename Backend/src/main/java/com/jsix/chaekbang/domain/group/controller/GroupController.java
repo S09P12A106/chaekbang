@@ -14,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +31,7 @@ public class GroupController {
 
     @PostMapping
     public ResponseEntity<?> createGroup(
-            @RequestBody @Valid GroupCreateRequestDto groupCreateRequestDto) {
+            @ModelAttribute @Valid GroupCreateRequestDto groupCreateRequestDto) {
         Long leaderId = 1L;
         groupCreateUseCase.createGroup(leaderId, groupCreateRequestDto);
         return HttpResponse.ok(HttpStatus.CREATED, "모임이 생성되었습니다.");

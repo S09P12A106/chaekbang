@@ -52,7 +52,7 @@ public class Group extends BaseEntity {
     @Column(nullable = false, columnDefinition = "int default 0")
     private Integer readCount;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(100) default 'defaultImageUrl'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(200) default 'defaultImageUrl'")
     private String imageUrl;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)

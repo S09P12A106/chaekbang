@@ -1,17 +1,41 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { styled } from 'styled-components'
 import SideBar from '../components/meetingRoom/SideBar'
 import TopSpace from '../components/meetingRoom/screen/TopSpace'
 import ScreenShot from '../components/meetingRoom/screen/ScreenShot'
 import BottomBtns from '../components/meetingRoom/screen/BottomBtns'
 import { BoardContext } from '../components/meetingRoom/context/BoardContext'
+import CONSOLE from '../utils/consoleColors'
 
-function MeetingRoomPage() {
+function MeetingRoomPage({
+  meetingInfoState,
+  videoOption,
+  toggleMic,
+  toggleCam,
+}) {
+  CONSOLE.reRender('MeetingRoomPage rendered!')
+  const [meetingInfo, setMeetingInfo] = meetingInfoState
+  console.log(meetingInfo)
   //BoardContext
   const [whichBtn, setWhichBtn] = useState(0)
 
+  // MeetingRoom에 들어오면 내 영상 publish
+  useEffect(() => {
+    meetingInfo.session.publish(meetingInfo.publisher)
+  }, [])
+
   return (
-    <BoardContext.Provider value={{ whichBtn, setWhichBtn }}>
+    <BoardContext.Provider
+      value={{
+        whichBtn,
+        setWhichBtn,
+        meetingInfoState,
+        videoOption,
+        toggleMic,
+        toggleCam,
+      }}
+    >
       <Container>
         {/* 오른쪽 사이드 바는 상시 고정 */}
         <SideBarContainer>

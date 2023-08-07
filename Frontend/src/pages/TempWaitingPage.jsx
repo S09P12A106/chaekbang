@@ -6,7 +6,7 @@ import { OpenVidu } from 'openvidu-browser'
 const TempWaitingPage = () => {
   const navigate = useNavigate()
   function joinMeeting() {
-    window.location.href = '/mw'
+    window.location.href = '/testMeeting'
   }
   return (
     <div>

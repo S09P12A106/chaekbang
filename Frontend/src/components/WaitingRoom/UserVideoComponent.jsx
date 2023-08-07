@@ -4,13 +4,27 @@ import OpenViduVideoComponent from './OvVideo'
 import './UserVideo.css'
 import CONSOLE from '../../utils/consoleColors'
 
+/*
+- streamManager : openvidu에서 제공해주는 Publisher type
+- 접속자 한명의 영상 정보(Publisher)가 들어옵니다.
+*/
 const UserVideoComponent = ({ nickname, streamManager }) => {
+  /**
+   * 접속자의 streamManager로부터 닉네임 정보를 문자열로 반환합니다.
+   * @returns {string}
+   */
+  function getNicknameTag() {
+    return JSON.parse(streamManager.stream.connection.data).clientData
+  }
+
   return (
     <div>
       {streamManager !== undefined ? (
         <MainVideoContanier>
           <OpenViduVideoComponent streamManager={streamManager} />
-          <NickNameBox>{nickname}</NickNameBox>
+          <NickNameBox>
+            {streamManager.stream.connection ? getNicknameTag() : nickname}
+          </NickNameBox>
         </MainVideoContanier>
       ) : null}
     </div>

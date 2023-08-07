@@ -10,6 +10,7 @@ import GroupManagementPage from '../pages/GroupManagementPage'
 import GroupCreatePage from '../pages/GroupCreatePage'
 import MeetWaiting from '../pages/MeetWaiting'
 import TempWaitingPage from '../pages/TempWaitingPage'
+import MeetingPage from '../pages/MeetingPage'
 function RouterApp() {
   return (
     <BrowserRouter>
@@ -23,6 +24,7 @@ function RouterApp() {
         <Route path="/groups/create" element={<GroupCreatePage />} />
         <Route path="/mw" element={<MeetWaiting />} />
         <Route path="/testWaiting" element={<TempWaitingPage />} />
+        <Route path="/testMeeting" element={<MeetingPage />} />
       </Routes>
     </BrowserRouter>
   )

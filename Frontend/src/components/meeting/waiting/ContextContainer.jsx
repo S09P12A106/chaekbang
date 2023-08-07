@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { styled } from 'styled-components'
 import COLORS from '../../../constants/colors'
 
-function ContextContainer() {
+function ContextContainer({ joinMeetingRoom }) {
   // 임시
   const [remainTime, SetRemainTime] = useState(3)
 
@@ -10,7 +10,8 @@ function ContextContainer() {
     <Container>
       <H3>입장까지 {remainTime}분 남았습니다.</H3>
       <H1>참여할 준비가 되셨나요?</H1>
-      <Btn>참여하기</Btn>
+      <Btn onClick={joinMeetingRoom}>참여하기</Btn>
+      {/* <Btn>참여하기</Btn> */}
     </Container>
   )
 }

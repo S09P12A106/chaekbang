@@ -19,8 +19,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        log.error("authentication fail", authException.getMessage());
-        sendResponse(response, "인증 실패");
+        log.error("authentication fail " + authException.getMessage());
+        sendResponse(response, "인증 실패[Security Authentication Fail]");
     }
 
     private void sendResponse(HttpServletResponse response, String message) throws IOException {

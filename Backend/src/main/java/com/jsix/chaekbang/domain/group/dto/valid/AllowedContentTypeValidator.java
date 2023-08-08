@@ -14,7 +14,7 @@ public class AllowedContentTypeValidator implements
 
     @Override
     public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext context) {
-        if (multipartFile == null) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
             return true;
         }
         return isValidExtension(multipartFile) && isValidContentType(multipartFile);

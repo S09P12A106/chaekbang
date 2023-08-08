@@ -58,7 +58,7 @@ public class JwtProvider {
     }
 
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
             Jwts.parserBuilder()
                 .setSigningKey(accessKey)
@@ -73,6 +73,37 @@ public class JwtProvider {
             throw new AuthenticationFailException("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             throw new AuthenticationFailException("JWT 토큰이 잘못되었습니다.");
+        }
+    }
+
+    public void validateRefreshToken(String refreshToken) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(refreshKey)
+                .build()
+                .parseClaimsJws(refreshToken);
+        } catch (Exception e) {
+            throw new AuthenticationFailException("잘못된 토큰입니다.");
+        }
+    }
+
+
+    public Long getUserIdFromExpiredAccessToken(String accessToken) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                                .setSigningKey(accessKey)
+                                .build()
+                                .parseClaimsJws(accessToken)
+                                .getBody();
+            return Long.valueOf(claims.getSubject());
+        } catch (ExpiredJwtException e) {
+            return Long.valueOf(e.getClaims()
+                                 .getSubject());
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new AuthenticationFailException("잘못된 JWT 서명입니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AuthenticationFailException("지원되지 않는 JWT 토큰입니다.");
         }
     }
 

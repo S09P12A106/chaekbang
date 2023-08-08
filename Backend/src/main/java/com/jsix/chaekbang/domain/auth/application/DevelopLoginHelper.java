@@ -26,7 +26,7 @@ public class DevelopLoginHelper {
                                                "개발 계정을 찾을 수 없습니다."));
         String accessToken = jwtProvider.generateAccessToken(savedUser);
         String refreshToken = jwtProvider.generateRefreshToken();
-        
+        savedUser.setRefreshToken(refreshToken);
         return OIDCLoginResponseDto.logined(accessToken, refreshToken);
     }
 }

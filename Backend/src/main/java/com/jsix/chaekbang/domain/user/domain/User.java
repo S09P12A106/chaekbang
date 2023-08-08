@@ -1,6 +1,7 @@
 package com.jsix.chaekbang.domain.user.domain;
 
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import com.jsix.chaekbang.global.exception.AuthenticationFailException;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -98,6 +99,17 @@ public class User extends BaseEntity {
     }
 
     public void logout() {
+        if (this.refreshToken == null) {
+            throw new AuthenticationFailException("로그인이 필요합니다.");
+        }
         this.refreshToken = null;
+    }
+
+
+    public boolean isEqualRefreshToken(String refreshToken) {
+        if (this.refreshToken == null) {
+            throw new AuthenticationFailException("로그인이 필요합니다.");
+        }
+        return this.refreshToken.equals(refreshToken);
     }
 }

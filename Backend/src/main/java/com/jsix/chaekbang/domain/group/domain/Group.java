@@ -2,6 +2,7 @@ package com.jsix.chaekbang.domain.group.domain;
 
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
     private List<GroupTag> groupTags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<GroupUser> groupUsers = new ArrayList<>();
 
 
@@ -88,6 +89,88 @@ public class Group extends BaseEntity {
                            .build();
         group.addGroupUser(GroupUser.createGroupLeader(leader, group, LocalDateTime.now()));
         return group;
+    }
+
+    public void joinGroup(User user, String answer) {
+        if (checkExistedUser(user)) {
+            throw new NotFoundResourceException("이미 신청한 유저입니다.");
+        }
+
+        this.groupUsers.add(GroupUser.createGroupParticipant(user, this, answer));
+    }
+
+    public void cancelGroup(User user) {
+        GroupUser target = validateUser(user);
+
+        if (target.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new NotFoundResourceException("참여 대기중인 유저가 아닙니다.");
+        }
+        removeTarget(target);
+    }
+
+    private boolean checkExistedUser(User user) {
+        return this.groupUsers.stream().anyMatch(
+                groupUser -> groupUser.getUser().equals(user));
+    }
+
+    public void approveGroup(User user, long leaderId) {
+        validateLeader(leaderId);
+        GroupUser target = validateUser(user);
+
+        if (target.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new NotFoundResourceException("참여 대기중인 유저가 아닙니다.");
+        }
+
+        target.approve(LocalDateTime.now());
+    }
+
+    public void disapproveGroup(User user, long leaderId) {
+        validateLeader(leaderId);
+        GroupUser target = validateUser(user);
+
+        if (target.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new NotFoundResourceException("참여 대기중인 유저가 아닙니다.");
+        }
+        removeTarget(target);
+    }
+
+    public LocalDateTime withdrawGroup(User user, long leaderId) {
+        validateLeader(leaderId);
+        GroupUser target = validateUser(user);
+
+        if (target.getStatus().equals(UserStatus.WAITING)) {
+            throw new NotFoundResourceException("참여중인 유저가 아닙니다.");
+        }
+        removeTarget(target);
+        return target.getParticipatedAt();
+    }
+
+    public LocalDateTime leaveGroup(User user) {
+        GroupUser target = validateUser(user);
+
+        if (target.getStatus().equals(UserStatus.WAITING)) {
+            throw new NotFoundResourceException("참여중인 유저가 아닙니다.");
+        }
+        removeTarget(target);
+        return target.getParticipatedAt();
+    }
+
+    private GroupUser validateUser(User user) {
+        return this.groupUsers.stream()
+                              .filter(groupUser -> groupUser.getUser().equals(user))
+                              .findFirst()
+                              .orElseThrow(() -> new NotFoundResourceException(
+                                      "신청하지 않은 유저입니다."));
+    }
+
+    private void validateLeader(long leaderId) {
+        if (!this.leaderId.equals(leaderId)) {
+            throw new NotFoundResourceException("해당 그룹의 리더가 아닙니다.");
+        }
+    }
+
+    private void removeTarget(GroupUser target) {
+        this.groupUsers.removeIf(groupUser -> groupUser.equals(target));
     }
 
     public void addTags(List<Tag> tags) {

@@ -2,6 +2,7 @@ package com.jsix.chaekbang.domain.group.domain;
 
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
 @Table(
@@ -31,6 +33,7 @@ import lombok.NoArgsConstructor;
 )
 @Entity
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupUser extends BaseEntity {
 
@@ -90,6 +93,15 @@ public class GroupUser extends BaseEntity {
     @PrePersist
     private void setDefaultValues() {
         this.answer = this.answer == null ? "리더" : this.answer;
+    }
+
+    public void approve(LocalDateTime time) {
+        if (this.status != UserStatus.WAITING) {
+            throw new NotFoundResourceException("참여 신청한 유저가 아닙니다.");
+        }
+
+        this.status = UserStatus.ACTIVE;
+        this.participatedAt = time;
     }
 
 }

@@ -1,21 +1,23 @@
 package com.jsix.chaekbang.domain.group.domain;
 
 import com.jsix.chaekbang.domain.user.domain.User;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
 @Table(
-        name = "group_participant_history",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        columnNames = {"group_id", "user_id"}
-                )
-        }
+        name = "group_participant_history"
 )
 @Entity
 @Getter
@@ -42,16 +44,21 @@ public class History {
     private User user;
 
     @Builder
-    private History(LocalDateTime participatedAt, LocalDateTime withdrawedAt) {
+    private History(Group group, User user, LocalDateTime participatedAt,
+            LocalDateTime withdrawedAt) {
+        this.group = group;
+        this.user = user;
         this.participatedAt = participatedAt;
         this.withdrawedAt = withdrawedAt;
     }
 
-    public static History createHistory(LocalDateTime participatedAt, LocalDateTime withdrawedAt) {
+    public static History createHistory(Group group, User user, LocalDateTime participatedAt,
+            LocalDateTime withdrawedAt) {
         return History.builder()
+                      .group(group)
+                      .user(user)
                       .participatedAt(participatedAt)
                       .withdrawedAt(withdrawedAt)
                       .build();
     }
-
 }

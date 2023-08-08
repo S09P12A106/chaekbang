@@ -139,4 +139,15 @@ public class QueryGroupRepository {
                               .map(GroupUserResponseDto::from)
                               .collect(Collectors.toList());
     }
+
+    public Group findById(long groupId) {
+        return jpaQueryFactory.select(group)
+                              .from(group)
+                              .join(group.groupUsers, groupUser)
+                              .fetchJoin()
+                              .join(groupUser.user, user)
+                              .fetchJoin()
+                              .where(group.id.eq(groupId))
+                              .fetchOne();
+    }
 }

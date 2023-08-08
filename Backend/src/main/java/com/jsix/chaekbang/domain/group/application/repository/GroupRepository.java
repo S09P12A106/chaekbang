@@ -1,9 +1,11 @@
 package com.jsix.chaekbang.domain.group.application.repository;
 
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.group.domain.GroupUser;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import java.util.List;
+import java.util.Optional;
 
 public interface GroupRepository {
 
@@ -21,5 +23,8 @@ public interface GroupRepository {
     List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId);
 
     int plusReadCount(long groupId);
+
+
+    Group findById(Long groupId);
 
 }

@@ -2,7 +2,6 @@ package com.jsix.chaekbang.domain.user.application.repository;
 
 import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
 import com.jsix.chaekbang.domain.user.domain.User;
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -14,4 +13,6 @@ public interface UserRepository {
     Optional<User> findByOauthProviderAndOauthId(OAuthProvider oauthProvider, String oauthId);
 
     boolean existByOauthProviderAndOauthId(OAuthProvider oAuthProvider, String oauthId);
+
+    void delete(User user);
 }

@@ -33,4 +33,9 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existByOauthProviderAndOauthId(OAuthProvider oAuthProvider, String oauthId) {
         return jpaUserRepository.existsByOauthProviderAndOauthId(oAuthProvider, oauthId);
     }
+
+    @Override
+    public void delete(User user) {
+        jpaUserRepository.delete(user);
+    }
 }

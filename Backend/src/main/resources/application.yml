@@ -10,7 +10,10 @@ spring:
       ddl-auto: none
   config:
     import: application.properties
-
+    
+logging:
+  level:
+    com.jsix.chaekbang: DEBUG
 ---
 spring:
   config:

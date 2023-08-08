@@ -49,6 +49,9 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.POST, "/api/users/sign-in", "/api/users", "/api/users/refresh",
                     "/api/users/dev/sign-in", "/api/dev/oauth")
             .permitAll()
+            .antMatchers(HttpMethod.GET, "/api/groups/recommended", "/api/groups/popular",
+                    "/api/tags/popular")
+            .permitAll()
             .anyRequest()
             .authenticated();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

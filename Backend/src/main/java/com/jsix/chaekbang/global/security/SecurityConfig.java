@@ -41,7 +41,9 @@ public class SecurityConfig {
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests()
+        http.cors()
+            .and()
+            .authorizeRequests()
             .antMatchers("/")
             .permitAll()
             .antMatchers(HttpMethod.POST, "/api/users/sign-in", "/api/users", "/api/users/refresh",

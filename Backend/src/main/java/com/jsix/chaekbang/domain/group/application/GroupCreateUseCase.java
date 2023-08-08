@@ -8,6 +8,7 @@ import com.jsix.chaekbang.domain.group.domain.service.TagService;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.User;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import com.jsix.chaekbang.infra.aws.S3Uploader;
 import java.util.List;
@@ -29,8 +30,8 @@ public class GroupCreateUseCase {
     private final TagService tagService;
     private final S3Uploader s3Uploader;
 
-    public void createGroup(Long leaderId, GroupCreateRequestDto groupCreateRequestDto) {
-        User leader = userRepository.findById(leaderId)
+    public void createGroup(AuthUser authUser, GroupCreateRequestDto groupCreateRequestDto) {
+        User leader = userRepository.findById(authUser.getUserId())
                                     .orElseThrow(
                                             () -> new NotFoundResourceException("유저를 찾을 수 없습니다."));
         String directory = "group/image/";
@@ -48,8 +49,8 @@ public class GroupCreateUseCase {
         s3Uploader.upload(fileName, groupCreateRequestDto.getImage());
     }
 
-    private String makeFileName(String directory, MultipartFile multipartFile){
-        if (multipartFile == null){
+    private String makeFileName(String directory, MultipartFile multipartFile) {
+        if (multipartFile == null) {
             return null;
         }
         String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());

@@ -1,7 +1,6 @@
 package com.jsix.chaekbang.domain.group.application;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,6 +15,7 @@ import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.Gender;
 import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
 import com.jsix.chaekbang.domain.user.domain.User;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.infra.aws.S3Uploader;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -65,13 +65,14 @@ class GroupCreateUseCaseTest {
     void 그룹_생성_성공() {
         // given
         Long leaderId = 1L;
+        AuthUser authUser = new AuthUser(leaderId);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(leader));
         given(tagRepository.findByTagNameIn(any(List.class))).willReturn(existedTags);
         given(tagService.getAllTagsRequired(any(List.class), any(List.class)))
                 .willReturn(allTags);
 
         // when
-        groupCreateUseCase.createGroup(leaderId, groupCreateRequestDto);
+        groupCreateUseCase.createGroup(authUser, groupCreateRequestDto);
 
         // then
         verify(groupRepository, times(1)).save(any(Group.class));

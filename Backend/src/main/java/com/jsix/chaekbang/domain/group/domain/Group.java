@@ -104,6 +104,8 @@ public class Group extends BaseEntity {
         this.opened = this.opened == null ? true : this.opened;
         this.deleted = this.deleted == null ? false : this.deleted;
         this.readCount = this.readCount == null ? 0 : this.readCount;
-        this.imageUrl = this.imageUrl == null ? "defaultImageUrl" : this.imageUrl;
+        this.imageUrl = this.imageUrl == null
+                ? "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/group/image/chaekbang_default_image.jpeg"
+                : this.imageUrl;
     }
 }

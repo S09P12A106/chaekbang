@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class GroupCreateRequestDto {
 
+    private final String IMAGE_DIRECTORY = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/";
+
     @NotBlank(message = "모임 이름을 입력해주세요.")
     @Size(max = 30, message = "모임 이름의 최대 길이는 30글자 입니다.")
     private String title;
@@ -42,7 +44,7 @@ public class GroupCreateRequestDto {
     private MultipartFile image;
 
     public Group toEntityWithLeader(User user, String savedImageUrl) {
-        String directory = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/";
-        return Group.createGroup(title, detail, directory + savedImageUrl, question, user);
+        String imageUrl = image == null ? null : IMAGE_DIRECTORY + savedImageUrl;
+        return Group.createGroup(title, detail, imageUrl, question, user);
     }
 }

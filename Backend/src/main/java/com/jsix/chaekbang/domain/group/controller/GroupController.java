@@ -5,6 +5,8 @@ import com.jsix.chaekbang.domain.group.application.GroupSearchUseCase;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
+import com.jsix.chaekbang.global.config.webmvc.JwtLoginUser;
 import com.jsix.chaekbang.global.dto.HttpResponse;
 import java.util.List;
 import javax.validation.Valid;
@@ -30,10 +32,9 @@ public class GroupController {
     private final GroupSearchUseCase groupSearchUseCase;
 
     @PostMapping
-    public ResponseEntity<?> createGroup(
+    public ResponseEntity<?> createGroup(@JwtLoginUser AuthUser authUser,
             @ModelAttribute @Valid GroupCreateRequestDto groupCreateRequestDto) {
-        Long leaderId = 1L;
-        groupCreateUseCase.createGroup(leaderId, groupCreateRequestDto);
+        groupCreateUseCase.createGroup(authUser, groupCreateRequestDto);
         return HttpResponse.ok(HttpStatus.CREATED, "모임이 생성되었습니다.");
     }
 

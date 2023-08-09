@@ -16,9 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(
-        name = "group_participant_history"
-)
+@Table(name = "group_participant_history")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

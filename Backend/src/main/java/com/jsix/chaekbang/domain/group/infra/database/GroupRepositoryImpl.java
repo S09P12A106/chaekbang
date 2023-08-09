@@ -5,7 +5,7 @@ import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import java.util.List;
-import javax.persistence.EntityManager;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +15,15 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     private final JpaGroupRepository jpaGroupRepository;
     private final QueryGroupRepository groupQueryRepository;
-    private final EntityManager entityManager;
 
     @Override
     public Group save(Group group) {
         return jpaGroupRepository.save(group);
+    }
+
+    @Override
+    public Optional<Group> findById(Long id) {
+        return jpaGroupRepository.findById(id);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         return groupQueryRepository.findGroupByUserIdAndUserStatus(userId, userStatus);
     }
 
-    @Override
+
     public List<Group> findGroupHistoryByUserId(long userId) {
         return groupQueryRepository.findGroupHistoryByUserId(userId);
     }

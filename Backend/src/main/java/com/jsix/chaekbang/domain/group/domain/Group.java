@@ -1,5 +1,6 @@
 package com.jsix.chaekbang.domain.group.domain;
 
+import com.jsix.chaekbang.domain.meeting.domain.Meeting;
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.entity.BaseEntity;
@@ -64,6 +65,8 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<GroupUser> groupUsers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "group")
+    private List<Meeting> meetings = new ArrayList<>();
 
     @Formula("(select count(*) "
             + "from group_user gu "
@@ -182,6 +185,10 @@ public class Group extends BaseEntity {
 
     public void addGroupUser(GroupUser groupUser) {
         this.groupUsers.add(groupUser);
+    }
+
+    public void addMeeting(Meeting meeting) {
+        this.meetings.add(meeting);
     }
 
     @PrePersist

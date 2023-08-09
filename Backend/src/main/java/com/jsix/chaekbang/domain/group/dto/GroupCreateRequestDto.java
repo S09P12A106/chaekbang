@@ -44,7 +44,7 @@ public class GroupCreateRequestDto {
     private MultipartFile image;
 
     public Group toEntityWithLeader(User user, String savedImageUrl) {
-        String imageUrl = image == null ? null : IMAGE_DIRECTORY + savedImageUrl;
+        String imageUrl = image == null || image.isEmpty() ? null : IMAGE_DIRECTORY + savedImageUrl;
         return Group.createGroup(title, detail, imageUrl, question, user);
     }
 }

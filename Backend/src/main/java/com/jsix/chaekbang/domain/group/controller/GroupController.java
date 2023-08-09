@@ -5,7 +5,9 @@ import com.jsix.chaekbang.domain.group.application.GroupJoinUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupSearchUseCase;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
+import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.config.webmvc.JwtLoginUser;
 import com.jsix.chaekbang.global.dto.HttpResponse;
@@ -74,7 +76,7 @@ public class GroupController {
     }
 
     @GetMapping("/{group_id}/members")
-    public ResponseEntity<?> searchGroupMembers(
+    public ResponseEntity<?> searchGroupUsers(
             @PathVariable("group_id")
             @Min(1) long groupId) {
         return HttpResponse.okWithData(HttpStatus.OK, "그룹 회원 조회 성공했습니다.",
@@ -128,6 +130,37 @@ public class GroupController {
             @JwtLoginUser AuthUser user) {
         groupJoinUseCase.leaveGroup(groupId, user);
         return HttpResponse.ok(HttpStatus.OK, "그룹에서 나갔습니다.");
+    }
+
+    @GetMapping("/my-groups")
+    public ResponseEntity<?> searchMyActiveGroups(@JwtLoginUser AuthUser user) {
+        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyActiveGroups(
+                user);
+        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 조회 성공했습니다.", myGroupResponseDtoList);
+    }
+
+    @GetMapping("/my-applications")
+    public ResponseEntity<?> searchMyWaitingGroups(@JwtLoginUser AuthUser user) {
+        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyWaitingGroups(
+                user);
+        return HttpResponse.okWithData(HttpStatus.OK, "내 참여 신청 목록 조회 성공했습니다.",
+                myGroupResponseDtoList);
+    }
+
+    @GetMapping("/my-history")
+    public ResponseEntity<?> searchMyGroupHistory(@JwtLoginUser AuthUser user) {
+        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyGroupHistory(
+                user);
+        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 기록 조회 성공했습니다.", myGroupResponseDtoList);
+    }
+
+    @GetMapping("/{group_id}/leaders/applications")
+    public ResponseEntity<?> searchGroupParticipants(
+            @PathVariable("group_id") @Min(1) long groupId, @JwtLoginUser AuthUser leader) {
+        List<GroupUserResponseDto> groupUserResponseDtoList = groupSearchUseCase.searchGroupParticipant(
+                groupId, leader);
+        return HttpResponse.okWithData(HttpStatus.OK, "그룹에 참여 신청한 사용자 목록 조회 성공했습니다.",
+                groupUserResponseDtoList);
     }
 
 }

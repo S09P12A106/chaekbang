@@ -24,7 +24,6 @@ public class GroupDetailResponseDto {
     private String leaderNickname;
 
 
-    @QueryProjection
     public GroupDetailResponseDto(Group group, String leaderProfileImageUrl,
             String leaderAboutMe, String leaderNickname) {
         this.id = group.getId();

@@ -4,11 +4,16 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.application.repository.TagRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.Tag;
+import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MostTaggedGroupsResponseDto;
+import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
+import com.jsix.chaekbang.domain.user.domain.User;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import java.util.List;
 import java.util.Optional;
@@ -62,15 +67,69 @@ public class GroupSearchUseCase {
 
     @Transactional
     public GroupDetailResponseDto searchGroupDetail(long groupId) {
-        if (groupRepository.plusReadCount(groupId) == 0) {
-            throw new NotFoundResourceException("해당 그룹이 존재하지 않습니다.");
-        }
+        GroupDetailProjectionResponseDto groupDetailByGroupId = groupRepository.findGroupDetailByGroupId(
+                groupId);
+        try {
+            Group group = groupDetailByGroupId.getGroup();
+            group.plusReadCount();
 
-        return groupRepository.findGroupDetailByGroupId(groupId);
+            return new GroupDetailResponseDto(group,
+                    groupDetailByGroupId.getLeaderProfileImageUrl(),
+                    groupDetailByGroupId.getLeaderAboutMe(),
+                    groupDetailByGroupId.getLeaderNickname());
+        } catch (NullPointerException e) {
+            throw new NotFoundResourceException("그룹이 존재하지 않습니다.");
+        }
     }
 
     @Transactional(readOnly = true)
     public List<GroupUserResponseDto> searchGroupUsers(long groupId) {
-        return groupRepository.findGroupUsersByGroupId(groupId);
+        Group group = validateGroup(groupId);
+        List<User> userList = group.getGroupUsersByUserStatus(null, UserStatus.ACTIVE);
+        return userList.stream().map(GroupUserResponseDto::from)
+                       .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyGroupResponseDto> searchMyActiveGroups(AuthUser authUser) {
+
+        List<Group> groupList = groupRepository.findByUserIdAndUserStatus(authUser.getUserId(),
+                UserStatus.ACTIVE);
+        return groupList.stream().map(MyGroupResponseDto::from)
+                        .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyGroupResponseDto> searchMyWaitingGroups(AuthUser authUser) {
+
+        List<Group> groupList = groupRepository.findByUserIdAndUserStatus(authUser.getUserId(),
+                UserStatus.WAITING);
+        return groupList.stream().map(MyGroupResponseDto::from)
+                        .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyGroupResponseDto> searchMyGroupHistory(AuthUser authUser) {
+
+        List<Group> userList = groupRepository.findGroupHistoryByUserId(authUser.getUserId());
+        return userList.stream().map(MyGroupResponseDto::from)
+                       .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupUserResponseDto> searchGroupParticipant(long groupId, AuthUser leader) {
+
+        Group group = validateGroup(groupId);
+        return group.getGroupUsersByUserStatus(leader, UserStatus.WAITING).stream()
+                    .map(GroupUserResponseDto::from)
+                    .collect(Collectors.toList());
+    }
+
+    private Group validateGroup(long groupId) {
+        Group group = groupRepository.findByIdWithUser(groupId);
+        if (group == null) {
+            throw new NotFoundResourceException("그룹을 찾을 수 없습니다.");
+        }
+        return group;
     }
 }

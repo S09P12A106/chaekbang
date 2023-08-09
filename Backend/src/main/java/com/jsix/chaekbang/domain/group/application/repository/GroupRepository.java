@@ -1,11 +1,9 @@
 package com.jsix.chaekbang.domain.group.application.repository;
 
 import com.jsix.chaekbang.domain.group.domain.Group;
-import com.jsix.chaekbang.domain.group.domain.GroupUser;
-import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
-import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
+import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import java.util.List;
-import java.util.Optional;
 
 public interface GroupRepository {
 
@@ -18,13 +16,11 @@ public interface GroupRepository {
     List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds);
 
 
-    GroupDetailResponseDto findGroupDetailByGroupId(long groupId);
+    GroupDetailProjectionResponseDto findGroupDetailByGroupId(long groupId);
 
-    List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId);
+    Group findByIdWithUser(Long groupId);
 
-    int plusReadCount(long groupId);
+    List<Group> findByUserIdAndUserStatus(long userId, UserStatus userStatus);
 
-
-    Group findById(Long groupId);
-
+    List<Group> findGroupHistoryByUserId(long userId);
 }

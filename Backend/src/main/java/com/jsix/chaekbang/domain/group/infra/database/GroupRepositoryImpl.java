@@ -2,11 +2,9 @@ package com.jsix.chaekbang.domain.group.infra.database;
 
 import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
-import com.jsix.chaekbang.domain.group.domain.GroupUser;
-import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
-import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
+import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -39,23 +37,23 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public GroupDetailResponseDto findGroupDetailByGroupId(long groupId) {
+    public GroupDetailProjectionResponseDto findGroupDetailByGroupId(long groupId) {
         return groupQueryRepository.findGroupDetailByGroupId(groupId);
     }
 
     @Override
-    public List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId) {
-        return groupQueryRepository.findGroupUsersByGroupId(groupId);
+    public Group findByIdWithUser(Long groupId) {
+        return groupQueryRepository.findByIdWithUser(groupId);
     }
 
     @Override
-    public int plusReadCount(long groupId) {
-        return jpaGroupRepository.plusReadCount(groupId);
+    public List<Group> findByUserIdAndUserStatus(long userId, UserStatus userStatus) {
+        return groupQueryRepository.findGroupByUserIdAndUserStatus(userId, userStatus);
     }
 
     @Override
-    public Group findById(Long groupId) {
-        return groupQueryRepository.findById(groupId);
+    public List<Group> findGroupHistoryByUserId(long userId) {
+        return groupQueryRepository.findGroupHistoryByUserId(userId);
     }
 
 }

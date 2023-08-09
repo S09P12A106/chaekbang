@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 @Table(
         uniqueConstraints = {
@@ -62,6 +63,12 @@ public class User extends BaseEntity {
 
     @Column(length = 200)
     private String refreshToken;
+
+    @Formula("(select count(*) "
+            + "from group_user gu "
+            + "where gu.user_id = user_id "
+            + "and gu.status = 'ACTIVE')")
+    private int groupCount;
 
     @Builder
     private User(OAuthProvider oAuthProvider, String oAuthId,

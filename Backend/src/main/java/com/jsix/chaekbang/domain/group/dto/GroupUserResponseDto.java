@@ -5,7 +5,6 @@ import com.jsix.chaekbang.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
@@ -17,6 +16,7 @@ public class GroupUserResponseDto {
     private Gender gender;
     private String profileImageUrl;
     private String aboutMe;
+    private int groupCount;
 
 
     public static GroupUserResponseDto from(User user) {
@@ -26,6 +26,7 @@ public class GroupUserResponseDto {
                                    .gender(user.getGender())
                                    .profileImageUrl(user.getProfileImageUrl())
                                    .aboutMe(user.getAboutMe())
+                                   .groupCount(user.getGroupCount())
                                    .build();
     }
 }

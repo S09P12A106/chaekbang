@@ -1,11 +1,13 @@
 package com.jsix.chaekbang.domain.group.domain;
 
 import com.jsix.chaekbang.domain.user.domain.User;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.entity.BaseEntity;
 import com.jsix.chaekbang.global.exception.NotFoundResourceException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -190,5 +192,19 @@ public class Group extends BaseEntity {
         this.imageUrl = this.imageUrl == null
                 ? "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/group/image/chaekbang_default_image.jpeg"
                 : this.imageUrl;
+    }
+
+    public List<User> getGroupUsersByUserStatus(AuthUser leader, UserStatus userStatus) {
+        if (leader != null) {
+            validateLeader(leader.getUserId());
+        }
+        return this.groupUsers.stream()
+                              .filter(groupUser -> groupUser.getStatus().equals(userStatus))
+                              .map(GroupUser::getUser).collect(
+                        Collectors.toList());
+    }
+
+    public void plusReadCount() {
+        this.readCount += 1;
     }
 }

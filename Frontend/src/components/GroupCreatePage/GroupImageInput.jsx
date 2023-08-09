@@ -115,7 +115,7 @@ function GroupImageInput({ imageMessage, setImageMessage, info, setImage }) {
 
   const resetImage = (e) => {
     setImageUrl(TEMP_IMAGE)
-    setImage('')
+    setImage(null)
     setImageMessage('')
   }
 

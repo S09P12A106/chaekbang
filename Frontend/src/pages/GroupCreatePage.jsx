@@ -4,6 +4,8 @@ import MainLayout from '../components/Layout/MainLayout'
 import GroupInfoInput from '../components/GroupCreatePage/GroupInfoInput'
 import GroupTagInput from '../components/GroupCreatePage/GroupTagInput'
 import GroupImageInput from '../components/GroupCreatePage/GroupImageInput'
+import { useNavigate } from 'react-router-dom'
+import postGroup from '../api/groupCreateApi'
 
 const Container = styled.div`
   margin-left: 50px;
@@ -73,7 +75,21 @@ const ButtonContainer = styled.div`
   cursor: pointer;
 `
 
+const Message = styled.div`
+  color: #ff2020;
+  font-size: 18px;
+  padding-left: 10px;
+  padding-top: 3px;
+`
+
+const MessageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
 function GroupCreatePage() {
+  const navigate = useNavigate()
+
   const [inputs, setInputs] = useState({
     title: '',
     detail: '',
@@ -88,8 +104,9 @@ function GroupCreatePage() {
   })
 
   const [isValid, setValid] = useState(false)
-  const [image, setImage] = useState()
-  const [imageMessage, setImageMessage] = useState()
+  const [image, setImage] = useState(null)
+  const [imageMessage, setImageMessage] = useState('')
+  const [requestErrorMessage, setRequestErrorMessage] = useState('')
 
   const { title, detail, question, tagNames } = inputs
   const { titleMessage, detailMessage, questionMessage } = errorMessages
@@ -175,10 +192,30 @@ function GroupCreatePage() {
     })
   }
 
-  const createGroup = () => {
-    console.log(inputs)
-    console.log(image)
-    console.log('모임 만들기')
+  const createGroup = async () => {
+    const groupData = new FormData()
+    groupData.append('title', inputs.title)
+    groupData.append('detail', inputs.detail)
+    groupData.append('tagNames', [inputs.tagNames])
+    groupData.append('question', inputs.question)
+    if (image !== null) {
+      groupData.append('image', image)
+    }
+
+    try {
+      await postGroup(
+        groupData,
+        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2IiwiZXhwIjoxNjkxNTQ4NjM1fQ.BmHtCJB7K4rU3CJBgI4n_uGNfslIUyMRvddRp0cqxD0',
+      )
+      navigate('/mygroup')
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setRequestErrorMessage(error.response.data.message)
+      } else {
+        // 페이지 이동 삽입
+        console.log('에러 페이지로 이동해야함!!!')
+      }
+    }
   }
 
   return (
@@ -225,6 +262,11 @@ function GroupCreatePage() {
           onChange={onChangeQuestion}
           name={'question'}
         ></GroupInfoInput>
+        <MessageContainer>
+          <Message>
+            {requestErrorMessage ? '※ ' + requestErrorMessage : ''}
+          </Message>
+        </MessageContainer>
         <TextContainer>
           {isValid ? (
             <GreenText>&#10003;</GreenText>
@@ -237,6 +279,7 @@ function GroupCreatePage() {
             있습니다.
           </GrayText>
         </TextContainer>
+
         <ButtonContainer>
           {isValid ? (
             <CreateButton onClick={createGroup}>모임 만들기</CreateButton>

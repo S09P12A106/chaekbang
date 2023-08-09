@@ -6,7 +6,7 @@ import EyeIcon from '../../assets/Eye.svg'
 import convertShortNumber from '../../utils/convertShortNumber'
 
 const Container = styled.div`
-  max-width: 220px;
+  width: 220px;
 
   .green {
     color: ${COLORS.THEME_COLOR2};
@@ -17,7 +17,8 @@ const Container = styled.div`
   justify-content: center;
 `
 const Image = styled.img`
-  max-width: 220px;
+  width: 220px;
+  height: 220px;
   cursor: pointer;
   border-radius: 20px;
 `
@@ -40,7 +41,7 @@ const TagList = styled.div`
   display: flex;
   flex-wrap: wrap;
 
-  margin: 5px 0px 0px 5px;
+  margin: 5px 0px 5px 5px;
 
   div {
     margin-top: 5px;
@@ -62,18 +63,18 @@ function GroupItem({ group }) {
       <Title>{group.title}</Title>
       <ShowUserCountBlock>
         <ShowUser>
-          현재 <span className="green">{group.userCount}</span>명이
+          현재 <span className="green">{group.joinedUserCount}</span>명이
           함께하고있어요
         </ShowUser>
         <ViewCount>
           <img src={EyeIcon} />
-          <span>{convertShortNumber(group.viewCount)}</span>
+          <span>{convertShortNumber(group.readCount)}</span>
         </ViewCount>
       </ShowUserCountBlock>
       <TagList>
         {group.tags &&
           group.tags.map((tag, index) => (
-            <Tag value={tag.tag} key={index}></Tag>
+            <Tag value={tag.tagName} key={index}></Tag>
           ))}
       </TagList>
     </Container>

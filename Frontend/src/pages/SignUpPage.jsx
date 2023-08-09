@@ -1,12 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import LogoImg from '../components/LoginPage/LogoImg'
 import COLORS from '../constants/colors'
-import InputCompo from '../components/Input/InputCompo'
+import InputCompo from '../components/LoginPage/InputCompo'
+import axios from 'axios'
+import { sendAccessRequest } from '../utils/getUserInfo'
 
-function SignUpPage() {
+const SignUpPage = ({
+  state = { oauthProviderInfo: 'kakao', idTokenInfo: '1234' },
+}) => {
   const [activeMale, setActiveMale] = useState(false)
   const [activeFemale, setActiveFemale] = useState(false)
+  const [nickName, setNickName] = useState('')
+  const [birthday, setBirthday] = useState('')
+  const [aboutMe, setAboutMe] = useState('')
+  const [errorMessageNickName, setErrorMessageNickName] = useState('')
+  const [errorMessageAbout, setErrorMessageAbout] = useState('')
+  const BASE_URL = 'http://localhost:8080/api'
 
   function activeBtnM() {
     setActiveMale(!activeMale)
@@ -18,32 +28,104 @@ function SignUpPage() {
     setActiveMale(false)
   }
 
+  // 선택된 성별
+  function whichGender() {
+    return activeFemale ? 'F' : 'M'
+  }
+
+  // 닉네임 2~20자 이내 검증
+  useEffect(() => {
+    nickName.length > 20
+      ? setErrorMessageNickName('20자 이내로 작성해주세요.')
+      : setErrorMessageNickName('')
+  }, [nickName])
+
+  // 자기 소개 100자 이내 검증
+  useEffect(() => {
+    aboutMe.length > 100
+      ? setErrorMessageAbout('100자 이내로 작성해주세요.')
+      : setErrorMessageAbout('')
+  }, [aboutMe])
+
+  // API 통신
+  const axiosSignUp = async () => {
+    if (!aboutMe.length || !setErrorMessageAbout) return
+    if (!birthday) return
+    if (!nickName.length || !setErrorMessageNickName) return
+    if (!activeMale && !activeFemale) return
+
+    try {
+      const response = await axios.post(BASE_URL + '/users', {
+        idToken: state.idTokenInfo,
+        oauthProvider: state.oauthProviderInfo,
+        nickname: nickName,
+        gender: whichGender(),
+        birth: birthday,
+        aboutMe: aboutMe,
+      })
+
+      const responseData = response.data
+      const accessToken = responseData.accessToken
+      const refreshToken = responseData.refreshToken
+
+      // 로컬 스토리지에 토큰 저장
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
+    } catch (error) {
+      console.error('API 요청 에러:', error)
+    }
+  }
+
   return (
-    <>
-      <Container className="container">
-        <PageContainer>
-          <LogoImg marginButtonRem={1} />
-          <SignUpContext>
-            <H3>닉네임</H3>
-            <InputCompo placeholder="닉네임을 입력해주세요" />
-            <H3>생년월일 8자리</H3>
-            <InputCompo placeholder="생년월일 8자리를 입력해주세요" />
-            <H3>성별</H3>
-            <SignUpGender isActive={{ male: activeMale, female: activeFemale }}>
-              <button className="maleBtn" onClick={activeBtnM}>
-                남자
-              </button>
-              <button className="femaleBtn" onClick={activeBtnF}>
-                여자
-              </button>
-            </SignUpGender>
-            <H3>자신을 소개해주세요</H3>
-            <StyledTextarea placeholder="100글자 이내로 작성해주세요."></StyledTextarea>
-          </SignUpContext>
-          <SignUPButton>회원가입</SignUPButton>
-        </PageContainer>
-      </Container>
-    </>
+    <Container className="container">
+      <PageContainer>
+        <LogoImg marginButtonRem={1} />
+        <SignUpContext>
+          <H3>닉네임</H3>
+          <InputCompo
+            value={nickName}
+            callback={(e) => setNickName(e.target.value)}
+            placeholder="닉네임을 입력해주세요"
+          />
+          {errorMessageNickName ? (
+            <ErrorText>{errorMessageNickName}</ErrorText>
+          ) : (
+            <Space />
+          )}
+          <H3>생년월일 8자리</H3>
+          <InputCompo
+            type="date"
+            id="birthday"
+            value={birthday}
+            callback={(e) => setBirthday(e.target.value)}
+            placeholder="생년월일 8자리를 입력해주세요"
+          />
+          <Space />
+          <H3>성별</H3>
+          <SignUpGender isActive={{ male: activeMale, female: activeFemale }}>
+            <button className="maleBtn" onClick={activeBtnM}>
+              남자
+            </button>
+            <button className="femaleBtn" onClick={activeBtnF}>
+              여자
+            </button>
+          </SignUpGender>
+          <Space />
+          <H3>자신을 소개해주세요</H3>
+          <StyledTextarea
+            value={aboutMe}
+            onChange={(e) => setAboutMe(e.target.value)}
+            placeholder="100글자 이내로 작성해주세요."
+          ></StyledTextarea>
+          {errorMessageAbout ? (
+            <ErrorText>{errorMessageAbout}</ErrorText>
+          ) : (
+            <Space />
+          )}
+        </SignUpContext>
+        <SignUPButton onClick={axiosSignUp}>회원가입</SignUPButton>
+      </PageContainer>
+    </Container>
   )
 }
 
@@ -52,14 +134,14 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
+  min-width: 540px;
 `
 
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 30%; /* 가로 길이를 80%로 설정 */
+  width: 30%;
 `
-
 const SignUpContext = styled.div`
   display: flex;
   flex-direction: column;
@@ -69,7 +151,7 @@ const SignUpContext = styled.div`
 const H3 = styled.h3`
   font-size: 20px;
   color: ${COLORS.BLACK};
-  margin: 25px 0 5px;
+  margin: 5px 0 5px;
 `
 
 const SignUpGender = styled.div`
@@ -123,7 +205,7 @@ const SignUPButton = styled.button`
   width: 100%;
   height: 3rem;
   padding: 0 1.25rem 0 1.25rem;
-  margin: 25px 0 5px;
+  margin: 5px 0 5px;
   border-radius: 0.75rem;
   font-size: 1.125rem;
   background-color: ${COLORS.THEME_COLOR2};
@@ -134,4 +216,14 @@ const SignUPButton = styled.button`
   }
 `
 
+const Space = styled.div`
+  height: 16px;
+  margin-top: 5px;
+`
+const ErrorText = styled.span`
+  color: red;
+  height: 16px;
+  font-size: 0.8rem;
+  margin-top: 5px;
+`
 export default SignUpPage

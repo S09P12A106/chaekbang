@@ -1,18 +1,35 @@
 import React from 'react'
-import { useSelector } from 'react-redux' // react-redux에서 useSelector 가져오기
+import { useSelector, useDispatch } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { logout } from '../../utils/logout'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
+import { setNickname } from '../../store/LoginUser'
 
 function ProfileDropdown() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout(navigate)
+    dispatch(setNickname(''))
+    dispatch({ type: 'LOGOUT' })
+  }
+
   return (
     <DropdownContainer>
-      <DropdownItem>마이페이지</DropdownItem>
-      <hr></hr>
-      <DropdownItem>나의 모임</DropdownItem>
-      <DropdownItem>모임 관리</DropdownItem>
-      <hr></hr>
-      <DropdownItem>로그아웃</DropdownItem>
-      {/* 여기에 다른 Dropdown 메뉴 아이템을 추가할 수 있습니다 */}
+      <DropdownItem>
+        <Link to="/mypage">마이페이지</Link>
+      </DropdownItem>
+      <hr />
+      <DropdownItem>
+        <Link to="/mygroup">나의 모임</Link>
+      </DropdownItem>
+      <DropdownItem>
+        <Link to="/groups/manage">모임 관리</Link>
+      </DropdownItem>
+      <hr />
+      <DropdownItem onClick={handleLogout}>로그아웃</DropdownItem>
     </DropdownContainer>
   )
 }

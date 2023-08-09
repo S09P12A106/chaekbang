@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
@@ -8,24 +8,23 @@ import 이름 from '../../assets/이름.png'
 import NAVPROFILE from '../../assets/NAVPROFILE.png'
 import ProfileDropdown from '../HeaderPage/ProfileDropdown'
 import ToggleBtn from '../HeaderPage/ToggleBtn'
+import isAccessToken from '../../utils/isAccessToken'
 
 function MainHeader() {
   const [navProfile, setNavProfile] = useState(NAVPROFILE)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-
-  // Redux Store에서 isLogin 상태 가져오기
-  const isLogin = useSelector((state) => state.isLogin)
   const dispatch = useDispatch()
 
-  // 로그아웃 함수
-  const handleLogout = () => {
-    dispatch({ type: 'LOGOUT' })
-  }
+  useEffect(() => {
+    isAccessToken().then((result) => {
+      result ? dispatch({ type: 'LOGIN' }) : dispatch({ type: 'LOGOUT' })
+    })
+  }, [])
 
-  // 임시 로그인 > 토큰이 있을 시 바로 로그인
-  const handleLogin = () => {
-    dispatch({ type: 'LOGIN' })
-  }
+  // Redux Store에서 isLogin 상태 가져오기
+  const isLogin = useSelector((state) => {
+    return state.rootReducer.loginReducer.isLogin
+  })
 
   // Dropdown 메뉴 열기/닫기 함수
   const toggleDropdown = () => {
@@ -37,7 +36,7 @@ function MainHeader() {
       <Navbar className="container">
         <Logo>
           <Link to="/">
-            <i className="fa-solid fa-bars" />
+            <img className="fa-solid fa-bars" />
             <img className="logo" src={로고} alt="logo" />
             <img className="name" src={이름} alt="chaekbang" />
           </Link>
@@ -55,18 +54,18 @@ function MainHeader() {
             {isLogin ? (
               <>
                 <img src={navProfile} onClick={toggleDropdown} />
-                {isDropdownOpen && <ProfileDropdown onLogout={handleLogout} />}
+                {isDropdownOpen && <ProfileDropdown />}
               </>
             ) : (
               // 로그인 상태가 아닐 때
-              <button onClick={handleLogin}>
-                <Link to="/">로그인</Link>
+              <button>
+                <Link to="/login">로그인</Link>
               </button>
             )}
           </LoginOrMine>
         </Menu>
+        <ToggleBtn></ToggleBtn>
       </Navbar>
-      <ToggleBtn loginImf={isLogin}></ToggleBtn>
     </Header>
   )
 }

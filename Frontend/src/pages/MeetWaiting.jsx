@@ -7,9 +7,9 @@ import MainLayout from '../components/Layout/MainLayout'
 import { OpenVidu } from 'openvidu-browser'
 import CONSOLE from '../utils/consoleColors'
 import axios from 'axios'
+import { createSession, createToken } from '../api/openviduApi'
 
 // const OV = new OpenVidu()
-const APPLICATION_SERVER_URL = 'http://localhost:5000/'
 
 let mySession
 
@@ -31,26 +31,6 @@ function MeetWaiting({
   const OV = ovObj.OV
 
   CONSOLE.reRender('리렌더링')
-
-  /*
-  useEffect(() => {
-    // if (isTokenRequested.current) {
-    //   const newPublisher = OV.initPublisher(undefined, videoOption)
-    //   setMeetingInfo((prevState) => ({
-    //     ...prevState,
-    //     mainStreamManager: newPublisher,
-    //     publisher: newPublisher,
-    //   }))
-    // }
-    CONSOLE.info('video init')
-    const newPublisher = OV.initPublisher(undefined, videoOption)
-    setMeetingInfo((prevState) => ({
-      ...prevState,
-      mainStreamManager: newPublisher,
-      publisher: newPublisher,
-    }))
-  }, [videoOption])
-  */
 
   const handleRefresh = (e) => {
     CONSOLE.info('beforeunload event occured!!')
@@ -122,27 +102,19 @@ function MeetWaiting({
         console.warn(exception)
       })
 
-      getToken(meetingInfo.mySessionId)
-        .then((token) => {
-          const mySession = meetingInfo.session
-          mySession.connect(token, { clientData: 'James' }).then(async () => {
-            const publisher = await OV.initPublisherAsync(
-              undefined,
-              videoOption,
-            )
+      getToken(meetingInfo.mySessionId).then((token) => {
+        const mySession = meetingInfo.session
+        mySession.connect(token, { clientData: 'James' }).then(async () => {
+          const publisher = await OV.initPublisherAsync(undefined, videoOption)
 
-            setMeetingInfo((prevState) => ({
-              ...prevState,
-              mainStreamManager: publisher,
-              publisher: publisher,
-              prevPublisher: undefined,
-            }))
-          })
+          setMeetingInfo((prevState) => ({
+            ...prevState,
+            mainStreamManager: publisher,
+            publisher: publisher,
+            prevPublisher: undefined,
+          }))
         })
-        .catch((error) => {
-          CONSOLE.error('==== ERROR OCCURED!! ====')
-          CONSOLE.error(error)
-        })
+      })
     }
   }, [meetingInfo])
 
@@ -171,30 +143,18 @@ const WaitContainer = styled.div`
 `
 
 async function getToken(newSessionId) {
-  const sessionId = await createSession(newSessionId)
-  return await createToken(sessionId)
+  const sessionId = await createSession(newSessionId).catch((error) => {
+    processError(error, '세션 생성 중 오류 발생!')
+  })
+  return await createToken(sessionId).catch((error) => {
+    processError(error, '커넥션 생성 중 오류 발생!')
+  })
 }
 
-async function createSession(sessionId) {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions',
-    { customSessionId: sessionId },
-    {
-      headers: { 'Content-Type': 'application/json' },
-    },
-  )
-  return response.data // The sessionId
-}
-
-async function createToken(sessionId) {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-    {},
-    {
-      headers: { 'Content-Type': 'application/json' },
-    },
-  )
-  return response.data // The token
+function processError(error, message) {
+  CONSOLE.error('==== ERROR OCCURED!! ====')
+  CONSOLE.error(message)
+  console.log(error)
 }
 
 function deleteSubscriber(streamManager, subscribers, setMeetingInfo) {

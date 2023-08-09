@@ -1,6 +1,5 @@
-import { apiInstance, backApiInstance } from './http'
+import { backApiInstance } from './http'
 
-const api = apiInstance()
 const backApi = backApiInstance()
 
 async function getGroupDetail(groupId, success, fail) {

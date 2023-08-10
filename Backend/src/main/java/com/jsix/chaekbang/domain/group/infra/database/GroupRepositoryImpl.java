@@ -4,6 +4,7 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public Group findByIdWithUser(Long groupId) {
-        return groupQueryRepository.findByIdWithUser(groupId);
+    public Group findByIdWithActiveUser(Long groupId) {
+        return groupQueryRepository.findByIdWithActiveUser(groupId);
     }
 
     @Override
@@ -59,4 +60,8 @@ public class GroupRepositoryImpl implements GroupRepository {
         return groupQueryRepository.findGroupHistoryByUserId(userId);
     }
 
+    @Override
+    public List<GroupParticipantResponseDto> findByIdAndLeaderWithAnswer(long userId, long leaderId) {
+        return groupQueryRepository.findByIdAndLeaderWithAnswer(userId, leaderId);
+    }
 }

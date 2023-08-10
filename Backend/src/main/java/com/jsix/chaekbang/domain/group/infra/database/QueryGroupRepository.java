@@ -9,8 +9,9 @@ import com.jsix.chaekbang.domain.group.domain.QHistory;
 import com.jsix.chaekbang.domain.group.domain.QTag;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
-import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupDetailProjectionResponseDto;
+import com.jsix.chaekbang.domain.group.dto.QGroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
@@ -19,7 +20,6 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -131,26 +131,15 @@ public class QueryGroupRepository {
                               .fetchFirst();
     }
 
-    public List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId) {
-        return jpaQueryFactory.select(user)
-                              .from(groupUser)
-                              .innerJoin(groupUser.user, user)
-                              .where(groupUser.group.id.eq(groupId)
-                                                       .and(groupUser.status.eq(UserStatus.ACTIVE)))
-                              .fetch()
-                              .stream()
-                              .map(GroupUserResponseDto::from)
-                              .collect(Collectors.toList());
-    }
-
-    public Group findByIdWithUser(long groupId) {
+    public Group findByIdWithActiveUser(long groupId) {
         return jpaQueryFactory.select(group)
                               .from(group)
                               .join(group.groupUsers, groupUser)
                               .fetchJoin()
                               .join(groupUser.user, user)
                               .fetchJoin()
-                              .where(group.id.eq(groupId))
+                              .where(group.id.eq(groupId)
+                                             .and(groupUser.status.eq(UserStatus.ACTIVE)))
                               .fetchOne();
     }
 
@@ -182,4 +171,21 @@ public class QueryGroupRepository {
                               .distinct()
                               .fetch();
     }
+
+    public List<GroupParticipantResponseDto> findByIdAndLeaderWithAnswer(long groupId,
+            long leaderId) {
+        return jpaQueryFactory.select(
+                                      new QGroupParticipantResponseDto(
+                                              user.id, user.nickname, user.gender, user.profileImageUrl, user.aboutMe,
+                                              user.groupCount, user.email, groupUser.answer
+                                      ))
+                              .from(group)
+                              .join(group.groupUsers, groupUser)
+                              .join(groupUser.user, user)
+                              .where(group.id.eq(groupId)
+                                             .and(groupUser.status.eq(UserStatus.WAITING))
+                                             .and(group.leaderId.eq(leaderId)))
+                              .fetch();
+    }
+
 }

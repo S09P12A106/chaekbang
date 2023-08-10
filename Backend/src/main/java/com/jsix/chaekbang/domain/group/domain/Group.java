@@ -212,7 +212,7 @@ public class Group extends BaseEntity {
     public void modifyGroup(String title, String detail, String imageUrl) {
         this.title = title;
         this.detail = detail;
-        this.imageUrl = imageUrl;
+        this.imageUrl = imageUrl == null ? defaultImageUrl : imageUrl;
     }
 
     public void removeTagWithoutKeepTags(List<Tag> keepTags) {

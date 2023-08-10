@@ -5,9 +5,9 @@ import com.jsix.chaekbang.domain.group.application.GroupJoinUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupModifyUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupSearchUseCase;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
+import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupModifyRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
-import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
@@ -160,7 +160,7 @@ public class GroupController {
     @GetMapping("/{group_id}/leaders/applications")
     public ResponseEntity<?> searchGroupParticipants(
             @PathVariable("group_id") @Min(1) long groupId, @JwtLoginUser AuthUser leader) {
-        List<GroupUserResponseDto> groupUserResponseDtoList = groupSearchUseCase.searchGroupParticipant(
+        List<GroupParticipantResponseDto> groupUserResponseDtoList = groupSearchUseCase.searchGroupParticipant(
                 groupId, leader);
         return HttpResponse.okWithData(HttpStatus.OK, "그룹에 참여 신청한 사용자 목록 조회 성공했습니다.",
                 groupUserResponseDtoList);

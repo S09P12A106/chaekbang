@@ -3,12 +3,15 @@ package com.jsix.chaekbang.domain.group.application;
 import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.application.repository.TagRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.group.domain.GroupUser;
 import com.jsix.chaekbang.domain.group.domain.Tag;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUsersResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MostTaggedGroupsResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
@@ -83,11 +86,17 @@ public class GroupSearchUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupUserResponseDto> searchGroupUsers(long groupId) {
-        Group group = validateGroup(groupId);
-        List<User> userList = group.getGroupUsersByUserStatus(null, UserStatus.ACTIVE);
-        return userList.stream().map(GroupUserResponseDto::from)
-                       .collect(Collectors.toList());
+    public GroupUsersResponseDto searchGroupUsers(long groupId) {
+        Group group = groupRepository.findByIdWithActiveUser(groupId);
+        if (group == null) {
+            throw new NotFoundResourceException("그룹이 존재하지 않습니다.");
+        }
+
+        List<User> users = group.getGroupUsers().stream().map(GroupUser::getUser).toList();
+        List<GroupUserResponseDto> groupUserResponseDtoList = users.stream()
+                                                                   .map(GroupUserResponseDto::fromUser)
+                                                                   .toList();
+        return new GroupUsersResponseDto(group.getLeaderId(), groupUserResponseDtoList);
     }
 
     @Transactional(readOnly = true)
@@ -117,19 +126,8 @@ public class GroupSearchUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupUserResponseDto> searchGroupParticipant(long groupId, AuthUser leader) {
-
-        Group group = validateGroup(groupId);
-        return group.getGroupUsersByUserStatus(leader, UserStatus.WAITING).stream()
-                    .map(GroupUserResponseDto::from)
-                    .collect(Collectors.toList());
+    public List<GroupParticipantResponseDto> searchGroupParticipant(long groupId, AuthUser leader) {
+        return groupRepository.findByIdAndLeaderWithAnswer(groupId, leader.getUserId());
     }
 
-    private Group validateGroup(long groupId) {
-        Group group = groupRepository.findByIdWithUser(groupId);
-        if (group == null) {
-            throw new NotFoundResourceException("그룹을 찾을 수 없습니다.");
-        }
-        return group;
-    }
 }

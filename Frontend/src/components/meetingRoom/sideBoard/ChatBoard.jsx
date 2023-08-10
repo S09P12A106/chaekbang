@@ -1,14 +1,40 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { BiSolidRightArrow } from 'react-icons/bi'
 import { BoardContext } from '../context/BoardContext'
 
 function ChatBoard() {
-  const [message, setMessage] = useState('')
-  const [messageHistory, setMessageHistory] = useState([])
-  const { whichBtn } = useContext(BoardContext)
+  // const [message, setMessage] = useState('')
+  // const [messageHistory, setMessageHistory] = useState([])
+  const { whichBtn, meetingInfoState } = useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
+  // const { session, publisher } = meetingInfo
+
+  // const input = useRef()
+  // const chattingLog = useRef()
+  const [chat, setChat] = useState({
+    messageList: [],
+    message: '',
+  })
+
+  const session = meetingInfoState[0].session
+
+  // const session = meetingInfoState.session
+  // const publisher = meetingInfoState.publisher
+  const { messageList, message } = chat
+
+  const convertTime = () => {
+    const dateObject = new window.Date()
+
+    const hours = dateObject.getHours()
+    const minutes = dateObject.getMinutes()
+    const period = hours >= 12 ? '오후' : '오전'
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
+
+    return `${period} ${formattedHours}:${formattedMinutes}`
+  }
 
   useEffect(() => {
     if (whichBtn === 0) {
@@ -18,43 +44,103 @@ function ChatBoard() {
     }
   }, [whichBtn])
 
-  // 메세지 보내기
-  const handleSendMessage = () => {
-    if (message.trim() === '') return
-
-    const newMessage = {
-      user: 'User Name',
-      message: message,
-      // date: new Date().toLocaleTimeString(), // Get the current time
+  useEffect(() => {
+    const handleChatSignal = (event) => {
+      const data = JSON.parse(event.data)
+      // 새 메시지를 추가하도록 업데이트
+      setChat((prev) => ({
+        ...prev,
+        messageList: [
+          ...prev.messageList,
+          {
+            connectionId: event.from.connectionId,
+            nickname: data.nickname,
+            message: data.message,
+            time: data.date,
+          },
+        ],
+      }))
+      scrollToBottom()
     }
 
-    setMessageHistory((prevMessage) => [...prevMessage, newMessage])
-    setMessage('')
-  }
+    session.on('signal:cheakbang-chat', handleChatSignal)
 
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 핸들러 해제
+      session.off('signal:cheakbang-chat', handleChatSignal)
+    }
+  }, [session])
+
+  // 메세지 보내기
+  const sendMessage = () => {
+    if (chat.message.trim() === '') return
+
+    // const nowDate = new Date()
+    // console.log('date ' + nowDate)
+
+    const data = {
+      message: chat.message,
+      nickname: meetingInfoState[0].myUserName, // redux에서 불러올 것
+      date: convertTime(),
+    }
+
+    // 메세지 데이터 보내기
+    session
+      .signal({
+        data: JSON.stringify(data),
+        type: 'cheakbang-chat',
+      })
+      .then(() => {
+        console.log('Message successfully sent')
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+    setChat((prev) => ({
+      ...prev,
+      message: '',
+    }))
+  }
+  const chattingLog = useRef()
   const handleInputChange = (event) => {
-    setMessage(event.target.value)
+    setChat((prev) => ({
+      ...prev,
+      message: event.target.value,
+    }))
   }
 
   const handleInputKeyPress = (event) => {
     if (event.key === 'Enter') {
-      handleSendMessage()
+      console.log('핸들인풋키프레스')
+      sendMessage()
+      event.target.value = ''
     }
+  }
+
+  // 채팅칠 때 최신 메세지 위치로 내려가도록
+  function scrollToBottom() {
+    setTimeout(() => {
+      try {
+        chattingLog.current.scrollTop = chattingLog.current.scrollHeight
+      } catch (err) {}
+    }, 20)
   }
 
   return (
     <ChatContainer toggle={isToggleOpen}>
       <WhiteBoard>
         <Title>회의 중 메세지</Title>
-        <MessageBoard>
+        <MessageBoard ref={chattingLog}>
           <Notice>
             메세지는 통화 중인 사람에게만 표시되며 통화가 끝나면 삭제됩니다.
           </Notice>
           <MessageBox>
-            {messageHistory.map((message, index) => (
+            {messageList.map((message, index) => (
               <div className="box" key={index}>
-                <Username>{message.user}</Username>
-                {/* <Date>{message}.date</Date> */}
+                <UpperSession>
+                  <Username>{message.nickname}</Username>
+                  <Date>{message.time}</Date>
+                </UpperSession>
                 <Text>{message.message}</Text>
               </div>
             ))}
@@ -70,7 +156,7 @@ function ChatBoard() {
           onKeyPress={handleInputKeyPress}
           placeholder="메세지를 입력해주세요"
         ></Input>
-        <InputBtn onClick={handleSendMessage}>
+        <InputBtn onClick={sendMessage}>
           <BiSolidRightArrow />
         </InputBtn>
       </InputBox>
@@ -82,7 +168,7 @@ const ChatContainer = styled.div`
   position: fixed;
   right: ${(props) => (props.toggle ? '25px' : '-300px')};
   top: 0px;
-  transition: all 0.5s ease;
+  transition: right 0.5s ease;
 
   display: flex;
   flex-direction: column;
@@ -115,7 +201,7 @@ const Notice = styled.div`
   background-color: ${COLORS.BRIGHTGREY};
 `
 const MessageBoard = styled.div`
-  max-height: 500px;
+  max-height: 450px;
   overflow-y: auto; /* 세로 방향으로 스크롤이 생기도록 설정 */
   padding: 5px; /* 내용이 스크롤 바 아래에 가려지지 않도록 padding 추가 */
   box-sizing: border-box; /* padding을 포함한 크기로 요소를 계산 */
@@ -146,10 +232,20 @@ const MessageBox = styled.div`
     width: calc(100%-10px);
   }
 `
+const UpperSession = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
 const Username = styled.div`
   font-size: 12px;
 `
-const Date = styled.div``
+const Date = styled.div`
+  font-size: 10px;
+  margin-left: 5px;
+  margin-top: 2px;
+  color: ${COLORS.GREY};
+`
 const Text = styled.div`
   margin: 5px;
   font-size: 16px;

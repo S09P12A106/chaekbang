@@ -71,8 +71,7 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
     void saveGroups() {
         groups = new ArrayList<>();
         for (int idx = 0; idx < 10; idx++) {
-            Group newGroup = Group.createGroup("title" + idx, "detail", "imageURL", "question",
-                    users.get(0));
+            Group newGroup = Group.createGroup("title" + idx, "detail", "imageURL", users.get(0));
             addTags(newGroup, idx);
             Group savedGroup = groupRepository.save(newGroup);
             addGroupUser(savedGroup);

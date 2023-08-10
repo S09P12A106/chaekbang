@@ -12,7 +12,6 @@ public class GroupDetailResponseDto {
     private Long id;
     private String title;
     private String detail;
-    private String question;
     private Long leaderId;
     private String imageUrl;
     private Boolean opened;
@@ -29,7 +28,6 @@ public class GroupDetailResponseDto {
         this.id = group.getId();
         this.title = group.getTitle();
         this.detail = group.getDetail();
-        this.question = group.getQuestion();
         this.leaderId = group.getLeaderId();
         this.imageUrl = group.getImageUrl();
         this.opened = group.getOpened();

@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GroupCreateRequestDto {
+public class GroupModifyRequestDto {
 
     private final String IMAGE_DIRECTORY = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/";
 
@@ -38,11 +38,6 @@ public class GroupCreateRequestDto {
     @AllowedContentType(allowedTypes = {"image/jpg", "image/jpeg", "image/png"},
             allowedExtensions = {"jpg", "jpeg", "png"})
     private MultipartFile image;
-
-    public Group toEntityWithLeader(User user, String savedImageUrl) {
-        String imageUrl = image == null || image.isEmpty() ? null : IMAGE_DIRECTORY + savedImageUrl;
-        return Group.createGroup(title, detail, imageUrl, user);
-    }
 
     public String makeImageUrl(String savedImageUrl) {
         return image == null || image.isEmpty() ? null : IMAGE_DIRECTORY + savedImageUrl;

@@ -34,7 +34,6 @@ class GroupCreateRequestDtoTest extends IntegrationTestSupport {
         dto = new GroupCreateRequestDto();
         dto.setTitle("TITLE");
         dto.setDetail("DETAIL");
-        dto.setQuestion("QUESTION");
         dto.setTagNames(tagNames);
         dto.setImage(null);
     }

@@ -41,9 +41,6 @@ public class Group extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String detail;
 
-    @Column(nullable = false, length = 100)
-    private String question;
-
     @Column(nullable = false)
     private Long leaderId;
 
@@ -59,7 +56,7 @@ public class Group extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(200) default 'defaultImageUrl'")
     private String imageUrl;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<GroupTag> groupTags = new ArrayList<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -74,21 +71,20 @@ public class Group extends BaseEntity {
             + "and gu.status = 'ACTIVE')")
     private Integer joinedUserCount;
 
+    private static final String defaultImageUrl = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/group/image/chaekbang_default_image.jpeg";
+
     @Builder
-    private Group(String title, String detail, String question, String imageUrl, Long leaderId) {
+    private Group(String title, String detail, String imageUrl, Long leaderId) {
         this.title = title;
         this.detail = detail;
-        this.question = question;
         this.imageUrl = imageUrl;
         this.leaderId = leaderId;
     }
 
-    public static Group createGroup(String title, String detail, String imageUrl, String question,
-            User leader) {
+    public static Group createGroup(String title, String detail, String imageUrl, User leader) {
         Group group = Group.builder()
                            .title(title)
                            .detail(detail)
-                           .question(question)
                            .imageUrl(imageUrl)
                            .leaderId(leader.getId())
                            .build();
@@ -110,7 +106,7 @@ public class Group extends BaseEntity {
         if (target.getStatus().equals(UserStatus.ACTIVE)) {
             throw new NotFoundResourceException("참여 대기중인 유저가 아닙니다.");
         }
-        removeTarget(target);
+        removeGroupUser(target);
     }
 
     private boolean checkExistedUser(User user) {
@@ -136,7 +132,7 @@ public class Group extends BaseEntity {
         if (target.getStatus().equals(UserStatus.ACTIVE)) {
             throw new NotFoundResourceException("참여 대기중인 유저가 아닙니다.");
         }
-        removeTarget(target);
+        removeGroupUser(target);
     }
 
     public LocalDateTime withdrawGroup(User user, long leaderId) {
@@ -146,7 +142,7 @@ public class Group extends BaseEntity {
         if (target.getStatus().equals(UserStatus.WAITING)) {
             throw new NotFoundResourceException("참여중인 유저가 아닙니다.");
         }
-        removeTarget(target);
+        removeGroupUser(target);
         return target.getParticipatedAt();
     }
 
@@ -156,7 +152,7 @@ public class Group extends BaseEntity {
         if (target.getStatus().equals(UserStatus.WAITING)) {
             throw new NotFoundResourceException("참여중인 유저가 아닙니다.");
         }
-        removeTarget(target);
+        removeGroupUser(target);
         return target.getParticipatedAt();
     }
 
@@ -174,7 +170,7 @@ public class Group extends BaseEntity {
         }
     }
 
-    private void removeTarget(GroupUser target) {
+    private void removeGroupUser(GroupUser target) {
         this.groupUsers.removeIf(groupUser -> groupUser.equals(target));
     }
 
@@ -196,9 +192,7 @@ public class Group extends BaseEntity {
         this.opened = this.opened == null ? true : this.opened;
         this.deleted = this.deleted == null ? false : this.deleted;
         this.readCount = this.readCount == null ? 0 : this.readCount;
-        this.imageUrl = this.imageUrl == null
-                ? "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/group/image/chaekbang_default_image.jpeg"
-                : this.imageUrl;
+        this.imageUrl = this.imageUrl == null ? defaultImageUrl : this.imageUrl;
     }
 
     public List<User> getGroupUsersByUserStatus(AuthUser leader, UserStatus userStatus) {
@@ -214,4 +208,19 @@ public class Group extends BaseEntity {
     public void plusReadCount() {
         this.readCount += 1;
     }
+
+    public void modifyGroup(String title, String detail, String imageUrl) {
+        this.title = title;
+        this.detail = detail;
+        this.imageUrl = imageUrl;
+    }
+
+    public void removeTagWithoutKeepTags(List<Tag> keepTags) {
+        List<GroupTag> removeTags = this.groupTags.stream()
+                                                  .filter(groupTag -> !keepTags.contains(
+                                                          groupTag.getTag())).toList();
+        removeTags.forEach(groupTag -> groupTag.getTag().minusTaggedCount());
+        this.getGroupTags().removeIf(removeTags::contains);
+    }
+
 }

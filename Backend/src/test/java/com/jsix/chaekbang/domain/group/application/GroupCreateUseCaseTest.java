@@ -86,7 +86,6 @@ class GroupCreateUseCaseTest {
         tagNames.add("TAG1");
         groupCreateRequestDto.setTitle("title");
         groupCreateRequestDto.setDetail("detail");
-        groupCreateRequestDto.setQuestion("question");
         groupCreateRequestDto.setTagNames(tagNames);
         groupCreateRequestDto.setImage(null);
     }

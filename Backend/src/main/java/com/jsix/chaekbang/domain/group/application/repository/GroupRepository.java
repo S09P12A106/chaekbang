@@ -25,4 +25,5 @@ public interface GroupRepository {
     List<Group> findByUserIdAndUserStatus(long userId, UserStatus userStatus);
 
     List<Group> findGroupHistoryByUserId(long userId);
+
 }

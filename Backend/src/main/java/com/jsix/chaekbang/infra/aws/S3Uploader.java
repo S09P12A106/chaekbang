@@ -20,7 +20,7 @@ public class S3Uploader {
     private String bucket;
 
     public void upload(String fileName, MultipartFile multipartFile) {
-        if (multipartFile == null) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
             return;
         }
 

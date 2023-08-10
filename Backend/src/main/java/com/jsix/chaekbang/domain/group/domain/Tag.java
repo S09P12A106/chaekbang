@@ -41,6 +41,11 @@ public class Tag {
     public void plusTaggedCount() {
         this.taggedCount++;
     }
+
+    public void minusTaggedCount() {
+        if(this.taggedCount > 0)
+            this.taggedCount--;
+    }
     
     @PrePersist
     private void setDefaultValues() {

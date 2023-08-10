@@ -9,6 +9,7 @@ import com.jsix.chaekbang.domain.group.domain.QHistory;
 import com.jsix.chaekbang.domain.group.domain.QTag;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -18,6 +19,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -127,6 +129,18 @@ public class QueryGroupRepository {
                               .where(group.id.eq(groupId))
                               .distinct()
                               .fetchFirst();
+    }
+
+    public List<GroupUserResponseDto> findGroupUsersByGroupId(long groupId) {
+        return jpaQueryFactory.select(user)
+                              .from(groupUser)
+                              .innerJoin(groupUser.user, user)
+                              .where(groupUser.group.id.eq(groupId)
+                                                       .and(groupUser.status.eq(UserStatus.ACTIVE)))
+                              .fetch()
+                              .stream()
+                              .map(GroupUserResponseDto::from)
+                              .collect(Collectors.toList());
     }
 
     public Group findByIdWithUser(long groupId) {

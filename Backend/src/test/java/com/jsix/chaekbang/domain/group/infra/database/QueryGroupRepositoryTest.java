@@ -52,8 +52,7 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
 
     void saveGroupsWithUserAndTag(List<Integer> readCounts) {
         for (int idx = 0; idx < readCounts.size(); idx++) {
-            Group group = Group.createGroup("title", "detail", "imageUrl", "question",
-                    users.get(idx));
+            Group group = Group.createGroup("title", "detail", "imageUrl", users.get(idx));
             ReflectionTestUtils.setField(group, "readCount", readCounts.get(idx));
             group.addTags(new ArrayList<>(List.of(tags.get(idx))));
             groupRepository.save(group);
@@ -120,8 +119,7 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
         List<Integer> taggedCount = new ArrayList<>(List.of(2, 1));
         saveTags(tagNames, taggedCount);
 
-        Group createdGroup = Group.createGroup("title", "detail", "imageUrl", "question",
-                users.get(0));
+        Group createdGroup = Group.createGroup("title", "detail", "imageUrl", users.get(0));
         Tag savedTag1 = tags.get(0);
         Tag savedTag2 = tags.get(1);
         createdGroup.addTags(List.of(savedTag1, savedTag2));

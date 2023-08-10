@@ -87,7 +87,7 @@ class MeetingCreateUseCaseTest {
     }
 
     Group getGroupWithLeader(User leader) {
-        group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
         ReflectionTestUtils.setField(group, "id", 1L);
         return group;
     }

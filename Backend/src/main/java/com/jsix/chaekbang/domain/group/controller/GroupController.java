@@ -2,8 +2,10 @@ package com.jsix.chaekbang.domain.group.controller;
 
 import com.jsix.chaekbang.domain.group.application.GroupCreateUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupJoinUseCase;
+import com.jsix.chaekbang.domain.group.application.GroupModifyUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupSearchUseCase;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
+import com.jsix.chaekbang.domain.group.dto.GroupModifyRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
@@ -37,6 +39,7 @@ public class GroupController {
 
     private final GroupCreateUseCase groupCreateUseCase;
     private final GroupSearchUseCase groupSearchUseCase;
+    private final GroupModifyUseCase groupModifyUseCase;
 
     private final GroupJoinUseCase groupJoinUseCase;
 
@@ -163,4 +166,12 @@ public class GroupController {
                 groupUserResponseDtoList);
     }
 
+
+    @PatchMapping("/{group_id}")
+    public ResponseEntity<?> modifyGroup(@PathVariable("group_id") @Min(1) Long groupId,
+            @JwtLoginUser AuthUser leader,
+            @ModelAttribute @Valid GroupModifyRequestDto groupModifyRequestDto) {
+        groupModifyUseCase.modifyGroup(leader, groupId, groupModifyRequestDto);
+        return HttpResponse.ok(HttpStatus.OK, "그룹 수정 성공했습니다.");
+    }
 }

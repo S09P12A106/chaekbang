@@ -55,7 +55,6 @@ public class GroupRepositoryImpl implements GroupRepository {
         return groupQueryRepository.findGroupByUserIdAndUserStatus(userId, userStatus);
     }
 
-
     public List<Group> findGroupHistoryByUserId(long userId) {
         return groupQueryRepository.findGroupHistoryByUserId(userId);
     }

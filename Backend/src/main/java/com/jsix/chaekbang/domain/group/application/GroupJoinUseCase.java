@@ -90,9 +90,8 @@ public class GroupJoinUseCase {
 
     private Group validateGroup(long groupId) {
         Group group = groupRepository.findByIdWithUser(groupId);
-        if (group == null) {
+        if (group == null)
             throw new NotFoundResourceException("그룹을 찾을 수 없습니다.");
-        }
         return group;
     }
 

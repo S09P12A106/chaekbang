@@ -8,6 +8,8 @@ import {
   getPopularGroupsApi,
   getRecommendedTagAndGroupsApi,
 } from '../api/mainApi'
+import { getUserInfoApi } from '../api/userApi'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   height: auto;
@@ -18,7 +20,7 @@ function MainPage() {
   const [popularGroup, setPopularGroups] = useState(null)
   const [recommendTag, setRecommendTag] = useState(null)
   const [recommendGroup, setRecommendGroup] = useState(null)
-
+  const navigate = useNavigate()
   useEffect(() => {
     async function getPopularGroups() {
       const data = await getPopularGroupsApi()

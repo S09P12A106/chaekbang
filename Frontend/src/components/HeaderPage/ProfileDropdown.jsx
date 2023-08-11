@@ -4,16 +4,18 @@ import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../../utils/logout'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
-import { setNickname } from '../../store/LoginUser'
+import { logoutAction } from '../../store/LoginUser'
+import { clearToken } from '../../utils/tokenUtil'
 
 function ProfileDropdown() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout(navigate)
-    dispatch(setNickname(''))
-    dispatch({ type: 'LOGOUT' })
+    clearToken()
+    dispatch(logoutAction())
+    alert('로그아웃 성공')
+    navigate('/')
   }
 
   return (

@@ -2,15 +2,16 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { kakaoUnlink } from '../utils/kakaoUnlink'
 import styled from 'styled-components'
-import axios from 'axios'
 import COLORS from '../constants/colors'
 import kakaoImage from '../assets/kakao_login.png'
 import googleImage from '../assets/googleBtn.png'
 import KakaoLogin from 'react-kakao-login'
 import LogoImg from '../components/LoginPage/LogoImg'
-import getUserInfo from '../utils/getUserInfo'
-import { setNickname } from '../store/LoginUser'
+import { loginAction } from '../store/LoginUser'
 import { useDispatch } from 'react-redux'
+import { loginApi } from '../api/authApi'
+import { getUserInfoApi } from '../api/userApi'
+import { saveToken } from '../utils/tokenUtil'
 
 const LoginPage = () => {
   const [keepLoggedIn, setKeepLoggedIn] = useState(false)
@@ -22,40 +23,35 @@ const LoginPage = () => {
   const kakaoOnSuccess = async (data) => {
     // 로그인 시 발생하는 idTkn
     const idToken = data.response.id_token
-    const BASE_URL = 'http://localhost:8080/api'
-
+    const requestBody = {
+      idToken,
+      oauthProvider: 'KAKAO',
+      isLoginKeep: keepLoggedIn,
+    }
     // API 요청 보내기
     try {
-      const response = await axios.post(BASE_URL + '/users/sign-in', {
-        oauthProvider: 'kakao',
-        idToken: idToken,
-        isLoginKeep: keepLoggedIn,
-      })
-
-      const { isNewUser, accessToken, refreshToken } = response.data
-
+      const response = await loginApi(requestBody)
+      console.log(response)
+      const { newUser, accessToken, refreshToken } = response.data
       // 신규 유저이면 회원가입 페이지로 이동
-      if (isNewUser) {
+      if (newUser) {
         navigate('/signup', {
           state: {
-            oauthProvider: 'kakao',
+            oauthProvider: 'KAKAO',
             idToken: idToken,
           },
         })
+        return
       }
       // 신규 회원이 아닐 경우 메인페이지로 이동
-      else {
-        // 로컬 스토리지에 토큰 저장
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-
-        getUserInfo().then((userInfo) => {
-          dispatch(setNickname(userInfo.nickname))
-        })
-        navigate('/')
-      }
+      // 로컬 스토리지에 토큰 저장
+      saveToken(accessToken, refreshToken)
+      const userInfo = await getUserInfoApi()
+      dispatch(loginAction(userInfo.data))
+      navigate('/')
     } catch (error) {
       console.error('API 요청 에러:', error)
+      alert('현재 로그인 할 수 없습니다')
     }
   }
 

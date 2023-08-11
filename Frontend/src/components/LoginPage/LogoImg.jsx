@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 function LogoImg({ marginButtonRem = 0 }) {
   return (
     <div>
-      <Logo marginbuttonrem={marginButtonRem}>
+      <Logo $marginbuttonrem={marginButtonRem}>
         <Link to="/">
           <StyledLogo src={LogoImage} />
         </Link>
@@ -23,7 +23,7 @@ const Logo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: ${(props) => props.marginbuttonrem}rem;
+  margin-bottom: ${(props) => props.$marginbuttonrem}rem;
   a {
     display: flex;
     align-items: center;

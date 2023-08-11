@@ -8,23 +8,28 @@ import 이름 from '../../assets/이름.png'
 import NAVPROFILE from '../../assets/NAVPROFILE.png'
 import ProfileDropdown from '../HeaderPage/ProfileDropdown'
 import ToggleBtn from '../HeaderPage/ToggleBtn'
-import isAccessToken from '../../utils/isAccessToken'
 
 function MainHeader() {
   const [navProfile, setNavProfile] = useState(NAVPROFILE)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    isAccessToken().then((result) => {
-      result ? dispatch({ type: 'LOGIN' }) : dispatch({ type: 'LOGOUT' })
-    })
-  }, [])
+  const [isLogined, setIsLogined] = useState(false)
 
   // Redux Store에서 isLogin 상태 가져오기
-  const isLogin = useSelector((state) => {
-    return state.rootReducer.loginReducer.isLogin
+  const user = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
   })
+
+  function checkUser() {
+    if (user) {
+      setIsLogined(true)
+      setNavProfile(user.profileImageUrl)
+    } else {
+      setIsLogined(false)
+    }
+  }
+  useEffect(() => {
+    checkUser()
+  }, [user])
 
   // Dropdown 메뉴 열기/닫기 함수
   const toggleDropdown = () => {
@@ -51,7 +56,7 @@ function MainHeader() {
             </li>
           </ul>
           <LoginOrMine>
-            {isLogin ? (
+            {isLogined ? (
               <>
                 <img src={navProfile} onClick={toggleDropdown} />
                 {isDropdownOpen && <ProfileDropdown />}

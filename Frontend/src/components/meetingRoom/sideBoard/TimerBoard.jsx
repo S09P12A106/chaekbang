@@ -31,7 +31,7 @@ function TimerBoard() {
   useEffect(() => {
     // STOMP 클라이언트 초기화
     const stompClient = new CompatClient()
-    const socket = new SockJS('http://localhost:8080/ws') // 임시 주소
+    const socket = new SockJS('https://dev.chaekbang.xyz')
 
     stompClient.webSocketFactory = () => socket
 

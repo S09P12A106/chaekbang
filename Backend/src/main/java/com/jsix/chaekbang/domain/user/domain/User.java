@@ -52,7 +52,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = true, length = 100)
+    @Column(nullable = true, length = 200)
     private String profileImageUrl;
 
     @Column(nullable = false, length = 100)
@@ -69,6 +69,8 @@ public class User extends BaseEntity {
             + "where gu.user_id = user_id "
             + "and gu.status = 'ACTIVE')")
     private int groupCount;
+
+    private static final String defaultImageUrl = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/user/image/chaekbang_default_image.jpeg";
 
     @Builder
     private User(OAuthProvider oAuthProvider, String oAuthId,
@@ -118,5 +120,11 @@ public class User extends BaseEntity {
             throw new AuthenticationFailException("로그인이 필요합니다.");
         }
         return this.refreshToken.equals(refreshToken);
+    }
+
+    public void modifyUser(String nickname, String profileImageUrl, boolean imageChanged) {
+        this.nickname = nickname;
+        if (imageChanged)
+            this.profileImageUrl = profileImageUrl == null ? defaultImageUrl : profileImageUrl;
     }
 }

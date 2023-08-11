@@ -195,24 +195,15 @@ public class Group extends BaseEntity {
         this.imageUrl = this.imageUrl == null ? defaultImageUrl : this.imageUrl;
     }
 
-    public List<User> getGroupUsersByUserStatus(AuthUser leader, UserStatus userStatus) {
-        if (leader != null) {
-            validateLeader(leader.getUserId());
-        }
-        return this.groupUsers.stream()
-                              .filter(groupUser -> groupUser.getStatus().equals(userStatus))
-                              .map(GroupUser::getUser).collect(
-                        Collectors.toList());
-    }
-
     public void plusReadCount() {
         this.readCount += 1;
     }
 
-    public void modifyGroup(String title, String detail, String imageUrl) {
+    public void modifyGroup(String title, String detail, String imageUrl, boolean imageChanged) {
         this.title = title;
         this.detail = detail;
-        this.imageUrl = imageUrl == null ? defaultImageUrl : imageUrl;
+        if (imageChanged)
+            this.imageUrl = imageUrl == null ? defaultImageUrl : imageUrl;
     }
 
     public void removeTagWithoutKeepTags(List<Tag> keepTags) {

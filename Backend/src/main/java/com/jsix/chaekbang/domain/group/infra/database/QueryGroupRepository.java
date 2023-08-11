@@ -134,7 +134,7 @@ public class QueryGroupRepository {
                               .fetchFirst();
     }
 
-    public Group findByIdWithActiveUser(long groupId) {
+    public Group findByGroupIdAndUserStatus(long groupId, UserStatus userStatus) {
         return jpaQueryFactory.select(group)
                               .from(group)
                               .join(group.groupUsers, groupUser)
@@ -142,7 +142,7 @@ public class QueryGroupRepository {
                               .join(groupUser.user, user)
                               .fetchJoin()
                               .where(group.id.eq(groupId)
-                                             .and(groupUser.status.eq(UserStatus.ACTIVE)))
+                                             .and(groupUser.status.eq(userStatus)))
                               .fetchOne();
     }
 

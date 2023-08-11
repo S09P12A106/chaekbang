@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyGroupResponseDto {
+public class UserGroupResponseDto {
 
     private long groupId;
     private String title;
@@ -16,15 +16,15 @@ public class MyGroupResponseDto {
     private List<TagResponseDto> tags;
     private int joinedUserCount;
 
-    public static MyGroupResponseDto from(Group group) {
-        return MyGroupResponseDto.builder()
-                                 .groupId(group.getId())
-                                 .title(group.getTitle())
-                                 .groupImageUrl(group.getTitle())
-                                 .tags(group.getGroupTags().stream()
+    public static UserGroupResponseDto from(Group group) {
+        return UserGroupResponseDto.builder()
+                                   .groupId(group.getId())
+                                   .title(group.getTitle())
+                                   .groupImageUrl(group.getImageUrl())
+                                   .tags(group.getGroupTags().stream()
                                             .map(TagResponseDto::fromGroupTag)
                                             .collect(Collectors.toList()))
-                                 .joinedUserCount(group.getJoinedUserCount())
-                                 .build();
+                                   .joinedUserCount(group.getJoinedUserCount())
+                                   .build();
     }
 }

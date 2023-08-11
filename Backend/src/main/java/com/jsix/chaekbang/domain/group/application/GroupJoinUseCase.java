@@ -5,6 +5,7 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupHistoryReposi
 import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.History;
+import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
@@ -25,7 +26,8 @@ public class GroupJoinUseCase {
     @Transactional
     public void joinGroup(Long groupId, AuthUser authUser, String answer) {
         User user = validateUser(authUser.getUserId());
-        Group group = validateGroup(groupId);
+        Group group = groupRepository.findById(groupId).orElseThrow(
+                () -> new NotFoundResourceException("해당 그룹이 존재하지 않습니다."));
 
         group.joinGroup(user, answer);
     }
@@ -33,7 +35,7 @@ public class GroupJoinUseCase {
     @Transactional
     public void cancelJoinGroup(Long groupId, AuthUser authUser) {
         User user = validateUser(authUser.getUserId());
-        Group group = validateGroup(groupId);
+        Group group = validateGroupWithUserStatus(groupId, UserStatus.WAITING);
 
         group.cancelGroup(user);
     }
@@ -42,7 +44,7 @@ public class GroupJoinUseCase {
     public void approveJoinGroup(Long groupId, AuthUser leader, long userId) {
 
         User user = validateUser(userId);
-        Group group = validateGroup(groupId);
+        Group group = groupRepository.findByGroupIdAndUserStatus(groupId, UserStatus.WAITING);
 
         group.approveGroup(user, leader.getUserId());
     }
@@ -51,7 +53,7 @@ public class GroupJoinUseCase {
     public void disapproveJoinGroup(Long groupId, AuthUser leader, long userId) {
 
         User user = validateUser(userId);
-        Group group = validateGroup(groupId);
+        Group group = validateGroupWithUserStatus(groupId, UserStatus.WAITING);
 
         group.disapproveGroup(user, leader.getUserId());
     }
@@ -60,7 +62,7 @@ public class GroupJoinUseCase {
     public void withdrawGroup(Long groupId, AuthUser leader, long userId) {
 
         User user = validateUser(userId);
-        Group group = validateGroup(groupId);
+        Group group = validateGroupWithUserStatus(groupId, UserStatus.ACTIVE);
 
         LocalDateTime participatedAt = group.withdrawGroup(user,
                 leader.getUserId());
@@ -70,7 +72,7 @@ public class GroupJoinUseCase {
     @Transactional
     public void leaveGroup(Long groupId, AuthUser authUser) {
         User user = validateUser(authUser.getUserId());
-        Group group = validateGroup(groupId);
+        Group group = validateGroupWithUserStatus(groupId, UserStatus.ACTIVE);
 
         LocalDateTime participatedAt = group.leaveGroup(user);
         createHistory(group, user, participatedAt);
@@ -88,10 +90,10 @@ public class GroupJoinUseCase {
                                      () -> new NotFoundResourceException("유저를 찾을 수 없습니다."));
     }
 
-    private Group validateGroup(long groupId) {
-        Group group = groupRepository.findByIdWithActiveUser(groupId);
+    private Group validateGroupWithUserStatus(long groupId, UserStatus userStatus) {
+        Group group = groupRepository.findByGroupIdAndUserStatus(groupId, userStatus);
         if (group == null) {
-            throw new NotFoundResourceException("그룹을 찾을 수 없습니다.");
+            throw new NotFoundResourceException("해당 그룹을 찾을 수 없습니다.");
         }
         return group;
     }

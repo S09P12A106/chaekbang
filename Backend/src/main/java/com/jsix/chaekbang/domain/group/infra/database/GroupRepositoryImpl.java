@@ -48,8 +48,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public Group findByIdWithActiveUser(Long groupId) {
-        return groupQueryRepository.findByIdWithActiveUser(groupId);
+    public Group findByGroupIdAndUserStatus(Long groupId, UserStatus userStatus) {
+        return groupQueryRepository.findByGroupIdAndUserStatus(groupId, userStatus);
     }
 
     @Override

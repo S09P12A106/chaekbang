@@ -22,7 +22,7 @@ public interface GroupRepository {
 
     GroupDetailProjectionResponseDto findGroupDetailByGroupId(long groupId);
 
-    Group findByIdWithActiveUser(Long groupId);
+    Group findByGroupIdAndUserStatus(Long groupId, UserStatus userStatus);
 
     List<Group> findByUserIdAndUserStatus(long userId, UserStatus userStatus);
 

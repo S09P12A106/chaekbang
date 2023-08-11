@@ -14,7 +14,7 @@ import com.jsix.chaekbang.domain.group.dto.GroupUserResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupUsersResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import com.jsix.chaekbang.domain.group.dto.MostTaggedGroupsResponseDto;
-import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
+import com.jsix.chaekbang.domain.group.dto.UserGroupResponseDto;
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.exception.NotFoundResourceException;
@@ -92,7 +92,7 @@ public class GroupSearchUseCase {
 
     @Transactional(readOnly = true)
     public GroupUsersResponseDto searchGroupUsers(long groupId) {
-        Group group = groupRepository.findByIdWithActiveUser(groupId);
+        Group group = groupRepository.findByGroupIdAndUserStatus(groupId, UserStatus.ACTIVE);
         if (group == null) {
             throw new NotFoundResourceException("그룹이 존재하지 않습니다.");
         }
@@ -105,34 +105,51 @@ public class GroupSearchUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<MyGroupResponseDto> searchMyActiveGroups(AuthUser authUser) {
+    public List<UserGroupResponseDto> searchMyActiveGroups(AuthUser authUser) {
 
         List<Group> groupList = groupRepository.findByUserIdAndUserStatus(authUser.getUserId(),
                 UserStatus.ACTIVE);
-        return groupList.stream().map(MyGroupResponseDto::from)
+        return groupList.stream().map(UserGroupResponseDto::from)
                         .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<MyGroupResponseDto> searchMyWaitingGroups(AuthUser authUser) {
+    public List<UserGroupResponseDto> searchMyWaitingGroups(AuthUser authUser) {
 
         List<Group> groupList = groupRepository.findByUserIdAndUserStatus(authUser.getUserId(),
                 UserStatus.WAITING);
-        return groupList.stream().map(MyGroupResponseDto::from)
+        return groupList.stream().map(UserGroupResponseDto::from)
                         .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<MyGroupResponseDto> searchMyGroupHistory(AuthUser authUser) {
+    public List<UserGroupResponseDto> searchMyGroupHistory(AuthUser authUser) {
 
         List<Group> userList = groupRepository.findGroupHistoryByUserId(authUser.getUserId());
-        return userList.stream().map(MyGroupResponseDto::from)
+        return userList.stream().map(UserGroupResponseDto::from)
                        .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<GroupParticipantResponseDto> searchGroupParticipant(long groupId, AuthUser leader) {
         return groupRepository.findByIdAndLeaderWithAnswer(groupId, leader.getUserId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserGroupResponseDto> searchUserActiveGroups(long userId) {
+
+        List<Group> groupList = groupRepository.findByUserIdAndUserStatus(userId,
+                UserStatus.ACTIVE);
+        return groupList.stream().map(UserGroupResponseDto::from)
+                        .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserGroupResponseDto> searchUserGroupHistory(long userId) {
+
+        List<Group> userList = groupRepository.findGroupHistoryByUserId(userId);
+        return userList.stream().map(UserGroupResponseDto::from)
+                       .collect(Collectors.toList());
     }
 
 }

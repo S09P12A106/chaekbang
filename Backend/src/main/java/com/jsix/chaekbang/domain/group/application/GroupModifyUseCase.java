@@ -50,10 +50,11 @@ public class GroupModifyUseCase {
         tagRepository.saveAll(allTags);
 
         group.modifyGroup(groupModifyRequestDto.getTitle(), groupModifyRequestDto.getDetail(),
-                groupModifyRequestDto.makeImageUrl(fileName));
+                groupModifyRequestDto.makeImageUrl(fileName), groupModifyRequestDto.isImageChanged());
 
         group.addTags(allTags);
-        s3Uploader.upload(fileName, groupModifyRequestDto.getImage());
+        if (groupModifyRequestDto.isImageChanged())
+            s3Uploader.upload(fileName, groupModifyRequestDto.getImage());
     }
 
     private void validateLeader(AuthUser leader, Group group) {

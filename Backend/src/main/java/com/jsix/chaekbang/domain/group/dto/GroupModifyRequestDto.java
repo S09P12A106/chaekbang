@@ -39,7 +39,10 @@ public class GroupModifyRequestDto {
             allowedExtensions = {"jpg", "jpeg", "png"})
     private MultipartFile image;
 
+    private boolean imageChanged;
+
+
     public String makeImageUrl(String savedImageUrl) {
-        return image == null || image.isEmpty() ? null : IMAGE_DIRECTORY + savedImageUrl;
+        return (image == null || image.isEmpty()) ? null : IMAGE_DIRECTORY + savedImageUrl;
     }
 }

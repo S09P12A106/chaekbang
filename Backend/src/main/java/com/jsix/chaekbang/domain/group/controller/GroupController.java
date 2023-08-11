@@ -9,7 +9,7 @@ import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupModifyRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
-import com.jsix.chaekbang.domain.group.dto.MyGroupResponseDto;
+import com.jsix.chaekbang.domain.group.dto.UserGroupResponseDto;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
 import com.jsix.chaekbang.global.config.webmvc.JwtLoginUser;
 import com.jsix.chaekbang.global.dto.HttpResponse;
@@ -137,24 +137,25 @@ public class GroupController {
 
     @GetMapping("/my-groups")
     public ResponseEntity<?> searchMyActiveGroups(@JwtLoginUser AuthUser user) {
-        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyActiveGroups(
+        List<UserGroupResponseDto> userGroupResponseDtoList = groupSearchUseCase.searchMyActiveGroups(
                 user);
-        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 조회 성공했습니다.", myGroupResponseDtoList);
+        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 조회 성공했습니다.", userGroupResponseDtoList);
     }
 
     @GetMapping("/my-applications")
     public ResponseEntity<?> searchMyWaitingGroups(@JwtLoginUser AuthUser user) {
-        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyWaitingGroups(
+        List<UserGroupResponseDto> userGroupResponseDtoList = groupSearchUseCase.searchMyWaitingGroups(
                 user);
         return HttpResponse.okWithData(HttpStatus.OK, "내 참여 신청 목록 조회 성공했습니다.",
-                myGroupResponseDtoList);
+                userGroupResponseDtoList);
     }
 
     @GetMapping("/my-history")
     public ResponseEntity<?> searchMyGroupHistory(@JwtLoginUser AuthUser user) {
-        List<MyGroupResponseDto> myGroupResponseDtoList = groupSearchUseCase.searchMyGroupHistory(
+        List<UserGroupResponseDto> userGroupResponseDtoList = groupSearchUseCase.searchMyGroupHistory(
                 user);
-        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 기록 조회 성공했습니다.", myGroupResponseDtoList);
+        return HttpResponse.okWithData(HttpStatus.OK, "내 그룹 기록 조회 성공했습니다.",
+                userGroupResponseDtoList);
     }
 
     @GetMapping("/{group_id}/leaders/applications")
@@ -173,5 +174,20 @@ public class GroupController {
             @ModelAttribute @Valid GroupModifyRequestDto groupModifyRequestDto) {
         groupModifyUseCase.modifyGroup(leader, groupId, groupModifyRequestDto);
         return HttpResponse.ok(HttpStatus.OK, "그룹 수정 성공했습니다.");
+    }
+
+    @GetMapping("/members/{user_id}")
+    public ResponseEntity<?> searchUserActiveGroups(@PathVariable("user_id") long userId) {
+        List<UserGroupResponseDto> userGroupResponseDtoList = groupSearchUseCase.searchUserActiveGroups(
+                userId);
+        return HttpResponse.okWithData(HttpStatus.OK, "유저 그룹 조회 성공했습니다.", userGroupResponseDtoList);
+    }
+
+    @GetMapping("/members/{user_id}/history")
+    public ResponseEntity<?> searchUserGroupHistory(@PathVariable("user_id") long userId) {
+        List<UserGroupResponseDto> userGroupResponseDtoList = groupSearchUseCase.searchUserGroupHistory(
+                userId);
+        return HttpResponse.okWithData(HttpStatus.OK, "유저 그룹 기록 조회 성공했습니다.",
+                userGroupResponseDtoList);
     }
 }

@@ -1,7 +1,6 @@
 import { backApiInstance } from './http'
 
-const authToken =
-  'authToken'
+const authToken = 'authToken'
 
 const additionalBaseUrl = `/api/openvidu/sessions/`
 

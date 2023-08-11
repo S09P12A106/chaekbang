@@ -5,6 +5,7 @@
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
     "@reduxjs/toolkit": "^1.9.5",
+    "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -22,6 +23,7 @@
     "react-slick": "^0.29.0",
     "redux": "^4.2.1",
     "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.6.1",
     "styled-components": "^6.0.4",
     "sweetalert2": "^11.7.20",
     "url": "^0.11.1",

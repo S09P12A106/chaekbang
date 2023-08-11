@@ -1,24 +1,19 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { IoIosArrowDown } from 'react-icons/io'
 import { IoIosArrowUp } from 'react-icons/io'
 import { useHandleTime } from './useHandleTime'
 import { BoardContext } from '../context/BoardContext'
+import { CompatClient } from '@stomp/stompjs'
+import SockJS from 'sockjs-client'
 
 function TimerBoard() {
   const [isRunning, setIsRunning] = useState(false)
-
-  const { whichBtn, setWhichBtn } = useContext(BoardContext)
+  const { whichBtn, setWhichBtn, meetingInfoState } = useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
-
-  useEffect(() => {
-    if (whichBtn === 3) {
-      setIsToggleOpen(true)
-    } else {
-      setIsToggleOpen(false)
-    }
-  }, [whichBtn])
+  const [client, setClient] = useState(null)
+  const mySessionId = meetingInfoState[0].mySessionId
 
   const {
     hour,
@@ -32,14 +27,72 @@ function TimerBoard() {
     setIsOn,
   } = useHandleTime()
 
+  // sock연결
+  useEffect(() => {
+    // STOMP 클라이언트 초기화
+    const stompClient = new CompatClient()
+    const socket = new SockJS('http://localhost:8080/ws') // 임시 주소
+
+    stompClient.webSocketFactory = () => socket
+
+    stompClient.onConnect = () => {
+      console.log('Connected to WebSocket')
+
+      // 메시지를 받았을 때 처리할 로직
+      client.subscribe('/user/topic/timerResponse', (message) => {
+        const timerResponse = JSON.parse(message.body)
+        console.log('Received message:', timerResponse)
+        // timerResponse에는 백엔드에서 보낸 정보가 들어있음
+        // 들어오는 정보보고 띄우는 작업 진행 ㄱ
+      })
+    }
+
+    stompClient.activate()
+
+    setClient(stompClient)
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate()
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (whichBtn === 3) {
+      setIsToggleOpen(true)
+    } else {
+      setIsToggleOpen(false)
+    }
+  }, [whichBtn])
+
   // 타이머 시작 버튼을 눌렀을 때
   const handleStart = () => {
     setIsRunning(true)
+
+    // 백엔드로 시작 이벤트 전송
+    if (client) {
+      // publish 또는 send
+      // Publish 함수는 (주소, {헤더}, 메세지)로 구성
+      client.publish({
+        destination: '/app/startTimer',
+        headers: { sessionId: mySessionId },
+        body: JSON.stringify({ hour: hour, minute: minute, second: second }),
+      })
+    }
   }
 
   // 타이머 일시정지 버튼을 눌렀을 때
   const handlePause = () => {
     setIsRunning(false)
+
+    // 백엔드로 일시정지 이벤트 전송
+    if (client) {
+      client.publish({
+        destination: '/app/pauseTimer',
+        headers: { sessionId: mySessionId },
+      })
+    }
   }
 
   // 타이머 초기화 버튼을 눌렀을 때
@@ -48,6 +101,14 @@ function TimerBoard() {
     setHour(0)
     setMinute(0)
     setSecond(0)
+
+    // 백엔드로 리셋 이벤트 전송
+    if (client) {
+      client.publish({
+        destination: '/app/resetTimer',
+        headers: { sessionId: mySessionId },
+      })
+    }
   }
 
   const handleToggle = () => {

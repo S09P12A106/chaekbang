@@ -9,16 +9,13 @@ import GroupManagementPage from '../pages/GroupManagementPage'
 
 import GroupCreatePage from '../pages/GroupCreatePage'
 import MeetWaiting from '../pages/MeetWaiting'
-import SignUpPage from '../pages/SignUpPage'
-import LoginPage from '../pages/LoginPage'
-
+import TempWaitingPage from '../pages/TempWaitingPage'
+import MeetingPage from '../pages/MeetingPage'
 function RouterApp() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/mygroup" element={<MyGroupPage />} />
         <Route path="/mr" element={<MeetingRoomPage />} />
@@ -26,6 +23,8 @@ function RouterApp() {
         <Route path="/groups/manage" element={<GroupManagementPage />} />
         <Route path="/groups/create" element={<GroupCreatePage />} />
         <Route path="/mw" element={<MeetWaiting />} />
+        <Route path="/testWaiting" element={<TempWaitingPage />} />
+        <Route path="/testMeeting" element={<MeetingPage />} />
       </Routes>
     </BrowserRouter>
   )

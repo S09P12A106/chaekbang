@@ -3,12 +3,17 @@ import styled from 'styled-components'
 import LogoImg from '../components/LoginPage/LogoImg'
 import COLORS from '../constants/colors'
 import InputCompo from '../components/LoginPage/InputCompo'
-import axios from 'axios'
-import { sendAccessRequest } from '../utils/getUserInfo'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { signUpApi } from '../api/authApi'
+import { saveToken } from '../utils/tokenUtil'
+import { getUserInfoApi } from '../api/userApi'
+import { loginAction } from '../store/LoginUser'
+import { useDispatch } from 'react-redux'
 
-const SignUpPage = ({
-  state = { oauthProviderInfo: 'kakao', idTokenInfo: '1234' },
-}) => {
+const SignUpPage = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [activeMale, setActiveMale] = useState(false)
   const [activeFemale, setActiveFemale] = useState(false)
   const [nickName, setNickName] = useState('')
@@ -16,7 +21,6 @@ const SignUpPage = ({
   const [aboutMe, setAboutMe] = useState('')
   const [errorMessageNickName, setErrorMessageNickName] = useState('')
   const [errorMessageAbout, setErrorMessageAbout] = useState('')
-  const BASE_URL = 'http://localhost:8080/api'
 
   function activeBtnM() {
     setActiveMale(!activeMale)
@@ -53,24 +57,26 @@ const SignUpPage = ({
     if (!birthday) return
     if (!nickName.length || !setErrorMessageNickName) return
     if (!activeMale && !activeFemale) return
-
+    const { idToken, oauthProvider } = location.state
+    const requestBody = {
+      idToken,
+      oauthProvider,
+      nickname: nickName,
+      gender: whichGender(),
+      birth: birthday,
+      aboutMe,
+    }
     try {
-      const response = await axios.post(BASE_URL + '/users', {
-        idToken: state.idTokenInfo,
-        oauthProvider: state.oauthProviderInfo,
-        nickname: nickName,
-        gender: whichGender(),
-        birth: birthday,
-        aboutMe: aboutMe,
-      })
-
-      const responseData = response.data
-      const accessToken = responseData.accessToken
-      const refreshToken = responseData.refreshToken
-
+      const response = await signUpApi(requestBody)
+      const { accessToken, refreshToken } = response.data
       // 로컬 스토리지에 토큰 저장
-      localStorage.setItem('accessToken', accessToken)
-      localStorage.setItem('refreshToken', refreshToken)
+      saveToken(accessToken, refreshToken)
+
+      const userInfo = await getUserInfoApi()
+      dispatch(loginAction(userInfo.data))
+
+      alert(`반갑습니다 ${nickName} 님!`)
+      navigate('/')
     } catch (error) {
       console.error('API 요청 에러:', error)
     }
@@ -102,7 +108,7 @@ const SignUpPage = ({
           />
           <Space />
           <H3>성별</H3>
-          <SignUpGender isActive={{ male: activeMale, female: activeFemale }}>
+          <SignUpGender $isActive={{ male: activeMale, female: activeFemale }}>
             <button className="maleBtn" onClick={activeBtnM}>
               남자
             </button>
@@ -174,17 +180,17 @@ const SignUpGender = styled.div`
   }
   .maleBtn {
     background-color: ${(props) =>
-      props.isActive.male ? COLORS.THEME_COLOR2 : COLORS.WHITE};
-    color: ${(props) => (props.isActive.male ? COLORS.WHITE : COLORS.BLACK)};
+      props.$isActive.male ? COLORS.THEME_COLOR2 : COLORS.WHITE};
+    color: ${(props) => (props.$isActive.male ? COLORS.WHITE : COLORS.BLACK)};
     border: ${(props) =>
-      props.isActive.male ? 'none' : '1px solid ${COLORS.BLACK}'};
+      props.$isActive.male ? 'none' : '1px solid ${COLORS.BLACK}'};
   }
   .femaleBtn {
     background-color: ${(props) =>
-      props.isActive.female ? COLORS.THEME_COLOR2 : COLORS.WHITE};
-    color: ${(props) => (props.isActive.female ? COLORS.WHITE : COLORS.BLACK)};
+      props.$isActive.female ? COLORS.THEME_COLOR2 : COLORS.WHITE};
+    color: ${(props) => (props.$isActive.female ? COLORS.WHITE : COLORS.BLACK)};
     border: ${(props) =>
-      props.isActive.female ? 'none' : '1px solid ${COLORS.BLACK}'};
+      props.$isActive.female ? 'none' : '1px solid ${COLORS.BLACK}'};
   }
 `
 

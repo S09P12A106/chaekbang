@@ -6,21 +6,36 @@ import { logout } from '../../utils/logout'
 import TOGGLEBAR from '../../assets/TOGGLEBAR.png'
 import X from '../../assets/X.png' // x버튼 이미지
 import COLORS from '../../constants/colors'
-import { setNickname } from '../../store/LoginUser'
+import { logoutAction, setNickname } from '../../store/LoginUser'
+import { clearToken } from '../../utils/tokenUtil'
 
 function ToggleBtn() {
+  const navigate = useNavigate()
+  const [isLogined, setIsLogined] = useState(false)
+
   const [isToggleBarOpen, setIsToggleBarOpen] = useState(false)
   // Redux Store에서 isLogin 상태 가져오기
-  const isLogin = useSelector((state) => {
-    return state.rootReducer.loginReducer.isLogin
+
+  const user = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
   })
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+  function checkUser() {
+    if (user) {
+      setIsLogined(true)
+    } else {
+      setIsLogined(false)
+    }
+  }
 
+  useEffect(() => {
+    checkUser()
+  }, [user])
   const handleLogout = () => {
-    logout(navigate)
-    dispatch(setNickname(''))
-    dispatch({ type: 'LOGOUT' })
+    clearToken()
+    dispatch(logoutAction)
+    alert('로그아웃 성공')
+    navigate('/')
   }
 
   const toggleBar = () => {
@@ -32,7 +47,7 @@ function ToggleBtn() {
       <img src={TOGGLEBAR} onClick={toggleBar} alt="토글버튼" />
       {isToggleBarOpen && <ToggleLayer onClick={toggleBar} />}
 
-      <ToggleContainer toggle={isToggleBarOpen}>
+      <ToggleContainer $toggle={isToggleBarOpen}>
         <img src={X} onClick={toggleBar} alt="X버튼"></img>
         <ToggleBarItemContainer>
           <ToggleBarItem>
@@ -53,7 +68,7 @@ function ToggleBtn() {
             <Link to="/groups/manage">모임 관리</Link>
           </ToggleBarItem>
           <hr />
-          {isLogin ? (
+          {isLogined ? (
             <ToggleBarItem onClick={handleLogout}>로그아웃</ToggleBarItem>
           ) : (
             <ToggleBarItem>
@@ -97,7 +112,7 @@ const ToggleContainer = styled.div`
   flex-direction: column;
   position: fixed;
   top: 0px;
-  right: ${(props) => (props.toggle ? '0px' : '-280px')};
+  right: ${(props) => (props.$toggle ? '0px' : '-280px')};
   padding: 15px 20px;
   width: 280px;
   height: 100vh;

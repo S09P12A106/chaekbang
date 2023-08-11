@@ -8,6 +8,7 @@ import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,8 +38,8 @@ public class GroupRepositoryImpl implements GroupRepository {
         return groupQueryRepository.findMostTaggedCountByTagName(tagName);
     }
 
-    public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds) {
-        return groupQueryRepository.findByKeywordAndTags(keyword, tagIds);
+    public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable) {
+        return groupQueryRepository.findByKeywordAndTags(keyword, tagIds, pageable);
     }
 
     @Override

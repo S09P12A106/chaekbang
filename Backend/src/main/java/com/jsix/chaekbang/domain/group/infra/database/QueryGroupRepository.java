@@ -21,6 +21,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 
@@ -73,18 +74,20 @@ public class QueryGroupRepository {
     private QHistory history = QHistory.history;
     private QGroupUser groupUser = QGroupUser.groupUser;
 
-    public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds) {
+    public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable) {
 
         return jpaQueryFactory.select(group)
                               .from(group)
-                              .join(group.groupTags, groupTag)
+                              .offset(pageable.getOffset())
+                              .leftJoin(group.groupTags, groupTag)
                               .fetchJoin()
-                              .join(groupTag.tag, tag)
+                              .leftJoin(groupTag.tag, tag)
                               .fetchJoin()
                               .distinct()
+                              .limit(pageable.getPageSize())
                               .where(inMatchingGroups(tagIds), titleContainsKeyword(keyword),
-                                      isNotDeleted())
-
+                                      isNotDeleted(), group.opened.eq(true))
+                              .orderBy(group.id.desc())
                               .fetch();
     }
 

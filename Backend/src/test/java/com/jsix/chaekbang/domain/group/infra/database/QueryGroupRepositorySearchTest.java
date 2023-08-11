@@ -27,6 +27,8 @@ import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguratio
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
@@ -132,9 +134,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         saveGroups();
 
         entityManager.clear();
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(10);
@@ -155,9 +158,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "title3";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);
@@ -185,9 +189,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
 
         //// savedTagIds : 통합테스트 상 증가된 ID값 3개
         List<Long> savedTagIds = getSavedTagIds();
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, savedTagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, savedTagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(5);
@@ -216,9 +221,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "해당 정보가 없습니다.";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(0);
@@ -241,9 +247,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         List<Long> tagIds = new ArrayList<>(List.of(7L, 8L));
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, tagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, tagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(0);
@@ -270,8 +277,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         //// savedTagIds : 통합테스트 상 증가된 값
         List<Long> savedTagIds = getSavedTagIds();
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, savedTagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, savedTagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);
@@ -306,9 +315,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "title1";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);

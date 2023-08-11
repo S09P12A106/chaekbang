@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,9 +59,12 @@ public class GroupSearchUseCase {
     public List<GroupWithUserAndTagResponseDto> searchGroupByKeywordAndTags(
             GroupSearchRequestDto groupSearchRequestDto) {
 
+        Pageable pageable = PageRequest.of(groupSearchRequestDto.getPageNum(),
+                groupSearchRequestDto.getPageSize());
+
         List<Group> searchedGroups = groupRepository.findByKeywordAndTags(
                 groupSearchRequestDto.getKeyword(),
-                groupSearchRequestDto.getTags());
+                groupSearchRequestDto.getTags(), pageable);
 
         return searchedGroups.stream()
                              .map(GroupWithUserAndTagResponseDto::from)

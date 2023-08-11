@@ -12,5 +12,7 @@ public class GroupSearchRequestDto {
 
     private String keyword;
     private List<Long> tags;
+    private int pageNum;
+    private int pageSize;
 
 }

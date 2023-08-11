@@ -44,7 +44,4 @@ public class GroupCreateRequestDto {
         return Group.createGroup(title, detail, imageUrl, user);
     }
 
-    public String makeImageUrl(String savedImageUrl) {
-        return image == null || image.isEmpty() ? null : IMAGE_DIRECTORY + savedImageUrl;
-    }
 }

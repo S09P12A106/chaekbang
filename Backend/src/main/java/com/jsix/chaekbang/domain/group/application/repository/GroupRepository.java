@@ -6,6 +6,7 @@ import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
 public interface GroupRepository {
 
@@ -17,7 +18,7 @@ public interface GroupRepository {
 
     List<Group> findMostTaggedCountByTagName(String tagName);
 
-    List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds);
+    List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable);
 
     GroupDetailProjectionResponseDto findGroupDetailByGroupId(long groupId);
 

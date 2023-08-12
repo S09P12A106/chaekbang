@@ -12,19 +12,21 @@ public class UserGroupResponseDto {
 
     private long groupId;
     private String title;
-    private String groupImageUrl;
+    private String imageUrl;
     private List<TagResponseDto> tags;
     private int joinedUserCount;
+    private Integer readCount;
 
     public static UserGroupResponseDto from(Group group) {
         return UserGroupResponseDto.builder()
                                    .groupId(group.getId())
                                    .title(group.getTitle())
-                                   .groupImageUrl(group.getImageUrl())
+                                   .imageUrl(group.getImageUrl())
                                    .tags(group.getGroupTags().stream()
-                                            .map(TagResponseDto::fromGroupTag)
-                                            .collect(Collectors.toList()))
+                                              .map(TagResponseDto::fromGroupTag)
+                                              .collect(Collectors.toList()))
                                    .joinedUserCount(group.getJoinedUserCount())
+                                   .readCount(group.getReadCount())
                                    .build();
     }
 }

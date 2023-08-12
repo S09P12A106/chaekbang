@@ -33,9 +33,10 @@ function ToggleBtn() {
   }, [user])
   const handleLogout = () => {
     clearToken()
-    dispatch(logoutAction)
+    dispatch(logoutAction())
     alert('로그아웃 성공')
     navigate('/')
+    window.location.reload()
   }
 
   const toggleBar = () => {

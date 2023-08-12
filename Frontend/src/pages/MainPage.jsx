@@ -8,8 +8,9 @@ import {
   getPopularGroupsApi,
   getRecommendedTagAndGroupsApi,
 } from '../api/mainApi'
-import { getUserInfoApi } from '../api/userApi'
 import { useNavigate } from 'react-router-dom'
+import { getMyGroupsApi } from '../api/myGroupApi'
+import { useSelector } from 'react-redux'
 
 const Container = styled.div`
   height: auto;
@@ -19,8 +20,13 @@ const Container = styled.div`
 function MainPage() {
   const [popularGroup, setPopularGroups] = useState(null)
   const [recommendTag, setRecommendTag] = useState(null)
+  const [myGroup, setMyGroup] = useState(null)
   const [recommendGroup, setRecommendGroup] = useState(null)
   const navigate = useNavigate()
+  const user = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
+  })
+
   useEffect(() => {
     async function getPopularGroups() {
       const data = await getPopularGroupsApi()
@@ -32,8 +38,15 @@ function MainPage() {
       setRecommendTag('#' + tagName)
       setRecommendGroup(groups)
     }
+    async function getMyGroup() {
+      const data = await getMyGroupsApi()
+      setMyGroup(data.data)
+    }
     getPopularGroups()
     getRecommendTagAndGroups()
+    if (user != null) {
+      getMyGroup()
+    }
   }, [])
 
   return (
@@ -41,9 +54,9 @@ function MainPage() {
       <Container>
         <Banner />
         <hr />
-        <GroupSlider title={'인기모임'} grops={popularGroup} />
-        <GroupSlider title={recommendTag} grops={recommendGroup} />
-        <GroupSlider title={'내모임'} grops={getListGroup(8)} />
+        <GroupSlider title={'인기모임'} groups={popularGroup} />
+        <GroupSlider title={recommendTag} groups={recommendGroup} />
+        {myGroup && <GroupSlider title={'내모임'} groups={myGroup} />}
       </Container>
     </MainLayout>
   )

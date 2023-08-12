@@ -31,7 +31,6 @@ const LoginPage = () => {
     // API 요청 보내기
     try {
       const response = await loginApi(requestBody)
-      console.log(response)
       const { newUser, accessToken, refreshToken } = response.data
       // 신규 유저이면 회원가입 페이지로 이동
       if (newUser) {

@@ -50,7 +50,8 @@ public class SecurityConfig {
                     "/api/users/dev/sign-in", "/api/dev/oauth")
             .permitAll()
             .antMatchers(HttpMethod.GET, "/api/groups/recommended", "/api/groups/popular",
-                    "/api/tags/popular", "/api/groups/search*", "/api/groups/{group_id}")
+                    "/api/tags/popular", "/api/groups/search*", "/api/groups/{group_id}",
+                    "/api/groups/{group_id}/members")
             .permitAll()
             .anyRequest()
             .authenticated();

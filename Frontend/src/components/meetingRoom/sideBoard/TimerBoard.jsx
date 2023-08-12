@@ -1,24 +1,18 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { IoIosArrowDown } from 'react-icons/io'
 import { IoIosArrowUp } from 'react-icons/io'
-import { useHandleTime } from './useHandleTime'
+import { useHandleTime } from './timer/useHandleTime'
 import { BoardContext } from '../context/BoardContext'
+import { convertSecond } from './timer/convertTime'
 
 function TimerBoard() {
   const [isRunning, setIsRunning] = useState(false)
-
-  const { whichBtn, setWhichBtn } = useContext(BoardContext)
+  const { whichBtn, setWhichBtn, meetingInfoState, client, currentTime } =
+    useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
-
-  useEffect(() => {
-    if (whichBtn === 3) {
-      setIsToggleOpen(true)
-    } else {
-      setIsToggleOpen(false)
-    }
-  }, [whichBtn])
+  const mySessionId = meetingInfoState[0].mySessionId
 
   const {
     hour,
@@ -32,14 +26,58 @@ function TimerBoard() {
     setIsOn,
   } = useHandleTime()
 
-  // 타이머 시작 버튼을 눌렀을 때
+  // 현재시간 받아오기 > MeetingRoomPage에서 받고 받아옴
+  // [시, 분, 초]로 받아옴
+  useEffect(() => {
+    setHour(currentTime[0])
+    setMinute(currentTime[1])
+    setSecond(currentTime[2])
+  }, [currentTime])
+
+  useEffect(() => {
+    // 메시지를 받았을 때 처리할 로직
+    client.subscribe('/meeting/timer/currentTime', (message) => {
+      const currentTime = JSON.parse(message.body)
+      console.log('Received message:', currentTime)
+    })
+  }, [client])
+
+  useEffect(() => {
+    if (whichBtn === 3) {
+      setIsToggleOpen(true)
+    } else {
+      setIsToggleOpen(false)
+    }
+  }, [whichBtn])
+
+  // 타이머 시작 버튼을 눌렀을 때 > isRunning 중이라면 다시 안눌리도록
   const handleStart = () => {
     setIsRunning(true)
+    const totalTime = convertSecond(hour, minute, second)
+    // 백엔드로 시작 이벤트 전송
+    if (client) {
+      // publish 또는 send
+      // Publish 함수는 (주소, {헤더}, 메세지)로 구성
+      client.publish({
+        destination: '/app/timer/startTimer',
+        body: JSON.stringify({
+          type: 'timer',
+          time: totalTime,
+        }),
+      })
+    }
   }
 
   // 타이머 일시정지 버튼을 눌렀을 때
   const handlePause = () => {
     setIsRunning(false)
+
+    // 백엔드로 일시정지 이벤트 전송
+    if (client) {
+      client.publish({
+        destination: '/app/timer/pauseTimer',
+      })
+    }
   }
 
   // 타이머 초기화 버튼을 눌렀을 때
@@ -48,6 +86,13 @@ function TimerBoard() {
     setHour(0)
     setMinute(0)
     setSecond(0)
+
+    // 백엔드로 리셋 이벤트 전송
+    if (client) {
+      client.publish({
+        destination: '/app/timer/resetTimer',
+      })
+    }
   }
 
   const handleToggle = () => {

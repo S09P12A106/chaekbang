@@ -29,6 +29,9 @@ function TimerBoard() {
   // 현재시간 받아오기 > MeetingRoomPage에서 받고 받아옴
   // [시, 분, 초]로 받아옴
   useEffect(() => {
+    // 시간 다 되면 isRunning 전환
+    currentTime == 0 ? setIsRunning(false) : setIsRunning(true)
+
     setHour(currentTime[0])
     setMinute(currentTime[1])
     setSecond(currentTime[2])
@@ -50,9 +53,13 @@ function TimerBoard() {
     }
   }, [whichBtn])
 
-  // 타이머 시작 버튼을 눌렀을 때 > isRunning 중이라면 다시 안눌리도록
+  // 타이머 시작 버튼을 눌렀을 때
   const handleStart = () => {
+    // isRunning 중이라면 다시 안눌리도록
+    if (isRunning) return
+
     setIsRunning(true)
+
     const totalTime = convertSecond(hour, minute, second)
     // 백엔드로 시작 이벤트 전송
     if (client) {

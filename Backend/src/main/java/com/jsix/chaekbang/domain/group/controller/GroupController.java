@@ -190,4 +190,12 @@ public class GroupController {
         return HttpResponse.okWithData(HttpStatus.OK, "유저 그룹 기록 조회 성공했습니다.",
                 userGroupResponseDtoList);
     }
+
+    @GetMapping("/{group_id}/info")
+    public ResponseEntity<?> searchGroupDetailForUpdate(
+            @PathVariable("group_id")
+            @Min(1) long groupId) {
+        return HttpResponse.okWithData(HttpStatus.OK, "그룹 조회 성공했습니다.",
+                groupSearchUseCase.searchGroupDetailForUpdate(groupId));
+    }
 }

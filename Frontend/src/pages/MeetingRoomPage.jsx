@@ -54,6 +54,12 @@ function MeetingRoomPage({
 
         // console.log('Received message:', currentTime)
       })
+
+      // 이모지 가져오는 구독 > confilct 날거임
+      client.subscribe('/meeting/emoji', (message) => {
+        const getEmoji = JSON.parse(message.body)
+        console.log('Received message:', getEmoji)
+      })
     }
 
     stompClient.activate()

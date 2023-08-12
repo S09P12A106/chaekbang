@@ -8,14 +8,17 @@ function ResultOpBox({ index }) {
   const { whichIndex, setWhichOpBoxContext } = useContext(OpBoxBoardContext)
   const { opBoxHistory } = useContext(OpBoxHistoryContext)
   const [selectedTitle, setSelectedTitle] = useState('')
+  const [selectedUser, setSelectedUser] = useState([])
   const [selectedContent, setSelectedContent] = useState([])
 
   useEffect(() => {
     const selectedOpBox = opBoxHistory[index]
     const title = selectedOpBox ? selectedOpBox.title : ''
-    const content = selectedOpBox ? selectedOpBox.results : []
+    const user = selectedOpBox ? selectedOpBox.users : []
+    const content = selectedOpBox ? selectedOpBox.opinions : []
 
     setSelectedTitle(title)
+    setSelectedUser(user)
     setSelectedContent(content)
   }, [])
 
@@ -29,7 +32,7 @@ function ResultOpBox({ index }) {
       <ContentBox>
         {selectedContent.map((value, index) => (
           <div key={index}>
-            <User>User님의 의견</User>
+            <User>{selectedUser[index]}님의 의견</User>
             <Content>
               <p>{value}</p>
             </Content>

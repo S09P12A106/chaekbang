@@ -3,12 +3,15 @@ import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
 import { OpBoxBoardContext } from '../../context/OpBoxBoardContext'
 import { OpBoxHistoryContext } from '../../context/OpBoxHistoryContext'
+import { useSelector } from 'react-redux'
 
 function ActiveOpBox({ index }) {
   const { whichIndex, setWhichOpBoxContext } = useContext(OpBoxBoardContext)
   const { opBoxHistory } = useContext(OpBoxHistoryContext)
   const [selectedTitle, setSelectedTitle] = useState('')
-  const [opBoxContent, setOpBoxContent] = useState('')
+  const [myOpinion, setMyOpinion] = useState('')
+
+  const userInfo = useSelector((state) => state.rootReducer.loginReducer.user)
 
   useEffect(() => {
     const selectedOpBox = opBoxHistory[index]
@@ -21,9 +24,32 @@ function ActiveOpBox({ index }) {
     setWhichOpBoxContext(num)
   }
 
+  // 제출하기 눌렀을 시
+  const handleSubmit = () => {
+    sendOp()
+    setWhichOpBoxContext(3)
+  }
+
+  const sendOp = () => {
+    try {
+      if (client) {
+        client.publish({
+          destination: '/app/opBox/sendOp',
+          body: JSON.stringify({
+            type: 'opBox',
+            userId: userInfo.userId,
+            opinion: myOpinion,
+          }),
+        })
+      }
+    } catch (error) {
+      console.log('에러요')
+    }
+  }
+
   // 입력하면 값 저장
   const handleContentChange = (e) => {
-    setOpBoxContent(e.target.value)
+    setMyOpinion(e.target.value)
   }
 
   return (
@@ -32,15 +58,13 @@ function ActiveOpBox({ index }) {
       <ContentBox>
         <Content>
           <TextArea
-            value={opBoxContent}
+            value={myOpinion}
             onChange={handleContentChange}
             placeholder="의견을 입력해주세요"
           ></TextArea>
         </Content>
 
-        <CompleteBtn onClick={() => handleOpBoxComp(3)}>
-          의견 보내기
-        </CompleteBtn>
+        <CompleteBtn onClick={() => handleSubmit()}>의견 보내기</CompleteBtn>
       </ContentBox>
       <BackWardBtn onClick={() => handleOpBoxComp(0)}>뒤로가기</BackWardBtn>
     </ActiveOpBoxContainer>

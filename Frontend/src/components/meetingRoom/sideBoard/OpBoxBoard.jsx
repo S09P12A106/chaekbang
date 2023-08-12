@@ -15,7 +15,7 @@ function OpBoxBoard() {
   const [whichIndex, setWhichIndex] = useState(0)
   const [opBoxHistory, setOpBoxHistory] = useState([])
 
-  const { whichBtn, setWhichBtn } = useContext(BoardContext)
+  const { whichBtn, setWhichBtn, client } = useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
 
   useEffect(() => {
@@ -25,6 +25,19 @@ function OpBoxBoard() {
       setIsToggleOpen(false)
     }
   }, [whichBtn])
+
+  // 데이터 받아서 opBoxHistory 넣기
+  useEffect(() => {
+    try {
+      client.subscribe('/meeting/opBox/opBoxList', (message) => {
+        const ResponseData = JSON.parse(message.body)
+        console.log('의견함이 생성')
+        setOpBoxHistory([...opBoxHistory, ResponseData])
+      })
+    } catch (error) {
+      console.log('의견함 받는데 오류', error)
+    }
+  }, [client])
 
   const OpBoxBoardComponents = {
     0: <MainOpBox></MainOpBox>,

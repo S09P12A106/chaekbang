@@ -20,14 +20,31 @@ function CreateOpBox() {
   }
 
   const completeCreate = () => {
-    const opBox = {
-      title: opBoxTitle,
-      state: 'on',
-      results: [123],
-    }
-
-    setOpBoxHistory([...opBoxHistory, opBox])
+    sendOpBox()
     handleOpBoxComp(0)
+  }
+
+  // 생성된 항목 보내기
+  const sendOpBox = () => {
+    // 히스토리에 저장될 데이터
+    const data = {
+      type: 'opBox',
+      title: opBoxTitle,
+      active: true,
+      results: [],
+      users: [],
+    }
+    try {
+      // 데이터 소켓으로 보내기
+      if (client) {
+        client.publish({
+          destination: '/app/opBox/createOpBox',
+          body: JSON.stringify(data),
+        })
+      }
+    } catch (error) {
+      console.log('에러에러')
+    }
   }
 
   return (

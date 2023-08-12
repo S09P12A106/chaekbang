@@ -33,7 +33,10 @@ function RouterApp() {
           <Route path="/mygroup" element={<MyGroupPage />} />
           <Route path="/groups/create" element={<GroupCreatePage />} />
           <Route path="/groups/:id/manage" element={<GroupManagementPage />} />
-          <Route path="/meetings/create" element={<MeetingCreatePage />} />
+          <Route
+            path="/groups/:id/meetings/create"
+            element={<MeetingCreatePage />}
+          />
         </Route>
         <Route path="/mr" element={<MeetingRoomPage />} />
         <Route path="/mw" element={<MeetWaiting />} />

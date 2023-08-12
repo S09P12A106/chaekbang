@@ -4,6 +4,20 @@ import 로고 from '../../assets/로고.png'
 import 이름 from '../../assets/이름.png'
 import TitleInput from './TitleInput'
 import StartDateInput from './StartDateInput'
+import postMeeting from '../../api/createMeetingApi'
+import { useNavigate } from 'react-router-dom'
+
+const Message = styled.div`
+  color: #ff2020;
+  font-size: 18px;
+  padding-left: 10px;
+  padding-top: 3px;
+`
+
+const MessageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
 const Container = styled.div`
   padding-top: 100px;
@@ -67,11 +81,17 @@ const ButtonContainer = styled.div`
 `
 
 function MeetingCreateContainer() {
+  const navigate = useNavigate()
+
+  const currentUrlSplited = window.location.href.split('/')
+  const groupId = currentUrlSplited[currentUrlSplited.length - 3]
+
   const [title, setTitle] = useState('')
   const [datetime, setDatetime] = useState(Date.now())
   const [isValid, setValid] = useState(false)
   const [titleMessage, setTitleMessage] = useState('※ 책방명을 입력해주세요.')
   const [dateMessage, setDateMessage] = useState('※ 시작 시간을 입력해주세요.')
+  const [requestErrorMessage, setRequestErrorMessage] = useState('')
 
   const onChangeTitle = (e) => {
     const { value } = e.target
@@ -111,7 +131,7 @@ function MeetingCreateContainer() {
     setDatetime(value)
   }
 
-  const createMeeting = () => {
+  const createMeeting = async () => {
     const currentDatetime = new Date()
     const selectedDatetime = new Date(datetime)
     if (selectedDatetime < currentDatetime) {
@@ -120,12 +140,23 @@ function MeetingCreateContainer() {
       return
     }
 
+    const startedAt = datetime.split('T').join(' ')
+
     const postData = {
       title: title,
-      data: datetime,
+      startedAt: startedAt,
     }
 
-    console.log('미팅 만들기!!')
+    try {
+      await postMeeting(groupId, postData)
+      navigate(`/groups/detail/${groupId}`)
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setRequestErrorMessage(error.response.data.message)
+      } else {
+        console.log('에러 페이지로 이동해야함!!!')
+      }
+    }
   }
 
   return (
@@ -145,6 +176,11 @@ function MeetingCreateContainer() {
               onChangeDatetime={onChangeDatetime}
               dateMessage={dateMessage}
             ></StartDateInput>
+            <MessageContainer>
+              <Message>
+                {requestErrorMessage ? '※ ' + requestErrorMessage : ''}
+              </Message>
+            </MessageContainer>
             <ButtonContainer>
               {isValid ? (
                 <CreateButton onClick={createMeeting}>책방 만들기</CreateButton>

@@ -13,6 +13,7 @@ import SignUpPage from '../pages/SignUpPage'
 import LoginPage from '../pages/LoginPage'
 import PrivateRoute from './PrivateRoute'
 import PublicRoute from './PublicRoute'
+import MeetingCreatePage from '../pages/MeetingCreatePage'
 
 import TempWaitingPage from '../pages/TempWaitingPage'
 import MeetingPage from '../pages/MeetingPage'
@@ -32,6 +33,7 @@ function RouterApp() {
           <Route path="/mygroup" element={<MyGroupPage />} />
           <Route path="/groups/create" element={<GroupCreatePage />} />
           <Route path="/groups/manage" element={<GroupManagementPage />} />
+          <Route path="/meetings/create" element={<MeetingCreatePage />} />
         </Route>
         <Route path="/mr" element={<MeetingRoomPage />} />
         <Route path="/mw" element={<MeetWaiting />} />

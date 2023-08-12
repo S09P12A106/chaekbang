@@ -203,10 +203,7 @@ function GroupCreatePage() {
     }
 
     try {
-      await postGroup(
-        groupData,
-        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2IiwiZXhwIjoxNjkxNTQ4NjM1fQ.BmHtCJB7K4rU3CJBgI4n_uGNfslIUyMRvddRp0cqxD0',
-      )
+      await postGroup(groupData)
       navigate('/mygroup')
     } catch (error) {
       if (error.response && error.response.status === 400) {

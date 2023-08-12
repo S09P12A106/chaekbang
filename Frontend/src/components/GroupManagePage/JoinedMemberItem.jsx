@@ -90,7 +90,7 @@ function JoinedMemberItem({ user, underLine, onRemove }) {
           </TextContainer>
         </MemberInfo>
         <ButtonContainer>
-          <OutButton onClick={() => onRemove(user.userId)}>내보내기</OutButton>
+          <OutButton onClick={() => onRemove(user.id)}>내보내기</OutButton>
         </ButtonContainer>
       </ContentContainer>
       {underLine ? <DevideLine></DevideLine> : null}

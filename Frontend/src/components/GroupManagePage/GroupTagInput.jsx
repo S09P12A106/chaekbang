@@ -74,6 +74,8 @@ const MessageContainer = styled.div`
 `
 
 function GroupTagInput(props) {
+  let tagNamesCopy = props.inputs.tagNames
+
   const [input, setInput] = useState({
     tag: '',
   })
@@ -90,6 +92,16 @@ function GroupTagInput(props) {
     setInput({
       [name]: value.replace(/\s+/g, ''),
     })
+  }
+
+  const isTagNamesSame = () => {
+    if (
+      props.origins['tagNames'].every((item) => tagNamesCopy.includes(item)) &&
+      tagNamesCopy.every((item) => props.origins['tagNames'].includes(item))
+    ) {
+      return true
+    }
+    return false
   }
 
   const handleOnKeyPress = (e) => {
@@ -122,7 +134,7 @@ function GroupTagInput(props) {
         })
         return
       }
-
+      tagNamesCopy = tagNamesCopy.concat(tag)
       props.setInputs({
         ...props.inputs,
         ['tagNames']: props.inputs.tagNames.concat(tag),
@@ -133,11 +145,21 @@ function GroupTagInput(props) {
       setInput({
         tag: '',
       })
+      if (
+        props.origins['title'] != props.inputs.title ||
+        props.origins['detail'] != props.inputs.detail ||
+        !isTagNamesSame()
+      ) {
+        props.setIsSomethingChanged(true)
+      } else {
+        props.setIsSomethingChanged(false)
+      }
     }
   }
 
   const clickCancelTag = (e) => {
     const innerText = e.target.parentNode.innerText.split(' ')[0].slice(1, -1)
+    tagNamesCopy = tagNamesCopy.filter((name) => name != innerText)
     props.setInputs({
       ...props.inputs,
       ['tagNames']: props.inputs.tagNames.filter(
@@ -147,8 +169,19 @@ function GroupTagInput(props) {
     setMessage({
       errorMessage: '',
     })
+    if (
+      props.origins['title'] != props.inputs.title ||
+      props.origins['detail'] != props.inputs.detail ||
+      !isTagNamesSame()
+    ) {
+      props.setIsSomethingChanged(true)
+    } else {
+      props.setIsSomethingChanged(false)
+    }
   }
-
+  if (props.inputs.tagNames === null) {
+    return null
+  }
   return (
     <FormContainer>
       <InfoContainer>태그 입력</InfoContainer>

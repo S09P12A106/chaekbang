@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import GroupInfoInput from './GroupInfoInput'
 import GroupTagInput from './GroupTagInput'
-import { getGroup } from './GroupDummy'
 import Swal from 'sweetalert2'
 import GroupImageInput from './GroupImageInput'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import patchGroup from '../../api/modifyGroupApi'
+import { jwtBackApiInstance } from '../../api/http'
+
+const groupId = 1
 
 const Container = styled.div`
   max-width: 960px;
@@ -42,6 +47,18 @@ const GreenText = styled.div`
   color: #088a08;
 `
 
+const Message = styled.div`
+  color: #ff2020;
+  font-size: 18px;
+  padding-left: 10px;
+  padding-top: 3px;
+`
+
+const MessageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
 const CreateButton = styled.div`
   background-color: #00bbc6;
   padding-left: 20px;
@@ -76,28 +93,83 @@ const ButtonContainer = styled.div`
 `
 
 function UpdateGroup() {
-  const dummy = getGroup()
+  const currentUrlSplited = window.location.href.split('/')
+  const groupId = currentUrlSplited[currentUrlSplited.length - 2]
 
-  const [inputs, setInputs] = useState({
-    title: dummy.title,
-    detail: dummy.detail,
-    question: dummy.question,
-    tagNames: dummy.tagNames,
+  const navigate = useNavigate()
+
+  const [origins, setOrigins] = useState({
+    title: null,
+    detail: null,
+    tagNames: null,
   })
+  const [inputs, setInputs] = useState({
+    title: null,
+    detail: null,
+    tagNames: null,
+    imageUrl: null,
+  })
+
+  useEffect(() => {
+    const fetchGroup = async () => {
+      try {
+        setInputs({
+          ['title']: null,
+          ['detail']: null,
+          ['tagNames']: null,
+          ['imageUrl']: null,
+        })
+        setInputs({
+          ['title']: null,
+          ['detail']: null,
+          ['tagNames']: null,
+        })
+        const jwtHttp = jwtBackApiInstance()
+        const URL = `api/groups/${groupId}/info`
+        const response = await jwtHttp.get(URL)
+
+        setInputs({
+          title: response.data.data.title,
+          detail: response.data.data.detail,
+          tagNames: response.data.data.tags.map((tag) => tag.tagName),
+          imageUrl: response.data.data.imageUrl,
+        })
+        setOrigins({
+          title: response.data.data.title,
+          detail: response.data.data.detail,
+          tagNames: response.data.data.tags.map((tag) => tag.tagName),
+        })
+      } catch (error) {
+        console.log('에러페이지')
+      }
+    }
+    fetchGroup()
+  }, [])
 
   const [errorMessages, setMessages] = useState({
     titleMessage: '',
     detailMessage: '',
-    questionMessage: '',
   })
 
   const [isValid, setValid] = useState(true)
-  const [image, setImage] = useState()
+  const [image, setImage] = useState(null)
   const [imageMessage, setImageMessage] = useState()
   const [isImageChanged, setIsImageChanged] = useState(false)
 
-  const { title, detail, question, tagNames } = inputs
-  const { titleMessage, detailMessage, questionMessage } = errorMessages
+  const { title, detail, tagNames, imageUrl } = inputs
+  const { titleMessage, detailMessage } = errorMessages
+  const [requestErrorMessage, setRequestErrorMessage] = useState('')
+  const [isSomethingChanged, setIsSomethingChanged] = useState(false)
+
+  const isTagNamesSame = () => {
+    if (
+      origins['tagNames'].every((item) => tagNames.includes(item)) &&
+      tagNames.every((item) => origins['tagNames'].includes(item))
+    ) {
+      return true
+    }
+    return false
+  }
 
   const onChangeTitle = (e) => {
     const { value, name } = e.target
@@ -118,7 +190,7 @@ function UpdateGroup() {
         ...errorMessages,
         ['titleMessage']: '',
       })
-      if (detailMessage === '' && questionMessage === '') {
+      if (detailMessage === '') {
         setValid(true)
       }
     }
@@ -126,6 +198,16 @@ function UpdateGroup() {
       ...inputs,
       [name]: value,
     })
+
+    if (
+      origins['title'] != value ||
+      origins['detail'] != detail ||
+      !isTagNamesSame()
+    ) {
+      setIsSomethingChanged(true)
+    } else {
+      setIsSomethingChanged(false)
+    }
   }
 
   const onChangeDetail = (e) => {
@@ -141,7 +223,7 @@ function UpdateGroup() {
         ...errorMessages,
         ['detailMessage']: '',
       })
-      if (questionMessage === '' && titleMessage === '') {
+      if (titleMessage === '') {
         setValid(true)
       }
     }
@@ -149,35 +231,16 @@ function UpdateGroup() {
       ...inputs,
       [name]: value,
     })
-  }
 
-  const onChangeQuestion = (e) => {
-    const { value, name } = e.target
-    if (value.length == 0) {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '※ 모임 질문을 입력해주세요.',
-      })
-      setValid(false)
-    } else if (value.length > 100) {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '※ 질문을 100자 이내로 입력해주세요.',
-      })
-      setValid(false)
+    if (
+      origins['title'] != title ||
+      origins['detail'] != value ||
+      !isTagNamesSame()
+    ) {
+      setIsSomethingChanged(true)
     } else {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '',
-      })
-      if (detailMessage === '' && titleMessage === '') {
-        setValid(true)
-      }
+      setIsSomethingChanged(false)
     }
-    setInputs({
-      ...inputs,
-      [name]: value,
-    })
   }
 
   const updateGroup = () => {
@@ -189,15 +252,28 @@ function UpdateGroup() {
       cancelButtonColor: '#d33',
       confirmButtonText: '수정',
       cancelButtonText: '취소',
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const postData = {
-          ...inputs,
-          image,
-          isImageChanged,
+        const groupData = new FormData()
+        groupData.append('title', inputs.title)
+        groupData.append('detail', inputs.detail)
+        groupData.append('tagNames', [inputs.tagNames])
+        groupData.append('imageChanged', isImageChanged)
+        if (image !== null) {
+          groupData.append('image', image)
         }
-        console.log(postData)
-        console.log('수정하기')
+
+        try {
+          await patchGroup(groupData, groupId)
+          navigate('/mygroup')
+        } catch (error) {
+          if (error.response && error.response.status === 400) {
+            setRequestErrorMessage(error.response.data.message)
+          } else {
+            // 페이지 이동 삽입
+            console.log('에러 페이지로 이동해야함!!!')
+          }
+        }
       }
     })
   }
@@ -213,13 +289,11 @@ function UpdateGroup() {
       placeholder: '모임에 대한 소개를 입력해주세요.',
       height: 320,
     },
-    question: {
-      info: '가입 질문',
-      placeholder: '모임 가입자들에게 물어볼 질문을 100자 이내로 입력해주세요.',
-      height: 130,
-    },
   }
 
+  if (!Object.values(inputs).every((elem) => elem !== null)) {
+    return null
+  }
   return (
     <Container>
       <GroupInfoInput
@@ -238,31 +312,30 @@ function UpdateGroup() {
         value={detail}
       ></GroupInfoInput>
       <HrTag></HrTag>
-      <GroupTagInput
-        setInputs={setInputs}
-        inputs={inputs}
-        tagNames={tagNames}
-      ></GroupTagInput>
-      <HrTag></HrTag>
       <GroupImageInput
         info={'모임 배경 사진'}
         imageMessage={imageMessage}
         setImageMessage={setImageMessage}
         setImage={setImage}
-        originImageSource={dummy.imageUrl}
+        originImageSource={inputs.imageUrl}
         setIsImageChanged={setIsImageChanged}
       ></GroupImageInput>
       <HrTag></HrTag>
-      <GroupInfoInput
-        errorMessage={questionMessage}
-        formOption={formOptions.question}
-        onChange={onChangeQuestion}
-        name={'question'}
-        value={question}
-      ></GroupInfoInput>
+      <GroupTagInput
+        setInputs={setInputs}
+        inputs={inputs}
+        tagNames={tagNames}
+        setIsSomethingChanged={setIsSomethingChanged}
+        origins={origins}
+      ></GroupTagInput>
+      <MessageContainer>
+        <Message>
+          {requestErrorMessage ? '※ ' + requestErrorMessage : ''}
+        </Message>
+      </MessageContainer>
 
       <ButtonContainer>
-        {isValid ? (
+        {isValid && (isSomethingChanged || isImageChanged) ? (
           <CreateButton onClick={updateGroup}>모임 수정하기</CreateButton>
         ) : (
           <NotCreateButton>모임 수정하기</NotCreateButton>

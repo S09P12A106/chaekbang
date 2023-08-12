@@ -151,10 +151,8 @@ function AppliedMemberItem({ user, underLine, onApprove, onDeny, question }) {
           </TextContainer>
         </MemberInfo>
         <ButtonContainer>
-          <ApproveButton onClick={() => onApprove(user.userId)}>
-            승인
-          </ApproveButton>
-          <DenyButton onClick={() => onDeny(user.userId)}>거절</DenyButton>
+          <ApproveButton onClick={() => onApprove(user.id)}>승인</ApproveButton>
+          <DenyButton onClick={() => onDeny(user.id)}>거절</DenyButton>
         </ButtonContainer>
       </ContentContainer>
       {isOpened ? (

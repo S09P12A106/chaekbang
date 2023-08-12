@@ -12,7 +12,7 @@ const MenuTab = ({ menus, activeTab, setActiveTab }) => {
       {menus.map((menu, index) => {
         const ok = activeTab === index ? 'ok' : 'no'
         return (
-          <Tab key={index} focused={ok} onClick={() => handleTabClick(index)}>
+          <Tab key={index} $focused={ok} onClick={() => handleTabClick(index)}>
             {menu}
           </Tab>
         )
@@ -29,7 +29,7 @@ const TabContainer = styled.div`
 const Tab = styled.span`
   display: inline-block;
   border-bottom: ${(props) => {
-    return props.focused == 'ok' ? '0.3rem solid black' : 'none'
+    return props.$focused == 'ok' ? '0.3rem solid black' : 'none'
   }};
   margin-left: 2rem;
   padding-bottom: 0.3rem;

@@ -16,6 +16,7 @@ function ProfileDropdown() {
     dispatch(logoutAction())
     alert('로그아웃 성공')
     navigate('/')
+    window.location.reload()
   }
 
   return (

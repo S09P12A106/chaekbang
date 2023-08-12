@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import Tag from '../common/Tag'
 import SearchIcon from '../../assets/SearchIcon.svg'
 import COLORS from '../../constants/colors'
+import TagBlock from './TagBlock'
 
 const Container = styled.div`
   max-width: 600px;
@@ -45,43 +45,21 @@ const CustomInput = styled.input`
   color: ${COLORS.GREY};
   border-radius: 40px;
 `
-const TagsBlock = styled.div`
-  margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  div {
-    margin-top: 5px;
-    margin-right: 10px;
-  }
-`
-
-function SearchInputBlock({ tags }) {
-  const onSubmit = () => {
-    alert('!')
-  }
-  const onHandlerKeyUp = (e) => {
-    if (e.key === 'Enter') {
-      onSubmit()
-    }
-  }
-
+function SearchInputBlock({ tags, keyUp, submit, input, onChange }) {
   return (
     <Container>
       <InputBlock>
         <CustomInput
           placeholder="검색어를 입력해주세요"
-          onKeyUp={onHandlerKeyUp}
+          value={input}
+          onKeyUp={keyUp}
+          onChange={onChange}
         />
-        <SearchIconBtn onClick={onSubmit}>
+        <SearchIconBtn onClick={submit}>
           <img src={SearchIcon} alt="search icon" />
         </SearchIconBtn>
       </InputBlock>
-      <TagsBlock>
-        {tags &&
-          tags.map((tag, index) => <Tag value={tag.tagName} key={index}></Tag>)}
-      </TagsBlock>
+      <TagBlock tags={tags} />
     </Container>
   )
 }

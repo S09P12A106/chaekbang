@@ -1,14 +1,14 @@
-import { apiInstance, backApiInstance } from './http'
-import axios from 'axios'
-const JSON_SERBER = 'http://localhost:4000'
+import { backApiInstance } from './http'
 
-const getSearchGroupApi = async () => {}
+const http = backApiInstance()
 
-const getTagsApi = async () => {
-  //   const URL = '/api/tags/popular'
-  const URL = '/tags'
-  const response = await axios.get(JSON_SERBER + URL)
-  return response.data
+export const getSearchGroupApi = async (query) => {
+  const URL = `/api/groups/search?${query}`
+  return (await http.get(URL)).data
 }
 
-export { getTagsApi }
+export const getTagsApi = async () => {
+  const URL = '/api/tags/popular'
+  const response = await http.get(URL)
+  return response.data
+}

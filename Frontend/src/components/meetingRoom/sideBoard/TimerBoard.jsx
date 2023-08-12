@@ -3,16 +3,15 @@ import styled from 'styled-components'
 import COLORS from '../../../constants/colors'
 import { IoIosArrowDown } from 'react-icons/io'
 import { IoIosArrowUp } from 'react-icons/io'
-import { useHandleTime } from './useHandleTime'
+import { useHandleTime } from './timer/useHandleTime'
 import { BoardContext } from '../context/BoardContext'
-import { CompatClient } from '@stomp/stompjs'
-import SockJS from 'sockjs-client'
+import { convertSecond } from './timer/convertTime'
 
 function TimerBoard() {
   const [isRunning, setIsRunning] = useState(false)
-  const { whichBtn, setWhichBtn, meetingInfoState } = useContext(BoardContext)
+  const { whichBtn, setWhichBtn, meetingInfoState, client, currentTime } =
+    useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
-  const [client, setClient] = useState(null)
   const mySessionId = meetingInfoState[0].mySessionId
 
   const {
@@ -27,36 +26,21 @@ function TimerBoard() {
     setIsOn,
   } = useHandleTime()
 
-  // sock연결
+  // 현재시간 받아오기 > MeetingRoomPage에서 받고 받아옴
+  // [시, 분, 초]로 받아옴
   useEffect(() => {
-    // STOMP 클라이언트 초기화
-    const stompClient = new CompatClient()
-    const socket = new SockJS('https://dev.chaekbang.xyz')
+    setHour(currentTime[0])
+    setMinute(currentTime[1])
+    setSecond(currentTime[2])
+  }, [currentTime])
 
-    stompClient.webSocketFactory = () => socket
-
-    stompClient.onConnect = () => {
-      console.log('Connected to WebSocket')
-
-      // 메시지를 받았을 때 처리할 로직
-      client.subscribe('/user/topic/timerResponse', (message) => {
-        const timerResponse = JSON.parse(message.body)
-        console.log('Received message:', timerResponse)
-        // timerResponse에는 백엔드에서 보낸 정보가 들어있음
-        // 들어오는 정보보고 띄우는 작업 진행 ㄱ
-      })
-    }
-
-    stompClient.activate()
-
-    setClient(stompClient)
-
-    return () => {
-      if (stompClient) {
-        stompClient.deactivate()
-      }
-    }
-  }, [])
+  useEffect(() => {
+    // 메시지를 받았을 때 처리할 로직
+    client.subscribe('/meeting/timer/currentTime', (message) => {
+      const currentTime = JSON.parse(message.body)
+      console.log('Received message:', currentTime)
+    })
+  }, [client])
 
   useEffect(() => {
     if (whichBtn === 3) {
@@ -66,18 +50,20 @@ function TimerBoard() {
     }
   }, [whichBtn])
 
-  // 타이머 시작 버튼을 눌렀을 때
+  // 타이머 시작 버튼을 눌렀을 때 > isRunning 중이라면 다시 안눌리도록
   const handleStart = () => {
     setIsRunning(true)
-
+    const totalTime = convertSecond(hour, minute, second)
     // 백엔드로 시작 이벤트 전송
     if (client) {
       // publish 또는 send
       // Publish 함수는 (주소, {헤더}, 메세지)로 구성
       client.publish({
-        destination: '/app/startTimer',
-        headers: { sessionId: mySessionId },
-        body: JSON.stringify({ hour: hour, minute: minute, second: second }),
+        destination: '/app/timer/startTimer',
+        body: JSON.stringify({
+          type: 'timer',
+          time: totalTime,
+        }),
       })
     }
   }
@@ -89,8 +75,7 @@ function TimerBoard() {
     // 백엔드로 일시정지 이벤트 전송
     if (client) {
       client.publish({
-        destination: '/app/pauseTimer',
-        headers: { sessionId: mySessionId },
+        destination: '/app/timer/pauseTimer',
       })
     }
   }
@@ -105,8 +90,7 @@ function TimerBoard() {
     // 백엔드로 리셋 이벤트 전송
     if (client) {
       client.publish({
-        destination: '/app/resetTimer',
-        headers: { sessionId: mySessionId },
+        destination: '/app/timer/resetTimer',
       })
     }
   }

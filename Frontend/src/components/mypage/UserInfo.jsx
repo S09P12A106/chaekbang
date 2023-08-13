@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { styled } from 'styled-components'
-import Modal from '../common/ModalWindow'
-import NicknameModal from './NicknameModal'
 
 const Container = styled.div``
 
@@ -80,45 +78,21 @@ function UserInfoModifiable({ name, value, updateNickname }) {
   )
 }
 
-function dateToString(date) {
-  return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
-}
-
-function UserInfo({ user, setNickname, nickname }) {
-  const updateNickname = () => {
-    setModalOpened(true)
-  }
-
-  const [modalOpened, setModalOpened] = useState(false)
-
+function UserInfo({ user }) {
   return (
     <Container>
-      <Modal isOpen={modalOpened} width={'350px'}>
-        <NicknameModal
-          setModalOpened={setModalOpened}
-          setNickname={setNickname}
-          nickname={nickname}
-        ></NicknameModal>
-      </Modal>
       <CenteredContainer>
         <ImageContainer>
           <Image src={user.profileImageUrl}></Image>
         </ImageContainer>
       </CenteredContainer>
-      <UserInfoModifiable
-        name={'닉네임'}
-        value={nickname}
-        updateNickname={updateNickname}
-      ></UserInfoModifiable>
+      <UserInfoFixed name={'닉네임'} value={user.nickname}></UserInfoFixed>
       <UserInfoFixed name={'이메일'} value={user.email}></UserInfoFixed>
       <UserInfoFixed
         name={'성별'}
-        value={user.nickname === 'M' ? '남성' : '여성'}
+        value={user.gender === 'M' ? '남성' : '여성'}
       ></UserInfoFixed>
-      <UserInfoFixed
-        name={'생년월일'}
-        value={dateToString(user.birthDate)}
-      ></UserInfoFixed>
+      <UserInfoFixed name={'생년월일'} value={user.birthDate}></UserInfoFixed>
     </Container>
   )
 }

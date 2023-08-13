@@ -157,7 +157,7 @@ function AppliedMemberItem({ user, underLine, onApprove, onDeny, question }) {
       </ContentContainer>
       {isOpened ? (
         <QuestionContainer>
-          <Question>Q . {question}</Question>
+          <Question>{question}</Question>
           <Answer>{user.answer}</Answer>
         </QuestionContainer>
       ) : null}

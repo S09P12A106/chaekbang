@@ -94,7 +94,7 @@ function AppliedMember() {
             underLine={index !== users.length - 1}
             onApprove={onApprove}
             onDeny={onDeny}
-            question={'왜 참여하고 싶니이이잉?'}
+            question={'가입 동기'}
           ></AppliedMemberItem>
         ))}
       </MemberList>

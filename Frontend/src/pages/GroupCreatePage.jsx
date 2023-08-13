@@ -93,14 +93,12 @@ function GroupCreatePage() {
   const [inputs, setInputs] = useState({
     title: '',
     detail: '',
-    question: '',
     tagNames: [],
   })
 
   const [errorMessages, setMessages] = useState({
     titleMessage: '※ 모임 이름을 입력해주세요.',
     detailMessage: '※ 모임 소개를 입력해주세요.',
-    questionMessage: '※ 모임 질문을 입력해주세요.',
   })
 
   const [isValid, setValid] = useState(false)
@@ -108,8 +106,8 @@ function GroupCreatePage() {
   const [imageMessage, setImageMessage] = useState('')
   const [requestErrorMessage, setRequestErrorMessage] = useState('')
 
-  const { title, detail, question, tagNames } = inputs
-  const { titleMessage, detailMessage, questionMessage } = errorMessages
+  const { title, detail, tagNames } = inputs
+  const { titleMessage, detailMessage } = errorMessages
 
   const onChangeTitle = (e) => {
     const { value, name } = e.target
@@ -130,7 +128,7 @@ function GroupCreatePage() {
         ...errorMessages,
         ['titleMessage']: '',
       })
-      if (detailMessage === '' && questionMessage === '') {
+      if (detailMessage === '') {
         setValid(true)
       }
     }
@@ -153,36 +151,7 @@ function GroupCreatePage() {
         ...errorMessages,
         ['detailMessage']: '',
       })
-      if (questionMessage === '' && titleMessage === '') {
-        setValid(true)
-      }
-    }
-    setInputs({
-      ...inputs,
-      [name]: value,
-    })
-  }
-
-  const onChangeQuestion = (e) => {
-    const { value, name } = e.target
-    if (value.length == 0) {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '※ 모임 질문을 입력해주세요.',
-      })
-      setValid(false)
-    } else if (value.length > 100) {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '※ 질문을 100자 이내로 입력해주세요.',
-      })
-      setValid(false)
-    } else {
-      setMessages({
-        ...errorMessages,
-        ['questionMessage']: '',
-      })
-      if (detailMessage === '' && titleMessage === '') {
+      if (titleMessage === '') {
         setValid(true)
       }
     }
@@ -197,7 +166,6 @@ function GroupCreatePage() {
     groupData.append('title', inputs.title)
     groupData.append('detail', inputs.detail)
     groupData.append('tagNames', [inputs.tagNames])
-    groupData.append('question', inputs.question)
     if (image !== null) {
       groupData.append('image', image)
     }
@@ -236,12 +204,6 @@ function GroupCreatePage() {
           name={'detail'}
         ></GroupInfoInput>
         <HrTag></HrTag>
-        <GroupTagInput
-          setInputs={setInputs}
-          inputs={inputs}
-          tagNames={tagNames}
-        ></GroupTagInput>
-        <HrTag></HrTag>
         <GroupImageInput
           info={'모임 배경 사진'}
           imageMessage={imageMessage}
@@ -249,16 +211,12 @@ function GroupCreatePage() {
           setImage={setImage}
         ></GroupImageInput>
         <HrTag></HrTag>
-        <GroupInfoInput
-          errorMessage={questionMessage}
-          info={'가입 질문'}
-          placeholder={
-            '모임 가입자들에게 물어볼 질문을 100자 이내로 입력해주세요.'
-          }
-          height={130}
-          onChange={onChangeQuestion}
-          name={'question'}
-        ></GroupInfoInput>
+        <GroupTagInput
+          setInputs={setInputs}
+          inputs={inputs}
+          tagNames={tagNames}
+        ></GroupTagInput>
+
         <MessageContainer>
           <Message>
             {requestErrorMessage ? '※ ' + requestErrorMessage : ''}

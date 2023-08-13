@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 
 const Container = styled.div``
@@ -25,6 +26,7 @@ const GroupContainer = styled.div`
 const Image = styled.img`
   width: 70px;
   height: 70px;
+  cursor: pointer;
 `
 
 const GroupTitle = styled.div`
@@ -34,9 +36,13 @@ const GroupTitle = styled.div`
 `
 
 function GroupItem({ group }) {
+  const navigate = useNavigate()
+  const onClick = (e) => {
+    navigate(`/groups/detail/${group.groupId}`)
+  }
   return (
     <GroupContainer>
-      <Image src={group.imageUrl}></Image>
+      <Image src={group.imageUrl} onClick={onClick}></Image>
       <GroupTitle>{group.title}</GroupTitle>
     </GroupContainer>
   )
@@ -47,7 +53,7 @@ function GroupList({ title, groups }) {
     <Container>
       <Title>{title}</Title>
       {groups.map((group, index) => (
-        <GroupItem key={index} group={group}></GroupItem>
+        <GroupItem key={group.groupId} group={group}></GroupItem>
       ))}
       <GrayLine></GrayLine>
     </Container>

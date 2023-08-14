@@ -17,6 +17,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     private final JpaGroupRepository jpaGroupRepository;
     private final QueryGroupRepository groupQueryRepository;
+    private final JpaGroupUserRepository jpaGroupUserRepository;
 
     @Override
     public Group save(Group group) {
@@ -64,5 +65,10 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public List<GroupParticipantResponseDto> findByIdAndLeaderWithAnswer(long userId, long leaderId) {
         return groupQueryRepository.findByIdAndLeaderWithAnswer(userId, leaderId);
+    }
+
+    @Override
+    public boolean existsByGroupIdAndUserId(long groupId, long userId) {
+        return jpaGroupUserRepository.existsByGroup_IdAndStatusAndUser_Id(groupId, UserStatus.WAITING, userId);
     }
 }

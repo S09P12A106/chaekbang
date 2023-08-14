@@ -152,7 +152,7 @@ public class GroupSearchUseCase {
                        .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GroupDetailResponseDto searchGroupDetailForUpdate(long groupId) {
         GroupDetailProjectionResponseDto groupDetailByGroupId = groupRepository.findGroupDetailByGroupId(
                 groupId);
@@ -166,6 +166,11 @@ public class GroupSearchUseCase {
         } catch (NullPointerException e) {
             throw new NotFoundResourceException("그룹이 존재하지 않습니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public boolean searchGroupUserStatus(long groupId, AuthUser authUser) {
+        return groupRepository.existsByGroupIdAndUserId(groupId, authUser.getUserId());
     }
 
 }

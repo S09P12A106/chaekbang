@@ -5,6 +5,7 @@ import com.jsix.chaekbang.domain.group.application.GroupJoinUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupModifyUseCase;
 import com.jsix.chaekbang.domain.group.application.GroupSearchUseCase;
 import com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto;
+import com.jsix.chaekbang.domain.group.dto.GroupJoinRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupModifyRequestDto;
 import com.jsix.chaekbang.domain.group.dto.GroupSearchRequestDto;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,8 +90,8 @@ public class GroupController {
 
     @PostMapping("/{group_id}/applications")
     public ResponseEntity<?> joinGroup(@PathVariable("group_id") @Min(1) Long groupId,
-            @JwtLoginUser AuthUser user, @RequestParam @NotBlank String answer) {
-        groupJoinUseCase.joinGroup(groupId, user, answer);
+            @JwtLoginUser AuthUser user, @RequestBody @Valid GroupJoinRequestDto groupJoinRequestDto) {
+        groupJoinUseCase.joinGroup(groupId, user, groupJoinRequestDto);
         return HttpResponse.ok(HttpStatus.OK, "그룹 참여 신청 성공했습니다.");
     }
 
@@ -197,5 +199,13 @@ public class GroupController {
             @Min(1) long groupId) {
         return HttpResponse.okWithData(HttpStatus.OK, "그룹 조회 성공했습니다.",
                 groupSearchUseCase.searchGroupDetailForUpdate(groupId));
+    }
+
+    @GetMapping("/{group_id}/status")
+    public ResponseEntity<?> searchGroupUserStatus(
+            @PathVariable("group_id")
+            @Min(1) long groupId, @JwtLoginUser AuthUser user) {
+        return HttpResponse.okWithData(HttpStatus.OK, "그룹 참여 신청 여부 조회 성공했습니다.",
+                groupSearchUseCase.searchGroupUserStatus(groupId, user));
     }
 }

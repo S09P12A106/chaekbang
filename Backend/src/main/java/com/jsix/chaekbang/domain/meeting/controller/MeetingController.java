@@ -40,7 +40,7 @@ public class MeetingController {
     }
 
     @Validated
-    @GetMapping("/{group_id}/meeting")
+    @GetMapping("/{group_id}/meetings")
     public ResponseEntity<?> searchMeeting(@PathVariable("group_id") long groupId,
             @RequestParam @Min(0) int pageNum, @RequestParam @Min(1) int pageSize) {
         List<MeetingSearchResponseDto> list = meetingSearchUseCase.searchMeeting(groupId,

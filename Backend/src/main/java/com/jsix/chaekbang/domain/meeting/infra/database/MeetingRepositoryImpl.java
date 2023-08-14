@@ -25,4 +25,9 @@ public class MeetingRepositoryImpl implements MeetingRepository {
             Pageable pageable) {
         return queryMeetingRepository.findByGroupIdWithSlicing(groupId, pageable);
     }
+
+    @Override
+    public Long findNotClosedMeetingCountByGroupId(long groupId) {
+        return queryMeetingRepository.findNotClosedMeetingCountByGroupId(groupId);
+    }
 }

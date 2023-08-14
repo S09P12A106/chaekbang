@@ -9,9 +9,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface JpaGroupRepository extends JpaRepository<Group, Long> {
 
-    @Modifying
-    @Query("update Group g set g.readCount = g.readCount + 1 where g.id = :groupId")
-    int plusReadCount(@Param("groupId") long groupId);
-
     Optional<Group> findById(Long id);
 }

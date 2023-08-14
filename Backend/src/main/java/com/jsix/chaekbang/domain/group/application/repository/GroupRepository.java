@@ -30,4 +30,6 @@ public interface GroupRepository {
 
     List<GroupParticipantResponseDto> findByIdAndLeaderWithAnswer(long userId, long leaderId);
 
+    boolean existsByGroupIdAndUserId(long userId, long groupId);
+
 }

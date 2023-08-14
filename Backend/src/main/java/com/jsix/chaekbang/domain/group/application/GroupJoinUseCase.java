@@ -6,6 +6,7 @@ import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.History;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupJoinRequestDto;
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.config.webmvc.AuthUser;
@@ -24,12 +25,12 @@ public class GroupJoinUseCase {
     private final GroupHistoryRepository groupHistoryRepository;
 
     @Transactional
-    public void joinGroup(Long groupId, AuthUser authUser, String answer) {
+    public void joinGroup(Long groupId, AuthUser authUser, GroupJoinRequestDto groupJoinRequestDto) {
         User user = validateUser(authUser.getUserId());
         Group group = groupRepository.findById(groupId).orElseThrow(
                 () -> new NotFoundResourceException("해당 그룹이 존재하지 않습니다."));
 
-        group.joinGroup(user, answer);
+        group.joinGroup(user, groupJoinRequestDto.getAnswer());
     }
 
     @Transactional

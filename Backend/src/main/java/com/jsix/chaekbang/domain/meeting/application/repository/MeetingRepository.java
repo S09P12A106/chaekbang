@@ -10,4 +10,6 @@ public interface MeetingRepository {
     Meeting save(Meeting meeting);
 
     List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId, Pageable pageable);
+    
+    Long findNotClosedMeetingCountByGroupId(long groupId);
 }

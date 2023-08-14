@@ -53,8 +53,7 @@ public class SecurityConfig {
                     "/api/tags/popular", "/api/groups/search*", "/api/groups/{group_id}",
                     "/api/groups/{group_id}/members")
             .permitAll()
-            .anyRequest()
-            .authenticated();
+            .antMatchers("/api/**").authenticated();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

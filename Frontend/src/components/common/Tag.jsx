@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   display: inline-block;
@@ -21,13 +22,29 @@ const Container = styled.div`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
+  cursor: pointer;
 `
 
 function Tag({ value }) {
-  const [active, setActive] = useState(false)
-  const text = `#${value}`
+  const tagId = value.tagId
+
+  const navigate = useNavigate()
+
+  const searchTag = () => {
+    const currentUrl = window.location.href
+    if (currentUrl.endsWith('/search')) {
+      navigate('/search', { state: { tagId: tagId } })
+      window.location.reload()
+    } else {
+      navigate('/search', { state: { tagId: tagId } })
+    }
+  }
+
+  const [active, setActive] = useState(true)
+  const text = `#${value.tagName}`
   return (
-    <Container $active={active} onClick={() => setActive(!active)}>
+    <Container $active={active} onClick={searchTag}>
       {text}
     </Container>
   )

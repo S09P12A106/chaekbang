@@ -49,7 +49,10 @@ function TagBlock({ tags }) {
       ) : (
         <TagsBlock>
           {tags.map((tag, index) => (
-            <Tag value={tag.tagName} key={index}></Tag>
+            <Tag
+              value={{ tagName: tag.tagName, tagId: tag.tagId }}
+              key={index}
+            ></Tag>
           ))}
         </TagsBlock>
       )}

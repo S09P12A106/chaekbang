@@ -45,7 +45,7 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
         placeholder="답변을 입력해주세요."
         value={userAnswer}
         onChange={handleChange}
-        spellcheck="false"
+        spellCheck="false"
       ></textarea>
       <InputLengthInfo>
         ({userAnswer.length}/{GTOUP_APPLY_ANSWER_LIMIT})

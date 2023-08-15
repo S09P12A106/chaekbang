@@ -5,6 +5,7 @@ import SearchInputBlock from '../components/search/SearchInputBlock'
 import SearchGroupList from '../components/search/SearchGroupList'
 import { getSearchGroupApi, getTagsApi } from '../api/searchApi'
 import MainLayout from '../components/Layout/MainLayout'
+import { useLocation } from 'react-router-dom'
 const Container = styled.div``
 
 function SearchPage() {
@@ -14,8 +15,11 @@ function SearchPage() {
   const [pageNum, setPageNum] = useState(0)
   const [groupList, setGroupList] = useState([])
   const [input, setInput] = useState('')
-  const targetRef = useRef()
 
+  const targetRef = useRef()
+  const location = useLocation()
+
+  let tagId = location.state === null ? null : location.state.tagId
   // 12개로 고정.
   const pageSize = 12
 
@@ -35,7 +39,14 @@ function SearchPage() {
   // input 창 핸들링 작업
   const onSubmit = async () => {
     setPageNum(0)
-    const query = `pageNum=0&pageSize=12&keyword=${input}` // 초기 값 넣기.
+    let query
+    if (input) {
+      query = `pageNum=0&pageSize=12&keyword=${input}`
+    } else if (tagId) {
+      query = `pageNum=0&pageSize=12&tags=${tagId}`
+    } else {
+      query = `pageNum=0&pageSize=12&keyword=`
+    }
     const response = await getSearchGroupApi(query)
     setGroupList(response.data)
     setPageNum(1)
@@ -52,7 +63,15 @@ function SearchPage() {
       const target = entries[0]
       if (target.isIntersecting) {
         setPageNum((prev) => prev + 1)
-        const initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&keyword=${input}`
+        let initQuery
+        if (input) {
+          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&keyword=${input}`
+        } else if (tagId) {
+          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&tags=${tagId}`
+        } else {
+          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&keyword=`
+        }
+
         const data = await getSearchGroupApi(initQuery)
         setGroupList((prev) => prev.concat(data.data))
         if (data.data.length < pageSize) {
@@ -64,6 +83,7 @@ function SearchPage() {
     },
     [pageNum],
   )
+
   useEffect(() => {
     if (stop) {
       return
@@ -81,7 +101,6 @@ function SearchPage() {
     }
     getTags()
   }, [])
-
   return (
     <MainLayout>
       <Container>

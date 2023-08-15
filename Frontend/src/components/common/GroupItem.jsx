@@ -4,6 +4,7 @@ import Tag from './Tag'
 import COLORS from '../../constants/colors'
 import EyeIcon from '../../assets/Eye.svg'
 import convertShortNumber from '../../utils/convertShortNumber'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   width: 220px;
@@ -57,10 +58,17 @@ const ViewCount = styled.div`
 `
 
 function GroupItem({ group }) {
+  const groupId = group.groupId
+  const navigate = useNavigate()
+  const toDetailPage = (e) => {
+    console.log(groupId)
+    navigate(`/groups/detail/${groupId}`)
+  }
+
   return (
     <Container className="group-item">
-      <Image src={group.imageUrl} />
-      <Title>{group.title}</Title>
+      <Image src={group.imageUrl} onClick={toDetailPage} />
+      <Title onClick={toDetailPage}>{group.title}</Title>
       <ShowUserCountBlock>
         <ShowUser>
           현재 <span className="green">{group.joinedUserCount}</span>명이
@@ -74,7 +82,10 @@ function GroupItem({ group }) {
       <TagList>
         {group.tags &&
           group.tags.map((tag, index) => (
-            <Tag value={tag.tagName} key={index}></Tag>
+            <Tag
+              value={{ tagName: tag.tagName, tagId: tag.tagId }}
+              key={index}
+            ></Tag>
           ))}
       </TagList>
     </Container>

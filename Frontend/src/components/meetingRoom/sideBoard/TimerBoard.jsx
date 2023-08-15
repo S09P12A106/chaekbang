@@ -34,13 +34,13 @@ function TimerBoard() {
     setSecond(currentTime[2])
   }, [currentTime])
 
-  useEffect(() => {
-    // 메시지를 받았을 때 처리할 로직
-    client.subscribe('/meeting/timer/currentTime', (message) => {
-      const currentTime = JSON.parse(message.body)
-      console.log('Received message:', currentTime)
-    })
-  }, [client])
+  // useEffect(() => {
+  //   // 메시지를 받았을 때 처리할 로직
+  //   client.subscribe('/meeting/timer/currentTime', (message) => {
+  //     const currentTime = JSON.parse(message.body)
+  //     console.log('Received message:', currentTime)
+  //   })
+  // }, [client])
 
   useEffect(() => {
     if (whichBtn === 3) {
@@ -101,7 +101,8 @@ function TimerBoard() {
 
   // 숫자를 두 자리 수로 바꾸기 위해
   const transformDouble = (time) => {
-    return `${time.toString().padStart(2, '0')}`
+    // return `${time.toString().padStart(2, '0')}`
+    return 0
   }
 
   return (

@@ -9,8 +9,10 @@ import { BoardContext } from '../components/meetingRoom/context/BoardContext'
 import COLORS from '../constants/colors'
 import CONSOLE from '../utils/consoleColors'
 import { convertTime } from '../components/meetingRoom/sideBoard/timer/convertTime'
-import { CompatClient } from '@stomp/stompjs'
+import { Stomp } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
+import { SocketContext } from '../modules/SocketContext'
+import { getAccessToken } from '../utils/tokenUtil'
 
 function MeetingRoomPage({
   meetingInfoState,
@@ -21,8 +23,9 @@ function MeetingRoomPage({
   CONSOLE.reRender('MeetingRoomPage rendered!')
   const [meetingInfo, setMeetingInfo] = meetingInfoState
   const [whichBtn, setWhichBtn] = useState(0)
-  const [client, setClient] = useState(null)
+  // const [client, setClient] = useState(null)
   const [currentTime, setCurrentTime] = useState([])
+  // const [getEmoji, setGetEmoji] = useState([])
 
   // MeetingRoom에 들어오거나 Publisher가 변경되었을 때 접속자 본인 영상 publish
   useEffect(() => {
@@ -37,35 +40,43 @@ function MeetingRoomPage({
     }))
   }, [meetingInfo.publisher])
 
-  //socket 연결
+  // -------------- socket 관한 코드 --------------
+  const apiURL = process.env.REACT_APP_APPLICATION_SERVER_URL
+  const wsUrl = `${apiURL}/ws/chaekbang`
+
+  const client = useRef(null)
+  const [getEmoji, setGetEmoji] = useState([])
+
+  // socket 연결
+  const connectHaner = () => {
+    console.log('--------------------' + apiURL)
+    client.current = Stomp.over(() => {
+      const sock = new SockJS(wsUrl)
+      return sock
+    })
+    console.log('---------------------------')
+    client.current.connect(
+      {
+        Authorization: getAccessToken(),
+      },
+      () => {
+        console.log('Connect!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        client.current.subscribe(`/topic/meeting/1/emoji`, (message) => {
+          const getEmojiInfo = JSON.parse(message.body)
+          console.log('getEmoji~~~~~~~~~~~~~~~~~~~~~~~~~ ')
+          console.log(getEmojiInfo)
+          setGetEmoji(getEmojiInfo)
+        })
+      },
+    )
+  }
+
   useEffect(() => {
-    // STOMP 클라이언트 초기화
-    const stompClient = new CompatClient()
-    const socket = new SockJS('https://dev.chaekbang.xyz')
-
-    stompClient.webSocketFactory = () => socket
-
-    stompClient.onConnect = () => {
-      console.log('Connected to WebSocket')
-
-      client.subscribe('/meeting/timer/currentTime', (message) => {
-        const getTime = JSON.parse(message.body)
-        setCurrentTime(convertTime(getTime))
-
-        // console.log('Received message:', currentTime)
-      })
-    }
-
-    stompClient.activate()
-
-    setClient(stompClient)
-
-    return () => {
-      if (stompClient) {
-        stompClient.deactivate()
-      }
-    }
+    connectHaner()
+    console.log(client)
   }, [])
+
+  // -------------- socket 끝 --------------
 
   return (
     <BoardContext.Provider
@@ -76,23 +87,29 @@ function MeetingRoomPage({
         videoOption,
         toggleMic,
         toggleCam,
-        client,
         currentTime,
       }}
     >
-      <Container>
-        {/* 오른쪽 사이드 바는 상시 고정 */}
-        <SideBarContainer>
-          <SideBar></SideBar>
-        </SideBarContainer>
-        {/* 왼쪽 스크린은 크게 위 여유공간 / 스크린 / 하단 버튼으로 세부분으로 나뉜다 */}
-        <ScreenContainer>
-          <TopSpace></TopSpace>
-          {/* 스크린을 보여주는 컴포넌트 > 그리드가 있어야함 */}
-          <ScreenShot></ScreenShot>
-          <BottomBtns></BottomBtns>
-        </ScreenContainer>
-      </Container>
+      <SocketContext.Provider
+        value={{
+          client: client.current,
+          EmojiInfo: { emoji: getEmoji.emoji, nickname: getEmoji.nickname },
+        }}
+      >
+        <Container>
+          {/* 오른쪽 사이드 바는 상시 고정 */}
+          <SideBarContainer>
+            <SideBar></SideBar>
+          </SideBarContainer>
+          {/* 왼쪽 스크린은 크게 위 여유공간 / 스크린 / 하단 버튼으로 세부분으로 나뉜다 */}
+          <ScreenContainer>
+            <TopSpace></TopSpace>
+            {/* 스크린을 보여주는 컴포넌트 > 그리드가 있어야함 */}
+            <ScreenShot></ScreenShot>
+            <BottomBtns></BottomBtns>
+          </ScreenContainer>
+        </Container>
+      </SocketContext.Provider>
     </BoardContext.Provider>
   )
 }

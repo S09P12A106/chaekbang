@@ -7,7 +7,7 @@ import EmojiBtn from '../buttonMeeting/EmojiBtn'
 import BackGroundBtn from '../buttonMeeting/BackGroundBtn'
 import SettingBtn from '../buttonMeeting/SettingBtn'
 import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
-import VideoButtons from '../../common/VideoButtons'
+import VideoButtonsInWaitingRoom from '../../common/VideoButtonsInWaitingRoom'
 
 function ScreenContainer({
   nickname,
@@ -28,7 +28,10 @@ function ScreenContainer({
             />
           </Screen>
 
-          <VideoButtons toggleCam={toggleCam} toggleMic={toggleMic} />
+          <VideoButtonsInWaitingRoom
+            toggleCam={toggleCam}
+            toggleMic={toggleMic}
+          />
         </div>
       ) : (
         <div>로딩 중입니다.</div>

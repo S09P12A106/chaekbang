@@ -18,16 +18,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chaekbang")
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
+        registry.addEndpoint("/ws/chaekbang")
+            .setAllowedOriginPatterns("*")
+            .withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/topic/", "/queue/")
-                .setTaskScheduler(heartBeatScheduler());
-        registry.setApplicationDestinationPrefixes("/pub");
+            .setTaskScheduler(heartBeatScheduler());
+        registry.setApplicationDestinationPrefixes("/ws/pub");
         registry.setUserDestinationPrefix("/user");
     }
 

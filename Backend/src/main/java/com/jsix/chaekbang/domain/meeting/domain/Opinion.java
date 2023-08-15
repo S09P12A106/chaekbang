@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,4 +35,20 @@ public class Opinion {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Builder
+    private Opinion(String opinion, OpinionBox opinionBox, User user) {
+        this.opinion = opinion;
+        this.opinionBox = opinionBox;
+        this.user = user;
+    }
+
+    public static Opinion createOpinion(String opinion, OpinionBox opinionBox, User user) {
+        Opinion createdOpinion = Opinion.builder()
+                                        .opinion(opinion)
+                                        .opinionBox(opinionBox)
+                                        .user(user)
+                                        .build();
+        opinionBox.addOpinion(createdOpinion);
+        return createdOpinion;
+    }
 }

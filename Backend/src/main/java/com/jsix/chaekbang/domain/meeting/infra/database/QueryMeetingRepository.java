@@ -1,5 +1,6 @@
 package com.jsix.chaekbang.domain.meeting.infra.database;
 
+import com.jsix.chaekbang.domain.group.domain.QGroup;
 import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
 import com.jsix.chaekbang.domain.meeting.dto.QMeetingSearchResponseDto;
@@ -10,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +19,7 @@ public class QueryMeetingRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
     private QMeeting meeting = QMeeting.meeting;
+    private QGroup group = QGroup.group;
 
     public List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId,
             Pageable pageable) {
@@ -42,4 +43,5 @@ public class QueryMeetingRepository {
                                       .and(meeting.group.id.eq(groupId)))
                               .fetchOne();
     }
+
 }

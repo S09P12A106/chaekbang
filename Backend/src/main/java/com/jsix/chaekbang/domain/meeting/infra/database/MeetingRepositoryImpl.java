@@ -4,6 +4,7 @@ import com.jsix.chaekbang.domain.meeting.application.repository.MeetingRepositor
 import com.jsix.chaekbang.domain.meeting.domain.Meeting;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,11 @@ public class MeetingRepositoryImpl implements MeetingRepository {
     @Override
     public Meeting save(Meeting meeting) {
         return jpaMeetingRepository.save(meeting);
+    }
+
+    @Override
+    public Optional<Meeting> findById(Long id) {
+        return jpaMeetingRepository.findById(id);
     }
 
     @Override

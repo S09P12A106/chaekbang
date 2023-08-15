@@ -45,6 +45,10 @@ public class Meeting extends BaseEntity {
     @OneToMany(mappedBy = "meeting")
     private List<OpinionBox> opinionBoxes = new ArrayList<>();
 
+    public void addOpinionBox(OpinionBox opinionBox) {
+        this.opinionBoxes.add(opinionBox);
+    }
+
     @Builder
     private Meeting(String title, LocalDateTime startedAt, Group group) {
         this.title = title;

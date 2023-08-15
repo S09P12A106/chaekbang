@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import '../../components/GroupDetailPage/css/groupDetailStyle.css'
+import { joinGroup } from '../../api/groupDetailApi'
 
 const GTOUP_APPLY_ANSWER_LIMIT = 200
 
 const GroupApplyForm = ({ question, setModalOpen }) => {
+  const { groupId } = useParams()
+
   const [userAnswer, setUserAnswer] = useState('')
 
   const handleChange = (event) => {
@@ -16,20 +20,25 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
     }
   }
 
-  const handleSubmit = () => {
-    // 서버로 보낼 데이터 객체 생성
-    const dataToSend = { userAnswer: userAnswer }
-
-    // 서버로 데이터 전송
-    console.log('Backend로 가입 데이터 전송!!')
-    console.log(dataToSend)
-    console.log('전송 완료!')
+  const handleSubmit = async () => {
+    try {
+      await joinGroup(groupId, userAnswer)
+      alert(
+        '신청해주셔서 감사합니다. 모임 리더가 확인할 때까지 조금만 기다려주세요!',
+      )
+      setModalOpen(false)
+    } catch (error) {
+      console.log(error)
+      alert('신청 중 에러가 발생했습니다. 잠시 뒤에 다시 신청해주세요.')
+    }
   }
 
   return (
     <FormContainer>
       <h1 className="mt-none">함께하기</h1>
-      <p className="form-question">{question}</p>
+      <QuestionBox className="form-question">
+        모임의 가입 동기를 자유롭게 써주세요.
+      </QuestionBox>
       <textarea
         className="form-answer"
         rows="10"
@@ -41,7 +50,6 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
       <InputLengthInfo>
         ({userAnswer.length}/{GTOUP_APPLY_ANSWER_LIMIT})
       </InputLengthInfo>
-      {/* <input className="form-answer" type="text" placeholder="입력해주세요." /> */}
       <FormButtonContainer>
         <FormButton
           color={COLORS.WHITE}
@@ -66,6 +74,11 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
 const FormContainer = styled.div`
   padding: 2.5rem;
 `
+
+const QuestionBox = styled.div`
+  margin: 1rem 0;
+`
+
 const FormButtonContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

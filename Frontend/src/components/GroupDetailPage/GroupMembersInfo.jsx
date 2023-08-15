@@ -4,13 +4,9 @@ import MemberInfo from './MemberInfo'
 import { GROUP_DETAIL_CONTAINER_PADDING } from './constant/groupDetailConstant'
 
 const GroupMembersInfo = ({ users, leader }) => {
-  const userOfLeader = users.filter(
-    (user) => user.nickname === leader.nickname,
-  )[0]
+  const userOfLeader = users.filter((user) => user.id === leader.id)[0]
 
-  const usersExceptLeader = users.filter(
-    (user) => user.nickname !== leader.nickname,
-  )
+  const usersExceptLeader = users.filter((user) => user.id !== leader.id)
 
   return (
     <GroupMembersInfoContainer>

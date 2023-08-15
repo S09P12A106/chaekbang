@@ -1,76 +1,98 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import CurrentMeeting from './CurrentMeeting'
 import MeetingList from './MeetingList'
 import { isActivatedMeeting } from './dateCalculator'
-import { sampleMeetings } from '../GroupDetailPage/sampleData'
 import { GROUP_DETAIL_CONTAINER_PADDING } from '../GroupDetailPage/constant/groupDetailConstant'
-import { getSampleData } from '../../api/tempApi'
+import { getMeetingList } from '../../api/groupHomeApi'
+import CONSOLE from '../../utils/consoleColors'
+CONSOLE
 
-const meetings = sampleMeetings.meetings
-const currentMeetingIndx = findCurrentMeeting(meetings)
+const PAGE_SIZE = 5
+let observer
 
 const MeetingsInfo = () => {
   const [meetingsData, setMeetingsData] = useState([])
-  const [offsetMeetingData, setoffsetMeetingData] = useState(0)
   const [target, setTarget] = useState(null) // 관찰대상 target
   const [isLoaded, setIsLoaded] = useState(false)
   const [error, setError] = useState(null)
   const [stop, setStop] = useState(false)
+  const pageNum = useRef(-1)
 
-  useEffect(() => {
-    let observer
-    if (target && !stop) {
-      // callback 함수로 onIntersect를 지정
-      observer = new IntersectionObserver(onIntersect, {
-        threshold: 1,
-      })
-      observer.observe(target)
-    }
-    return () => observer && observer.disconnect()
-  }, [target, isLoaded])
-
-  const getMoreItem = async () => {
-    // 데이터를 받아오도록 true 로 변경
-    getSampleData(
-      '/meetings',
-      ({ data }) => {
-        console.log('api called!!!')
-        setMeetingsData((meetings) => meetings.concat(data))
-        setoffsetMeetingData((offset) => offset + data.length)
-
-        if (data.length < 2) {
-          setStop(true)
-        }
-      },
-      (error) => {
-        setError(error)
-      },
-    )
+  const currentMeetingInfo = {
+    isActivatedMeetingExist: true,
+    meetingId: 1,
   }
 
-  const onIntersect = async ([entry], observer) => {
-    // entry 요소가 교차되거나 Load중이 아니면
-    if (entry.isIntersecting && !isLoaded) {
-      // 관찰은 일단 멈추고
+  const { groupId } = useParams()
+
+  // <설정> meetings 데이터가 변경될시
+  useEffect(() => {
+    setIsLoaded(false)
+    pageNum.current++
+  }, [meetingsData])
+
+  // <설정> isLoaded가 true이면 데이터를 받아온다.
+  useEffect(() => {
+    if (isLoaded) {
+      getMeetingList(groupId, PAGE_SIZE, pageNum.current)
+        .then(({ data }) => {
+          if (data.data.length < PAGE_SIZE) {
+            setStop(true)
+          }
+          setMeetingsData((meetings) => meetings.concat(data.data))
+        })
+        .catch((error) => {
+          CONSOLE.error('미팅 데이터를 받는데 Error 발생!!')
+          console.log(error)
+          setError(error)
+        })
+    }
+  }, [isLoaded])
+
+  // <설정> 화면 감지 옵션
+  const intersectionOption = {
+    root: null,
+    threshold: 0.5,
+    rootMargin: '0px',
+  }
+
+  // 1. 초기 데이터를 가져온다.
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+
+  // 2. 감지할 시 실행될 콜백함수 정의
+  const onIntersect = ([entry], observer) => {
+    if (entry.isIntersecting) {
       observer.unobserve(entry.target)
       // 데이터 불러오기
-      await getMoreItem()
-
-      // 불러온 후 다시 관찰 실행
+      setIsLoaded(true)
       observer.observe(entry.target)
     }
   }
 
-  if (isLoaded) return <div>로딩중..</div>
-  if (error) return <div>에러가 발생했습니다</div>
+  // 3. IntersectionObserver 설정
+  useEffect(() => {
+    let observer
+    if (target && !stop) {
+      observer = new IntersectionObserver(onIntersect, intersectionOption)
+      observer.observe(target)
+    }
+    return () => observer && observer.disconnect()
+  }, [isLoaded, stop, target])
   if (!meetingsData) return null
 
   return (
     <MeetingListContainer>
-      <CurrentMeeting currentMeetingIndex={currentMeetingIndx} />
-      <MeetingList meetings={meetingsData} />
-      <div ref={setTarget}></div>
+      <CurrentMeeting currentMeetingInfo={currentMeetingInfo} />
+      <MeetingList
+        meetings={meetingsData}
+        // setTarget={setTarget}
+        // isLoaded={isLoaded}
+      />
+      {isLoaded ? <p>Loading....</p> : <div ref={setTarget}></div>}
     </MeetingListContainer>
   )
 }

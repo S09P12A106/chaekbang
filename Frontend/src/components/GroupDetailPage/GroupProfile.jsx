@@ -1,10 +1,67 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import LeaderInfo from './LeaderInfo'
-import { serviceColor } from './groupDetailColors'
 import COLORS from '../../constants/colors'
+import { findLeader } from './util'
+import { isAppliedUser, cancelApplication } from '../../api/groupDetailApi'
+import { waringConfirmOption } from '../../utils/confirmSwalModal'
+import Swal from 'sweetalert2'
+import CONSOLE from '../../utils/consoleColors'
 
-const GroupProfile = ({ group, count, setModalOpen }) => {
+const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
+  const navigate = useNavigate()
+
+  // TODO: 그룹에 신청한 상태인지 가져오는 api 연동
+  const [hasApplied, setHasApplied] = useState(null)
+
+  const { groupId } = useParams()
+
+  const loggedInUser = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
+  })
+
+  useEffect(() => {
+    // api : 가입 여부 가져오기
+    if (loggedInUser) {
+      isAppliedUser(groupId)
+        .then(({ data }) => {
+          setHasApplied(data.data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }, [])
+
+  /*
+   * 로그인이 되어있지 않으면 false
+   * 로그인이 되어 있으면 현재 로그인 유저가 해당 모임 가입유저인지
+   */
+  const isMemberOfGroup = loggedInUser
+    ? membersInfo.users.some((user) => user.id === loggedInUser.userId)
+    : false
+
+  const leader = findLeader(membersInfo.users, membersInfo.leaderId)
+
+  const handleCancelBtnClick = async () => {
+    Swal.fire(waringConfirmOption('정말 모임 신청을 취소하시겠습니까?')).then(
+      async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await cancelApplication(groupId)
+            alert('모임 신청이 취소되었습니다.')
+            navigate('/')
+          } catch (error) {
+            console.log(error)
+            alert('모임 신청 취소에 실패했습니다. 잠시뒤에 다시 시도해주세요')
+          }
+        }
+      },
+    )
+  }
+
   return (
     <ProfileGridBox>
       <div>
@@ -18,8 +75,11 @@ const GroupProfile = ({ group, count, setModalOpen }) => {
         <h1>{group.title}</h1>
         {/* <div>yes or no : {temp}</div> --> api 통신 확인*/}
         <p>
-          현재 <MemberCountHighlight>{count}</MemberCountHighlight>명이 함께하고
-          있어요
+          현재{' '}
+          <MemberCountHighlight>
+            {membersInfo.users.length}
+          </MemberCountHighlight>
+          명이 함께하고 있어요
         </p>
 
         <TagList>
@@ -28,20 +88,32 @@ const GroupProfile = ({ group, count, setModalOpen }) => {
           })}
         </TagList>
 
-        <LeaderInfo leader={group.leader} />
+        <LeaderInfo leader={leader} />
 
-        <GroupApplyButtons>
-          <GroupButton
-            color={COLORS.THEME_COLOR4}
-            text="white"
-            onClick={() => setModalOpen(true)}
-          >
-            신청하기
-          </GroupButton>
-          <GroupButton color={serviceColor.button2} text="black">
-            예약하기
-          </GroupButton>
-        </GroupApplyButtons>
+        {loggedInUser &&
+          !isMemberOfGroup &&
+          hasApplied !== null &&
+          (hasApplied ? (
+            <GroupApplyButtons>
+              <GroupButton
+                color={COLORS.RED}
+                text="white"
+                onClick={handleCancelBtnClick}
+              >
+                신청 취소
+              </GroupButton>
+            </GroupApplyButtons>
+          ) : (
+            <GroupApplyButtons>
+              <GroupButton
+                color={COLORS.THEME_COLOR4}
+                text="white"
+                onClick={() => setModalOpen(true)}
+              >
+                신청하기
+              </GroupButton>
+            </GroupApplyButtons>
+          ))}
       </div>
     </ProfileGridBox>
   )

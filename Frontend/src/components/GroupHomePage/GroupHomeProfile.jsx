@@ -1,10 +1,40 @@
 import React from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import LeaderInfo from '../GroupDetailPage/LeaderInfo'
 import { serviceColor } from '../GroupDetailPage/groupDetailColors'
 import COLORS from '../../constants/colors'
+import { findLeader } from '../GroupDetailPage/util'
+import { leaveGroup } from '../../api/groupHomeApi'
+import Swal from 'sweetalert2'
 
-const GroupHomeProfile = ({ group, count, isLeader }) => {
+const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
+  const leader = findLeader(membersInfo.users, membersInfo.leaderId)
+  const { groupId } = useParams()
+  const navigate = useNavigate()
+
+  const handleLeaveBtnClick = async () => {
+    Swal.fire({
+      title: '정말 모임을 나가시겠습니까?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '승인',
+      cancelButtonText: '취소',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await leaveGroup(groupId)
+          alert('그동안 함께해서 즐거웠습니다!')
+          navigate('/')
+        } catch (error) {
+          console.log(error)
+          alert('모임 나가기에 실패했습니다. 잠시 뒤에 다시 시도해주세요.')
+        }
+      }
+    })
+  }
   return (
     <ProfileGridBox>
       <div>
@@ -16,24 +46,26 @@ const GroupHomeProfile = ({ group, count, isLeader }) => {
 
       <div>
         <h1>{group.title}</h1>
-        {/* <div>yes or no : {temp}</div> --> api 통신 확인*/}
         <p>
-          현재 <MemberCountHighlight>{count}</MemberCountHighlight>명이 함께하고
-          있어요
+          현재{' '}
+          <MemberCountHighlight>
+            {membersInfo.users.length}
+          </MemberCountHighlight>
+          명이 함께하고 있어요
         </p>
 
         <TagList>
           {group.tags.map((tag, index) => {
-            return <Tag index={index}>#{tag.tagName}</Tag>
+            return <Tag key={index}>#{tag.tagName}</Tag>
           })}
         </TagList>
 
-        <LeaderInfo leader={group.leader} />
+        <LeaderInfo leader={leader} />
 
         {!isLeader && (
           <GroupApplyButtons>
             {/* TODO: 색깔 상수로 바꾸기 */}
-            <GroupButton color="red" text="white">
+            <GroupButton color="red" text="white" onClick={handleLeaveBtnClick}>
               모임 나가기
             </GroupButton>
           </GroupApplyButtons>

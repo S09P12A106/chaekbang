@@ -24,9 +24,10 @@ const NOTICE = [
   },
 ]
 
-const CurrentMeeting = ({ currentMeetingIndex }) => {
-  const noticeOption =
-    currentMeetingIndex === -1 ? NOTICE[DEACTIVATED] : NOTICE[ACTIVATED]
+const CurrentMeeting = ({ currentMeetingInfo }) => {
+  const noticeOption = currentMeetingInfo.isActivatedMeetingExist
+    ? NOTICE[ACTIVATED]
+    : NOTICE[DEACTIVATED]
   return (
     <CurrentMeetingInfoContainer color={noticeOption.containerColor}>
       {noticeOption.icon}

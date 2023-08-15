@@ -1,56 +1,80 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import GroupHomeProfile from '../components/GroupHomePage/GroupHomeProfile'
 import GroupHomeDetail from '../components/GroupHomePage/GroupHomeDetail'
 import MainLayout from '../components/Layout/MainLayout'
 import { groupApi } from '../components/GroupDetailPage/api/groupApi'
 import ServerError from '../components/common/ServerError'
+import { getGroupDetail, getGroupMembers } from '../api/groupDetailApi'
+import { isUserNotInGroup } from '../utils/userUtil'
 
 const menuForMember = ['상세 정보', '인원 정보', '책방 정보']
 
 const GroupHomePage = () => {
-  // rtk query로 필요한 데이터 불러오기
-  const groupQuery = groupApi.useGetGroupQuery()
-  const usersQuery = groupApi.useGetUsersQuery()
+  const navigate = useNavigate()
 
-  if (groupQuery.isLoading || usersQuery.isLoading) {
+  const { groupId } = useParams()
+  const loggedInUser = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
+  })
+
+  const [groupInfo, setGroupInfo] = useState(null)
+  const [groupMembers, setGroupMembers] = useState(null)
+
+  useEffect(() => {
+    getGroupDetail(
+      groupId,
+      ({ data }) => {
+        setGroupInfo(data.data)
+      },
+      (error) => {
+        console.log(error)
+        return <ServerError />
+      },
+    )
+    getGroupMembers(
+      groupId,
+      ({ data }) => {
+        if (isUserNotInGroup(data.data.users, loggedInUser)) {
+          alert('모임에 가입된 사용자만 들어올 수 있습니다.')
+          navigate('/')
+        }
+        setGroupMembers(data.data)
+      },
+      (error) => {
+        console.log(error)
+        return <ServerError />
+      },
+    )
+  }, [])
+
+  if (!groupInfo || !groupMembers) {
     return (
       <div>
         <h1>로딩중입니다!!!</h1>
       </div>
     )
   }
-
-  // TODO: 데이터 받아오는 것 관련 에러 페이지 작성
-  if (groupQuery.isError || usersQuery.isError) {
-    return <ServerError />
-  }
-
-  const groupMarvel = groupQuery.data
-  const sampleGroupMembers = usersQuery.data
-  const groupMemberCount = sampleGroupMembers.length
+  const groupMemberCount = groupMembers.length
 
   return (
     <MainLayout>
       <div className="container">
         <GroupHomeProfile
-          group={groupMarvel}
-          count={groupMemberCount}
-          isLeader={isLeader()}
+          group={groupInfo}
+          membersInfo={groupMembers}
+          isLeader={loggedInUser.userId === groupMembers.leaderId}
         />
         <GroupHomeDetail
-          group={groupMarvel}
-          users={sampleGroupMembers}
+          group={groupInfo}
+          membersInfo={groupMembers}
           menu={menuForMember}
         />
       </div>
     </MainLayout>
   )
-}
-
-function isLeader() {
-  // TODO: redux에서 로그인 아이디 가져와서 리더인지 판별 로직 구현하기
-  return true
 }
 
 export default GroupHomePage

@@ -14,6 +14,8 @@ import LoginPage from '../pages/LoginPage'
 import PrivateRoute from './PrivateRoute'
 import PublicRoute from './PublicRoute'
 import MeetingCreatePage from '../pages/MeetingCreatePage'
+import GroupDetailPage from '../pages/GroupDetailPage'
+import GroupHomePage from '../pages/GroupHomePage'
 
 import TempWaitingPage from '../pages/TempWaitingPage'
 import MeetingPage from '../pages/MeetingPage'
@@ -25,6 +27,7 @@ function RouterApp() {
         <Route path="/" element={<MainPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/groups/detail/:groupId" element={<GroupDetailPage />} />
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
@@ -37,6 +40,7 @@ function RouterApp() {
             path="/groups/:id/meetings/create"
             element={<MeetingCreatePage />}
           />
+          <Route path="/groups/home/:groupId" element={<GroupHomePage />} />
         </Route>
         <Route path="/mr" element={<MeetingRoomPage />} />
         <Route path="/mw" element={<MeetWaiting />} />

@@ -1,13 +1,14 @@
 package com.jsix.chaekbang.domain.meeting.infra.database;
 
 import com.jsix.chaekbang.domain.group.domain.QGroup;
+import com.jsix.chaekbang.domain.meeting.domain.Meeting;
+import com.jsix.chaekbang.domain.meeting.domain.OpinionBox;
 import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
+import com.jsix.chaekbang.domain.meeting.domain.QOpinion;
+import com.jsix.chaekbang.domain.meeting.domain.QOpinionBox;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
 import com.jsix.chaekbang.domain.meeting.dto.QMeetingSearchResponseDto;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,8 @@ public class QueryMeetingRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private QMeeting meeting = QMeeting.meeting;
     private QGroup group = QGroup.group;
+    private QOpinionBox opinionBox = QOpinionBox.opinionBox;
+    private QOpinion opinion = QOpinion.opinion1;
 
     public List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId,
             Pageable pageable) {
@@ -40,8 +43,18 @@ public class QueryMeetingRepository {
         return jpaQueryFactory.select(meeting.count())
                               .from(meeting)
                               .where(meeting.closedAt.isNull()
-                                      .and(meeting.group.id.eq(groupId)))
+                                                     .and(meeting.group.id.eq(groupId)))
                               .fetchOne();
+    }
+
+    public List<OpinionBox> findByIdWithOpinionBox(long meetingId) {
+        return jpaQueryFactory.select(opinionBox)
+                .from(opinionBox)
+                .join(opinionBox.opinions, opinion)
+                .fetchJoin()
+                .where(opinionBox.meeting.id.eq(meetingId))
+                .distinct()
+                .fetch();
     }
 
 }

@@ -4,6 +4,7 @@ import com.jsix.chaekbang.domain.meeting.application.MeetingCreateUseCase;
 import com.jsix.chaekbang.domain.meeting.application.MeetingSearchUseCase;
 import com.jsix.chaekbang.domain.meeting.application.OpinionBoxCreateUseCase;
 import com.jsix.chaekbang.domain.meeting.application.OpinionCreateUseCase;
+import com.jsix.chaekbang.domain.meeting.application.OpinionSearchUseCase;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingCreateRequestDto;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
 import com.jsix.chaekbang.domain.meeting.dto.OpinionBoxCreateRequestDto;
@@ -35,6 +36,7 @@ public class MeetingController {
     private final MeetingSearchUseCase meetingSearchUseCase;
     private final OpinionBoxCreateUseCase opinionBoxCreateUseCase;
     private final OpinionCreateUseCase opinionCreateUseCase;
+    private final OpinionSearchUseCase opinionSearchUseCase;
 
     @PostMapping("/{group_id}/meetings")
     public ResponseEntity<?> createMeeting(@JwtLoginUser AuthUser authUser,
@@ -72,5 +74,12 @@ public class MeetingController {
         opinionCreateUseCase.createOpinion(authUser, groupId, meetingId, opinionBoxId,
                 opinionCreateRequestDto);
         return HttpResponse.ok(HttpStatus.OK, "의견이 생성되었습니다.");
+    }
+
+    @GetMapping("/{group_id}/meetings/{meeting_id}/opinions")
+    public ResponseEntity<?> searchOpinion(@JwtLoginUser AuthUser authUser,
+            @PathVariable("group_id") long groupId, @PathVariable("meeting_id") long meetingId) {
+        return HttpResponse.okWithData(HttpStatus.OK, "의견 목록 조회 성공했습니다.",
+                opinionSearchUseCase.searchOpinion(authUser, meetingId));
     }
 }

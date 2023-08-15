@@ -36,4 +36,5 @@ public class MeetingRepositoryImpl implements MeetingRepository {
     public Long findNotClosedMeetingCountByGroupId(long groupId) {
         return queryMeetingRepository.findNotClosedMeetingCountByGroupId(groupId);
     }
+
 }

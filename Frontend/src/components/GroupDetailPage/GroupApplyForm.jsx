@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import '../../components/GroupDetailPage/css/groupDetailStyle.css'
@@ -11,6 +11,7 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
   const { groupId } = useParams()
 
   const [userAnswer, setUserAnswer] = useState('')
+  const navigate = useNavigate()
 
   const handleChange = (event) => {
     if (event.target.value.length > GTOUP_APPLY_ANSWER_LIMIT) {
@@ -28,8 +29,7 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
       )
       setModalOpen(false)
     } catch (error) {
-      console.log(error)
-      alert('신청 중 에러가 발생했습니다. 잠시 뒤에 다시 신청해주세요.')
+      navigate('/error')
     }
   }
 

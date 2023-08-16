@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import CurrentMeeting from './CurrentMeeting'
 import MeetingList from './MeetingList'
@@ -16,11 +16,11 @@ const MeetingsInfo = () => {
   const [meetingsData, setMeetingsData] = useState([])
   const [target, setTarget] = useState(null) // 관찰대상 target
   const [isLoaded, setIsLoaded] = useState(false)
-  const [error, setError] = useState(null)
   const [stop, setStop] = useState(false)
   const pageNum = useRef(-1)
 
   const { groupId } = useParams()
+  const navigate = useNavigate()
 
   // <설정> meetings 데이터가 변경될시
   useEffect(() => {
@@ -40,10 +40,7 @@ const MeetingsInfo = () => {
           setMeetingsData((meetings) => meetings.concat(data.data))
         })
         .catch((error) => {
-          CONSOLE.error('미팅 데이터를 받는데 Error 발생!!')
-          console.log(error)
-          setError(error)
-          // TODO-ERROR-JAMES
+          navigate('/error')
         })
     }
   }, [isLoaded])

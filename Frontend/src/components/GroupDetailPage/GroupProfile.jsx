@@ -29,8 +29,7 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
           setHasApplied(data.data)
         })
         .catch((error) => {
-          console.log(error)
-          // TODO-ERROR-JAMES
+          navigate('/error')
         })
     }
   }, [])
@@ -54,8 +53,7 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
             alert('모임 신청이 취소되었습니다.')
             navigate('/')
           } catch (error) {
-            console.log(error)
-            alert('모임 신청 취소에 실패했습니다. 잠시뒤에 다시 시도해주세요')
+            navigate('/error')
           }
         }
       },
@@ -175,7 +173,9 @@ const Tag = styled.div`
 const GroupApplyButtons = styled.div`
   text-align: right;
   margin-top: 4rem;
-  margin-right: 2rem;
+  padding-right: 1rem;
+  display: flex;
+  justify-content: right;
 `
 
 const GroupButton = styled.span`

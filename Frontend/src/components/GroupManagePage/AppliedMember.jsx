@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import approveAppliedMember from '../../api/approveAppliedMemberApi'
 import denyAppliedMember from '../../api/denyAppliedMemberApi'
 import { jwtBackApiInstance } from '../../api/http'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   display: flex;
@@ -20,6 +21,7 @@ function AppliedMember() {
   const groupId = currentUrlSplited[currentUrlSplited.length - 2]
 
   const [users, setUsers] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function getAppliedMember() {
@@ -32,7 +34,7 @@ function AppliedMember() {
 
         setUsers(response.data.data)
       } catch (error) {
-        console.log('에러 페이지')
+        navigate('/error')
       }
     }
     getAppliedMember()
@@ -53,7 +55,7 @@ function AppliedMember() {
           await approveAppliedMember(groupId, id)
           setUsers(users.filter((user) => user.id !== id))
         } catch (error) {
-          console.log('에러 페이지로!!')
+          navigate('/error')
         }
       }
     })
@@ -74,7 +76,7 @@ function AppliedMember() {
           await denyAppliedMember(groupId, id)
           setUsers(users.filter((user) => user.id !== id))
         } catch (error) {
-          console.log('에러 페이지로!!')
+          navigate('/error')
         }
       }
     })

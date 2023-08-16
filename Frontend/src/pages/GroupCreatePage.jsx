@@ -176,9 +176,10 @@ function GroupCreatePage() {
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setRequestErrorMessage(error.response.data.message)
+      } else if (error.response && error.response.status === 401) {
+        navigate('/login')
       } else {
-        // 페이지 이동 삽입
-        console.log('에러 페이지로 이동해야함!!!')
+        navigate('/error')
       }
     }
   }

@@ -31,7 +31,7 @@ function JoinedMember() {
         const leaderId = response.data.data.leaderId
         setUsers(response.data.data.users.filter((user) => user.id != leaderId))
       } catch (error) {
-        console.log('에러페이지로!')
+        navigate('/error')
       }
     }
     fetchUsers()
@@ -52,7 +52,7 @@ function JoinedMember() {
           await deleteJoinedMember(groupId, id)
           setUsers(users.filter((user) => user.id !== id))
         } catch (error) {
-          console.log('에러 페이지로!!')
+          navigate('/error')
         }
       }
     })

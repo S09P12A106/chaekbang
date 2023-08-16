@@ -7,6 +7,7 @@ import { jwtBackApiInstance } from '../../api/http'
 import { useSelector } from 'react-redux'
 import Modal from '../common/ModalWindow'
 import UpdateModal from './UpdateModal'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   display: flex;
@@ -74,6 +75,7 @@ function MyPageContainer() {
   const [myHistory, setMyHistory] = useState(null)
 
   const [nickname, setNickname] = useState(null)
+  const navigate = useNavigate()
 
   const updateUser = () => {
     setModalOpened(true)
@@ -107,7 +109,7 @@ function MyPageContainer() {
         setMyGroup(myGroupData.data.data)
         setMyHistory(myHistoryData.data.data)
       } catch (error) {
-        console.log('에러 페이지로!')
+        navigate('/error')
       }
     }
     fetchData()

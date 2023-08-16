@@ -49,8 +49,7 @@ const LoginPage = () => {
       dispatch(loginAction(userInfo.data))
       navigate('/')
     } catch (error) {
-      console.error('API 요청 에러:', error)
-      alert('현재 로그인 할 수 없습니다')
+      navigate('/error')
     }
   }
 

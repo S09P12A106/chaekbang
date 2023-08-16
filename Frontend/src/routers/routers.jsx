@@ -20,6 +20,9 @@ import GroupHomePage from '../pages/GroupHomePage'
 import TempWaitingPage from '../pages/TempWaitingPage'
 import MeetingPage from '../pages/MeetingPage'
 
+import NotFoundPage from '../pages/NotFoundPage'
+import ServerErrorPage from '../pages/ServerErrorPage'
+
 function RouterApp() {
   return (
     <BrowserRouter>
@@ -46,6 +49,8 @@ function RouterApp() {
         <Route path="/mw" element={<MeetWaiting />} />
         <Route path="/testWaiting" element={<TempWaitingPage />} />
         <Route path="/testMeeting" element={<MeetingPage />} />
+        <Route path="/error" element={<ServerErrorPage />} />
+        <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )

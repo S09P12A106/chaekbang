@@ -5,11 +5,13 @@ import COLORS from '../../../constants/colors'
 import { styled, keyframes } from 'styled-components'
 import { SocketContext } from '../../../modules/SocketContext'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function EmojiBtn() {
   const [isOpen, setIsOpen] = useState(false)
   const [animationQueue, setAnimationQueue] = useState([])
   const { client, EmojiInfo } = useContext(SocketContext)
+  const navigate = useNavigate()
 
   const user = useSelector((state) => {
     return state.rootReducer.loginReducer.user
@@ -61,7 +63,7 @@ function EmojiBtn() {
         })
       }
     } catch (error) {
-      console.log('소켓 보내기 에러')
+      navigate('/error')
     }
   }
 

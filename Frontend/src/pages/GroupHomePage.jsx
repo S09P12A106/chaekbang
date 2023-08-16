@@ -30,9 +30,7 @@ const GroupHomePage = () => {
         setGroupInfo(data.data)
       },
       (error) => {
-        console.log(error)
-        // TODO-ERROR-JAMES
-        return <ServerError />
+        navigate('/error')
       },
     )
     getGroupMembers(
@@ -45,9 +43,7 @@ const GroupHomePage = () => {
         setGroupMembers(data.data)
       },
       (error) => {
-        console.log(error)
-        // TODO-ERROR-JAMES
-        return <ServerError />
+        navigate('/error')
       },
     )
   }, [])

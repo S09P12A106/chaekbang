@@ -29,8 +29,7 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
           alert('그동안 함께해서 즐거웠습니다!')
           navigate('/')
         } catch (error) {
-          console.log(error)
-          alert('모임 나가기에 실패했습니다. 잠시 뒤에 다시 시도해주세요.')
+          navigate('/error')
         }
       }
     })
@@ -157,9 +156,9 @@ const Tag = styled.span`
 const GroupApplyButtons = styled.div`
   text-align: right;
   margin-top: 4rem;
-  padding-right 
-  display:flex
-  justify-content : right
+  padding-right: 1rem;
+  display: flex;
+  justify-content: right;
 `
 
 const GroupButton = styled.span`

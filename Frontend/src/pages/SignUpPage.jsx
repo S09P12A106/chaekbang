@@ -78,7 +78,7 @@ const SignUpPage = () => {
       alert(`반갑습니다 ${nickName} 님!`)
       navigate('/')
     } catch (error) {
-      console.error('API 요청 에러:', error)
+      navigate('/error')
     }
   }
 

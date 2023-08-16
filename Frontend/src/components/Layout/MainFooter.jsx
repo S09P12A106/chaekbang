@@ -8,7 +8,7 @@ function MainFooter() {
   return (
     <Footer>
       <Footerbar>
-        <P>책방 Cheak-Bang</P>
+        <P>책방 Chaek-Bang</P>
         <hr />
         <Imf>
           서울특별시 강남구 역삼동 테헤란로 212. 멀티캠퍼스 역삼 | 1544-9001

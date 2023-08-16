@@ -154,7 +154,7 @@ function MeetingCreateContainer() {
       if (error.response && error.response.status === 400) {
         setRequestErrorMessage(error.response.data.message)
       } else {
-        console.log('에러 페이지로 이동해야함!!!')
+        navigate('/error')
       }
     }
   }

@@ -7,6 +7,7 @@ import '../GroupHomePage/css/groupHomePageStyle.css'
 import { getSessionId } from '../../api/groupHomeApi'
 import { saveSessionId } from '../../store/sessionIdReducer'
 import CONSOLE from '../../utils/consoleColors'
+import { useNavigate } from 'react-router-dom'
 
 const ACTIVATED = 0
 const DEACTIVATED = 1
@@ -31,6 +32,7 @@ const NOTICE = [
 const CurrentMeeting = ({ currentMeetingInfo }) => {
   const dispatch = useDispatch()
   const [sessionId, setSessionId] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (currentMeetingInfo.isActivatedMeetingExist) {
@@ -39,9 +41,7 @@ const CurrentMeeting = ({ currentMeetingInfo }) => {
           setSessionId(data.data)
         })
         .catch((error) => {
-          CONSOLE.error('sessionId를 가져오던 도중 에러가 발생했습니다.')
-          console.log(error)
-          // TODO-ERROR-JAMES
+          navigate('/error')
         })
     }
   }, [currentMeetingInfo])

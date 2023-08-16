@@ -187,7 +187,7 @@ function UpdateModal({ setModalOpened, nickname, imageUrl, userId }) {
         setErroeMessage(error.response.data.message)
       } else {
         // 페이지 이동 삽입
-        console.log('에러 페이지로 이동해야함!!!')
+        navigate('/error')
       }
     }
   }

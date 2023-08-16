@@ -33,6 +33,7 @@ const MeetingsInfo = () => {
     if (isLoaded) {
       getMeetingList(groupId, PAGE_SIZE, pageNum.current)
         .then(({ data }) => {
+          console.log(data)
           if (data.data.length < PAGE_SIZE) {
             setStop(true)
           }

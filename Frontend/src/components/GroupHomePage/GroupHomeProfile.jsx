@@ -35,66 +35,105 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
       }
     })
   }
+
+  const toManagePage = () => {
+    navigate(`/groups/${groupId}/manage`)
+  }
+
+  const toCreateMeetingPage = () => {
+    navigate(`/groups/${groupId}/meetings/create`)
+  }
+
   return (
     <ProfileGridBox>
-      <div>
+      <ImageContainer>
         {/* 이미지 컨테이너 */}
         <ProfileImg>
           <img src={`${group.imageUrl}`} alt="그룹 프로필 이미지" />
         </ProfileImg>
-      </div>
+      </ImageContainer>
 
-      <div>
-        <h1>{group.title}</h1>
-        <p>
-          현재{' '}
-          <MemberCountHighlight>
-            {membersInfo.users.length}
-          </MemberCountHighlight>
-          명이 함께하고 있어요
-        </p>
+      <InfoContainer>
+        <InfoInnerContainer>
+          <h1>{group.title}</h1>
+          <p>
+            현재{' '}
+            <MemberCountHighlight>
+              {membersInfo.users.length}
+            </MemberCountHighlight>
+            명이 함께하고 있어요
+          </p>
 
-        <TagList>
-          {group.tags.map((tag, index) => {
-            return <Tag key={index}>#{tag.tagName}</Tag>
-          })}
-        </TagList>
+          <TagList>
+            {group.tags.map((tag, index) => {
+              return <Tag key={index}>#{tag.tagName}</Tag>
+            })}
+          </TagList>
 
-        <LeaderInfo leader={leader} />
+          <LeaderInfo leader={leader} />
 
-        {!isLeader && (
-          <GroupApplyButtons>
-            {/* TODO: 색깔 상수로 바꾸기 */}
-            <GroupButton color="red" text="white" onClick={handleLeaveBtnClick}>
-              모임 나가기
-            </GroupButton>
-          </GroupApplyButtons>
-        )}
-      </div>
+          {!isLeader && (
+            <GroupApplyButtons>
+              {/* TODO: 색깔 상수로 바꾸기 */}
+              <GroupButton
+                color="red"
+                text="white"
+                onClick={handleLeaveBtnClick}
+              >
+                모임 나가기
+              </GroupButton>
+            </GroupApplyButtons>
+          )}
+          {isLeader && (
+            <GroupApplyButtons>
+              {/* TODO: 색깔 상수로 바꾸기 */}
+              <GroupButton color="#00BBC6" text="white" onClick={toManagePage}>
+                모임 관리하기
+              </GroupButton>
+              <GroupButton
+                color="#00BBC6"
+                text="white"
+                onClick={toCreateMeetingPage}
+              >
+                책방 생성하기
+              </GroupButton>
+            </GroupApplyButtons>
+          )}
+        </InfoInnerContainer>
+      </InfoContainer>
     </ProfileGridBox>
   )
 }
 
-const ProfileImg = styled.div`
-  position: relative;
-  height: 100%;
-  img {
-    /* max-width: ; */
-    width: 100%;
-    max-height: 37rem;
-    /* height: 100%; */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    vertical-align: middle;
+const ImageContainer = styled.div`
+  flex-basis: 50%;
+  @media (max-width: 700px) {
+    flex-basis: 100%;
   }
 `
 
+const InfoContainer = styled.div`
+  flex-basis: 50%;
+  @media (max-width: 700px) {
+    flex-basis: 100%;
+  }
+`
+
+const InfoInnerContainer = styled.div`
+  padding-left: 20px;
+`
+
+const ProfileImg = styled.div`
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+`
 const ProfileGridBox = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
 `
 
 const MemberCountHighlight = styled.span`
@@ -103,6 +142,9 @@ const MemberCountHighlight = styled.span`
 
 const TagList = styled.div`
   margin: 2rem 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 `
 
 const Tag = styled.span`
@@ -110,21 +152,25 @@ const Tag = styled.span`
   color: white;
   padding: 0.5rem;
   border-radius: 0.8rem;
-  margin-right: 2rem;
+  margin-right: 8px;
+  margin-bottom: 8px;
 `
 
 const GroupApplyButtons = styled.div`
   text-align: right;
-  margin: 5rem 4rem 2rem;
+  margin-top: 4rem;
+  padding-right 
+  display:flex
+  justify-content : right
 `
 
 const GroupButton = styled.span`
   display: inline-block;
-  padding: 0.5rem 1.3rem;
+  padding: 0.5rem 0.8rem;
   background-color: ${(props) => props.color};
   color: ${(props) => props.text};
   text-align: center;
-  margin-left: 2.5rem;
+  margin-left: 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
   cursor: pointer;

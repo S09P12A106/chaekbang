@@ -71,7 +71,8 @@ const LeaderNicknameHighlight = styled.span`
 const AboutmeHighlight = styled.div`
   color: #707070;
   margin: 1rem 0;
-  padding: 0 5rem;
+  padding-left: 2rem;
+  padding-right: 3rem;
   margin-top: 25px;
 `
 

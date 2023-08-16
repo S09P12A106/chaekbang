@@ -39,14 +39,14 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
       <QuestionBox className="form-question">
         모임의 가입 동기를 자유롭게 써주세요.
       </QuestionBox>
-      <textarea
+      <TextArea
         className="form-answer"
         rows="10"
         placeholder="답변을 입력해주세요."
         value={userAnswer}
         onChange={handleChange}
         spellCheck="false"
-      ></textarea>
+      ></TextArea>
       <InputLengthInfo>
         ({userAnswer.length}/{GTOUP_APPLY_ANSWER_LIMIT})
       </InputLengthInfo>
@@ -71,6 +71,13 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
   )
 }
 
+const TextArea = styled.textarea`
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+`
+
 const FormContainer = styled.div`
   padding: 2.5rem;
 `
@@ -80,18 +87,19 @@ const QuestionBox = styled.div`
 `
 
 const FormButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 2rem;
+  display: flex;
+  justify-content: center;
   margin-top: 1rem;
 `
 
 const FormButton = styled.div`
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   display: inline-block;
   justify-self: center;
   background-color: ${(props) => props.color};
   color: ${(props) => props.text};
-  width: 10rem;
+  width: 7rem;
   height: 3rem;
   line-height: 3rem;
   border-radius: 0.5rem;

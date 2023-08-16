@@ -94,9 +94,9 @@ const LoginPage = () => {
           )}
         />
         {/* (임시) 구글버튼 > 회원탈퇴 */}
-        <StyledButton onClick={handleKakaoUnlink}>
+        {/* <StyledButton onClick={handleKakaoUnlink}>
           <img src={googleImage} alt="googleloginbar" />
-        </StyledButton>
+        </StyledButton> */}
         <KeepLogin>
           <input
             type="checkbox"

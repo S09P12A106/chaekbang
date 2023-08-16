@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import GroupProfile from '../components/GroupDetailPage/GroupProfile'
 import GroupDetail from '../components/GroupDetailPage/GroupDetail'
@@ -8,12 +8,17 @@ import GroupApplyForm from '../components/GroupDetailPage/GroupApplyForm'
 import MainLayout from '../components/Layout/MainLayout'
 import ServerError from '../components/common/ServerError'
 import { getGroupDetail, getGroupMembers } from '../api/groupDetailApi'
+import { useSelector } from 'react-redux'
 
 const menuForUser = ['상세 정보', '인원 정보']
 
 function GroupDetailPage() {
   const { groupId } = useParams()
+  const loggedInUser = useSelector((state) => {
+    return state.rootReducer.loginReducer.user.userId
+  })
 
+  const navigate = useNavigate()
   const [isOpen, setModalOpen] = useState(false)
   const [groupInfo, setGroupInfo] = useState(null)
   const [groupMembers, setGroupMembers] = useState(null)
@@ -23,7 +28,6 @@ function GroupDetailPage() {
     getGroupDetail(
       groupId,
       ({ data }) => {
-        // console.log(data.data)
         setGroupInfo(data.data)
       },
       (error) => {
@@ -36,7 +40,12 @@ function GroupDetailPage() {
     getGroupMembers(
       groupId,
       ({ data }) => {
-        // console.log(data.data)
+        if (
+          data.data.leaderId === loggedInUser ||
+          loggedInUser in data.data.users.map((u) => u.id)
+        ) {
+          navigate(`/groups/home/${groupId}`)
+        }
         setGroupMembers(data.data)
       },
       (error) => {

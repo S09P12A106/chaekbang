@@ -177,7 +177,6 @@ const GroupApplyButtons = styled.div`
   text-align: right;
   margin-top: 4rem;
   margin-right: 2rem;
-  // margin: 5rem 4rem 2rem;
 `
 
 const GroupButton = styled.span`

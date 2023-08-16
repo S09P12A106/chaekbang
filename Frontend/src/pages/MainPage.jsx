@@ -12,7 +12,9 @@ import { useNavigate } from 'react-router-dom'
 import { getMyGroupsApi } from '../api/myGroupApi'
 import { useSelector } from 'react-redux'
 
-const Container = styled.div`
+const Container = styled.div``
+
+const InnerContainer = styled.div`
   height: auto;
   padding: 0 10px;
 `
@@ -54,9 +56,11 @@ function MainPage() {
       <Container>
         <Banner />
         <hr />
-        <GroupSlider title={'인기모임'} groups={popularGroup} />
-        <GroupSlider title={recommendTag} groups={recommendGroup} />
-        {myGroup && <GroupSlider title={'내모임'} groups={myGroup} />}
+        <InnerContainer>
+          <GroupSlider title={'인기모임'} groups={popularGroup} />
+          <GroupSlider title={recommendTag} groups={recommendGroup} />
+          {myGroup && <GroupSlider title={'내모임'} groups={myGroup} />}
+        </InnerContainer>
       </Container>
     </MainLayout>
   )

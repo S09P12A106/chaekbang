@@ -10,14 +10,16 @@ import { VoteBoardContext } from '../context/VoteBoardContext'
 import { VoteHistoryContext } from '../context/VoteHistoryContext'
 import COLORS from '../../../constants/colors'
 import { BoardContext } from '../context/BoardContext'
+import { SocketContext } from '../../../modules/SocketContext'
 
 function VoteBoard() {
   const [whichVoteContext, setWhichVoteContext] = useState(0)
   const [whichIndex, setWhichIndex] = useState(0)
   const [voteHistory, setVoteHistory] = useState([])
+  const [isToggleOpen, setIsToggleOpen] = useState(false)
 
   const { whichBtn, setWhichBtn } = useContext(BoardContext)
-  const [isToggleOpen, setIsToggleOpen] = useState(false)
+  const { voteInfo } = useContext(SocketContext)
 
   useEffect(() => {
     if (whichBtn === 1) {
@@ -26,6 +28,14 @@ function VoteBoard() {
       setIsToggleOpen(false)
     }
   }, [whichBtn])
+
+  // 데이터 받아서 voteHistory에 넣기
+  useEffect(() => {
+    setVoteHistory([voteInfo])
+
+    console.log('voteHistory###########################')
+    console.log(voteHistory)
+  }, [voteInfo])
 
   const VoteBoardComponents = {
     0: <MainVote></MainVote>,

@@ -13,6 +13,9 @@ import { Stomp } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import { SocketContext } from '../modules/SocketContext'
 import { getAccessToken } from '../utils/tokenUtil'
+import { emojiSUB } from '../utils/socket/emojiSUB'
+import { voteSUB } from '../utils/socket/voteSUB'
+import { votePUB } from '../utils/socket/votePUB'
 
 function MeetingRoomPage({
   meetingInfoState,
@@ -23,9 +26,7 @@ function MeetingRoomPage({
   CONSOLE.reRender('MeetingRoomPage rendered!')
   const [meetingInfo, setMeetingInfo] = meetingInfoState
   const [whichBtn, setWhichBtn] = useState(0)
-  // const [client, setClient] = useState(null)
   const [currentTime, setCurrentTime] = useState([])
-  // const [getEmoji, setGetEmoji] = useState([])
 
   // MeetingRoom에 들어오거나 Publisher가 변경되었을 때 접속자 본인 영상 publish
   useEffect(() => {
@@ -46,33 +47,38 @@ function MeetingRoomPage({
 
   const client = useRef(null)
   const [getEmoji, setGetEmoji] = useState([])
+  const [getVote, setGetVote] = useState([])
 
   // socket 연결
   const connectHaner = () => {
     console.log('--------------------' + apiURL)
     client.current = Stomp.over(() => {
-      const sock = new SockJS(wsUrl)
+      const sock = new SockJS(
+        'https://e024-175-209-203-255.ngrok.io/ws/chaekbang',
+      )
       return sock
     })
     console.log('---------------------------')
     client.current.connect(
       {
-        Authorization: getAccessToken(),
+        // Authorization: getAccessToken(),
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNzY0MTQ4NTQzfQ.lwDqjLBxK3GRHG9gMWBNhvBDhNesCTlUoFIs04o3-RQ',
       },
       () => {
-        console.log('Connect!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        client.current.subscribe(`/topic/meeting/1/emoji`, (message) => {
-          const getEmojiInfo = JSON.parse(message.body)
-          console.log('getEmoji~~~~~~~~~~~~~~~~~~~~~~~~~ ')
-          console.log(getEmojiInfo)
-          setGetEmoji(getEmojiInfo)
-        })
+        console.log('!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        // emojiSUB
+        emojiSUB(client, setGetEmoji)
+        // vote
+        voteSUB(client, setGetVote)
+        votePUB(client)
       },
     )
   }
 
   useEffect(() => {
     connectHaner()
+
     console.log(client)
   }, [])
 
@@ -94,6 +100,7 @@ function MeetingRoomPage({
         value={{
           client: client.current,
           EmojiInfo: { emoji: getEmoji.emoji, nickname: getEmoji.nickname },
+          voteInfo: getVote,
         }}
       >
         <Container>

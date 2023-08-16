@@ -1,17 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
+import { styled } from 'styled-components'
 import { VoteBoardContext } from '../../context/VoteBoardContext'
 import { VoteHistoryContext } from '../../context/VoteHistoryContext'
+import { SocketContext } from '../../../../modules/SocketContext'
 
 function ActiveVote({ index }) {
   const { whichIndex, setWhichVoteContext } = useContext(VoteBoardContext)
-  const { voteHistory } = useContext(VoteHistoryContext)
+  const { voteHistory, setVoteHistory } = useContext(VoteHistoryContext)
   const [selectedTitle, setSelectedTitle] = useState('')
   const [selectedContent, setSelectedContent] = useState([])
   const [selectedItemIndex, setSelectedItemIndex] = useState(null)
+  const { client } = useContext(SocketContext)
+
   useEffect(() => {
-    const selectedVote = voteHistory[index]
+    const selectedVote = voteHistory[0][index]
     const title = selectedVote ? selectedVote.title : ''
     const content = selectedVote ? selectedVote.contents : []
 
@@ -19,15 +22,47 @@ function ActiveVote({ index }) {
     setSelectedContent(content)
   }, [])
 
+  // 투표하기 누름
   const handleVoteComp = (num) => {
+    try {
+      // 투표한 항목이 소켓으로 이동
+      if (client) {
+        client.publish({
+          destination: '/ws/pub/meeting/1/vote/sendVote',
+          body: JSON.stringify({
+            // voteHistory[index] > 투표하고자 선택한 {투표객체}
+            voteId: voteHistory[0][index].voteId,
+            selectedItemIndex: selectedItemIndex,
+          }),
+        })
+        console.log('^^^^^^^^^^^^^^^^^^')
+        console.log(selectedItemIndex)
+      }
+    } catch (error) {
+      console.error('에러', error)
+    }
+
+    // 나가기
     setWhichVoteContext(num)
   }
+
+  // 투표 radio 누를 때
   const handleRadioButtonChange = (event, itemIndex) => {
     setSelectedItemIndex(itemIndex)
   }
 
+  // 뒤로가기 > 메인으로 이동
+  const goMain = (num) => {
+    setWhichVoteContext(num)
+  }
+
   return (
     <ActiveVoteContainer>
+      {voteHistory[0][index].isAnonymous ? (
+        <div>무기명투표</div>
+      ) : (
+        <div>기명투표</div>
+      )}
       <Title>{selectedTitle}</Title>
       <ContentBox>
         {selectedContent.map((value, index) => (
@@ -45,7 +80,7 @@ function ActiveVote({ index }) {
         ))}
         <CompleteBtn onClick={() => handleVoteComp(3)}>투표하기</CompleteBtn>
       </ContentBox>
-      <BackWardBtn onClick={() => handleVoteComp(0)}>뒤로가기</BackWardBtn>
+      <BackWardBtn onClick={() => goMain(0)}>뒤로가기</BackWardBtn>
     </ActiveVoteContainer>
   )
 }

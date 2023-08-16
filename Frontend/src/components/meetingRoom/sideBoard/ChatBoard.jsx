@@ -5,36 +5,16 @@ import { BiSolidRightArrow } from 'react-icons/bi'
 import { BoardContext } from '../context/BoardContext'
 
 function ChatBoard() {
-  // const [message, setMessage] = useState('')
-  // const [messageHistory, setMessageHistory] = useState([])
   const { whichBtn, meetingInfoState } = useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
-  // const { session, publisher } = meetingInfo
 
-  // const input = useRef()
-  // const chattingLog = useRef()
   const [chat, setChat] = useState({
     messageList: [],
     message: '',
   })
 
   const session = meetingInfoState[0].session
-
-  // const session = meetingInfoState.session
-  // const publisher = meetingInfoState.publisher
   const { messageList, message } = chat
-
-  const convertTime = () => {
-    const dateObject = new window.Date()
-
-    const hours = dateObject.getHours()
-    const minutes = dateObject.getMinutes()
-    const period = hours >= 12 ? '오후' : '오전'
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
-
-    return `${period} ${formattedHours}:${formattedMinutes}`
-  }
 
   useEffect(() => {
     if (whichBtn === 0) {
@@ -44,6 +24,7 @@ function ChatBoard() {
     }
   }, [whichBtn])
 
+  // 데이터 받기
   useEffect(() => {
     const handleChatSignal = (event) => {
       const data = JSON.parse(event.data)
@@ -75,9 +56,6 @@ function ChatBoard() {
   const sendMessage = () => {
     if (chat.message.trim() === '') return
 
-    // const nowDate = new Date()
-    // console.log('date ' + nowDate)
-
     const data = {
       message: chat.message,
       nickname: meetingInfoState[0].myUserName, // redux에서 불러올 것
@@ -102,6 +80,8 @@ function ChatBoard() {
     }))
   }
   const chattingLog = useRef()
+
+  // 입력창 체인지
   const handleInputChange = (event) => {
     setChat((prev) => ({
       ...prev,
@@ -124,6 +104,17 @@ function ChatBoard() {
         chattingLog.current.scrollTop = chattingLog.current.scrollHeight
       } catch (err) {}
     }, 20)
+  }
+
+  const convertTime = () => {
+    const dateObject = new window.Date()
+    const hours = dateObject.getHours()
+    const minutes = dateObject.getMinutes()
+    const period = hours >= 12 ? '오후' : '오전'
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes
+
+    return `${period} ${formattedHours}:${formattedMinutes}`
   }
 
   return (

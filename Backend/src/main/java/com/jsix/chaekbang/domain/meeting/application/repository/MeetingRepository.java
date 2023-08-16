@@ -12,7 +12,9 @@ public interface MeetingRepository {
 
     Optional<Meeting> findById(Long id);
 
+    Meeting findMeetingById(Long id);
+
     List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId, Pageable pageable);
-    
+
     Long findNotClosedMeetingCountByGroupId(long groupId);
 }

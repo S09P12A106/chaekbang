@@ -109,7 +109,7 @@ public class Group extends BaseEntity {
         removeGroupUser(target);
     }
 
-    private boolean checkExistedUser(User user) {
+    public boolean checkExistedUser(User user) {
         return this.groupUsers.stream().anyMatch(
                 groupUser -> groupUser.getUser().equals(user));
     }

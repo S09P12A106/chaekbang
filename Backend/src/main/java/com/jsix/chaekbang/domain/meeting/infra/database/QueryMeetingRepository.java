@@ -1,6 +1,7 @@
 package com.jsix.chaekbang.domain.meeting.infra.database;
 
 import com.jsix.chaekbang.domain.group.domain.QGroup;
+import com.jsix.chaekbang.domain.group.domain.QGroupUser;
 import com.jsix.chaekbang.domain.meeting.domain.Meeting;
 import com.jsix.chaekbang.domain.meeting.domain.OpinionBox;
 import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
@@ -8,6 +9,7 @@ import com.jsix.chaekbang.domain.meeting.domain.QOpinion;
 import com.jsix.chaekbang.domain.meeting.domain.QOpinionBox;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
 import com.jsix.chaekbang.domain.meeting.dto.QMeetingSearchResponseDto;
+import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ public class QueryMeetingRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private QMeeting meeting = QMeeting.meeting;
     private QGroup group = QGroup.group;
+    private QGroupUser groupUser = QGroupUser.groupUser;
+    private QUser user = QUser.user;
     private QOpinionBox opinionBox = QOpinionBox.opinionBox;
     private QOpinion opinion = QOpinion.opinion1;
 
@@ -38,6 +42,20 @@ public class QueryMeetingRepository {
                               .limit(pageable.getPageSize())
                               .fetch();
     }
+
+    public Meeting findMeetingById(Long id) {
+        return jpaQueryFactory.selectFrom(meeting)
+                              .innerJoin(meeting.group, group)
+                              .fetchJoin()
+                              .innerJoin(group.groupUsers, groupUser)
+                              .fetchJoin()
+                              .innerJoin(groupUser.user, user)
+                              .fetchJoin()
+                              .where(meeting.id.eq(id))
+                              .distinct()
+                              .fetchOne();
+    }
+
 
     public Long findNotClosedMeetingCountByGroupId(long groupId) {
         return jpaQueryFactory.select(meeting.count())

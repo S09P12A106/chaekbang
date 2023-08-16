@@ -1,7 +1,9 @@
 package com.jsix.chaekbang.domain.meeting.domain;
 
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.user.domain.User;
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import com.jsix.chaekbang.global.exception.NotGroupUserException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,4 +68,9 @@ public class Meeting extends BaseEntity {
         return meeting;
     }
 
+    public void validateUser(User user) {
+        if (!group.checkExistedUser(user)) {
+            throw new NotGroupUserException();
+        }
+    }
 }

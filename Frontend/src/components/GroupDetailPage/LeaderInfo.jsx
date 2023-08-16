@@ -1,20 +1,44 @@
 import React from 'react'
 import styled from 'styled-components'
 
+const LeaderTitleContainer = styled.div`
+  display: flex;
+  justify-content: left;
+  margin-bottom: 20px;
+`
+
+const LeaderTitle = styled.div`
+  font-size: 25px;
+`
+
 const LeaderInfo = ({ leader }) => {
   return (
     <LeaderInfoContainer>
-      <h2>
-        모임장{' '}
-        <LeaderNicknameHighlight>{leader.nickname}</LeaderNicknameHighlight>를
-        소개합니다.
-      </h2>
+      <LeaderTitleContainer>
+        <LeaderTitle>
+          모임장{' '}
+          <LeaderNicknameHighlight>{leader.nickname}</LeaderNicknameHighlight>을
+          소개합니다.
+        </LeaderTitle>
+      </LeaderTitleContainer>
       <LeaderProfileImg>
         <div className="image-container">
           <img src={`${leader.profileImageUrl}`} alt="리더 프로필 이미지" />
         </div>
       </LeaderProfileImg>
-      <AboutmeHighlight>{leader.aboutMe}</AboutmeHighlight>
+      <AboutmeHighlight>
+        {leader.aboutMe.split('\n').map((line, key) => {
+          return (
+            key,
+            (
+              <span>
+                {line}
+                <br />
+              </span>
+            )
+          )
+        })}
+      </AboutmeHighlight>
     </LeaderInfoContainer>
   )
 }
@@ -25,9 +49,8 @@ const LeaderInfoContainer = styled.div`
 
 const LeaderProfileImg = styled.div`
   img {
-    width: 50%;
-    width: 8rem;
-    height: 8rem;
+    width: 150px;
+    height: 150px;
     border-radius: 1rem;
     overflow: hidden;
     border: 0.01rem solid white;
@@ -42,13 +65,14 @@ const LeaderProfileImg = styled.div`
 `
 
 const LeaderNicknameHighlight = styled.span`
-  color: #7704ac;
+  font-weight: 700;
 `
 
 const AboutmeHighlight = styled.div`
   color: #707070;
   margin: 1rem 0;
   padding: 0 5rem;
+  margin-top: 25px;
 `
 
 export default LeaderInfo

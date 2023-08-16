@@ -64,81 +64,93 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
 
   return (
     <ProfileGridBox>
-      <div>
+      <ImageContainer>
         {/* 이미지 컨테이너 */}
         <ProfileImg>
           <img src={`${group.imageUrl}`} alt="그룹 프로필 이미지" />
         </ProfileImg>
-      </div>
+      </ImageContainer>
 
-      <div>
-        <h1>{group.title}</h1>
-        {/* <div>yes or no : {temp}</div> --> api 통신 확인*/}
-        <p>
-          현재{' '}
-          <MemberCountHighlight>
-            {membersInfo.users.length}
-          </MemberCountHighlight>
-          명이 함께하고 있어요
-        </p>
+      <InfoContainer>
+        <InfoInnerContainer>
+          <h1>{group.title}</h1>
+          {/* <div>yes or no : {temp}</div> --> api 통신 확인*/}
+          <p>
+            현재{' '}
+            <MemberCountHighlight>
+              {membersInfo.users.length}
+            </MemberCountHighlight>
+            명이 함께하고 있어요
+          </p>
 
-        <TagList>
-          {group.tags.map((tag, index) => {
-            return <Tag key={index}>#{tag.tagName}</Tag>
-          })}
-        </TagList>
+          <TagList>
+            {group.tags.map((tag, index) => {
+              return <Tag key={index}>#{tag.tagName}</Tag>
+            })}
+          </TagList>
 
-        <LeaderInfo leader={leader} />
+          <LeaderInfo leader={leader} />
 
-        {loggedInUser &&
-          !isMemberOfGroup &&
-          hasApplied !== null &&
-          (hasApplied ? (
-            <GroupApplyButtons>
-              <GroupButton
-                color={COLORS.RED}
-                text="white"
-                onClick={handleCancelBtnClick}
-              >
-                신청 취소
-              </GroupButton>
-            </GroupApplyButtons>
-          ) : (
-            <GroupApplyButtons>
-              <GroupButton
-                color={COLORS.THEME_COLOR4}
-                text="white"
-                onClick={() => setModalOpen(true)}
-              >
-                신청하기
-              </GroupButton>
-            </GroupApplyButtons>
-          ))}
-      </div>
+          {loggedInUser &&
+            !isMemberOfGroup &&
+            hasApplied !== null &&
+            (hasApplied ? (
+              <GroupApplyButtons>
+                <GroupButton
+                  color={COLORS.RED}
+                  text="white"
+                  onClick={handleCancelBtnClick}
+                >
+                  신청 취소
+                </GroupButton>
+              </GroupApplyButtons>
+            ) : (
+              <GroupApplyButtons>
+                <GroupButton
+                  color={COLORS.THEME_COLOR4}
+                  text="white"
+                  onClick={() => setModalOpen(true)}
+                >
+                  신청하기
+                </GroupButton>
+              </GroupApplyButtons>
+            ))}
+        </InfoInnerContainer>
+      </InfoContainer>
     </ProfileGridBox>
   )
 }
 
-const ProfileImg = styled.div`
-  position: relative;
-  height: 100%;
-  img {
-    /* max-width: ; */
-    width: 100%;
-    max-height: 37rem;
-    /* height: 100%; */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    vertical-align: middle;
+const ImageContainer = styled.div`
+  flex-basis: 50%;
+  @media (max-width: 700px) {
+    flex-basis: 100%;
   }
 `
 
+const InfoContainer = styled.div`
+  flex-basis: 50%;
+  @media (max-width: 700px) {
+    flex-basis: 100%;
+  }
+`
+
+const InfoInnerContainer = styled.div`
+  padding-left: 20px;
+`
+
 const ProfileGridBox = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+`
+
+const ProfileImg = styled.div`
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 `
 
 const MemberCountHighlight = styled.span`
@@ -147,19 +159,25 @@ const MemberCountHighlight = styled.span`
 
 const TagList = styled.div`
   margin: 2rem 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 `
 
-const Tag = styled.span`
+const Tag = styled.div`
   background-color: ${COLORS.THEME_COLOR2};
   color: white;
   padding: 0.5rem;
   border-radius: 0.8rem;
-  margin-right: 2rem;
+  margin-right: 8px;
+  margin-bottom: 8px;
 `
 
 const GroupApplyButtons = styled.div`
   text-align: right;
-  margin: 5rem 4rem 2rem;
+  margin-top: 4rem;
+  margin-right: 2rem;
+  // margin: 5rem 4rem 2rem;
 `
 
 const GroupButton = styled.span`
@@ -168,7 +186,6 @@ const GroupButton = styled.span`
   background-color: ${(props) => props.color};
   color: ${(props) => props.text};
   text-align: center;
-  margin-left: 2.5rem;
   border-radius: 0.5rem;
   font-size: 1rem;
   cursor: pointer;

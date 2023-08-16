@@ -6,7 +6,20 @@ const GroupDetailInfo = ({ detail }) => {
   return (
     <DetailInfoContainer>
       <h1>모임 정보</h1>
-      <p>{detail}</p>
+      <br></br>
+      <p>
+        {detail.split('\n').map((line, key) => {
+          return (
+            key,
+            (
+              <span>
+                {line}
+                <br />
+              </span>
+            )
+          )
+        })}
+      </p>
     </DetailInfoContainer>
   )
 }

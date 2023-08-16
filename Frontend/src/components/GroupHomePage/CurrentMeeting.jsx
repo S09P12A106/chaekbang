@@ -41,6 +41,7 @@ const CurrentMeeting = ({ currentMeetingInfo }) => {
         .catch((error) => {
           CONSOLE.error('sessionId를 가져오던 도중 에러가 발생했습니다.')
           console.log(error)
+          // TODO-ERROR-JAMES
         })
     }
   }, [currentMeetingInfo])

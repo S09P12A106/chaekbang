@@ -15,7 +15,7 @@ const menuForUser = ['상세 정보', '인원 정보']
 function GroupDetailPage() {
   const { groupId } = useParams()
   const loggedInUser = useSelector((state) => {
-    return state.rootReducer.loginReducer.user.userId
+    return state.rootReducer.loginReducer.user
   })
 
   const navigate = useNavigate()
@@ -32,6 +32,7 @@ function GroupDetailPage() {
       },
       (error) => {
         console.log(error)
+        // TODO-ERROR-JAMES
         return <ServerError />
       },
     )
@@ -41,8 +42,8 @@ function GroupDetailPage() {
       groupId,
       ({ data }) => {
         if (
-          data.data.leaderId === loggedInUser ||
-          loggedInUser in data.data.users.map((u) => u.id)
+          loggedInUser ||
+          data.data.users.map((user) => user.id).indexOf(loggedInUser) >= 0
         ) {
           navigate(`/groups/home/${groupId}`)
         }
@@ -50,6 +51,7 @@ function GroupDetailPage() {
       },
       (error) => {
         console.log(error)
+        // TODO-ERROR-JAMES
         return <ServerError />
       },
     )

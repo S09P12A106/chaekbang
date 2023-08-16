@@ -13,7 +13,6 @@ import CONSOLE from '../../utils/consoleColors'
 const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
   const navigate = useNavigate()
 
-  // TODO: 그룹에 신청한 상태인지 가져오는 api 연동
   const [hasApplied, setHasApplied] = useState(null)
 
   const { groupId } = useParams()
@@ -31,6 +30,7 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
         })
         .catch((error) => {
           console.log(error)
+          // TODO-ERROR-JAMES
         })
     }
   }, [])
@@ -74,7 +74,6 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
       <InfoContainer>
         <InfoInnerContainer>
           <h1>{group.title}</h1>
-          {/* <div>yes or no : {temp}</div> --> api 통신 확인*/}
           <p>
             현재{' '}
             <MemberCountHighlight>

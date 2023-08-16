@@ -43,6 +43,7 @@ const MeetingsInfo = () => {
           CONSOLE.error('미팅 데이터를 받는데 Error 발생!!')
           console.log(error)
           setError(error)
+          // TODO-ERROR-JAMES
         })
     }
   }, [isLoaded])

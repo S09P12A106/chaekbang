@@ -74,7 +74,6 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
 
           {!isLeader && (
             <GroupApplyButtons>
-              {/* TODO: 색깔 상수로 바꾸기 */}
               <GroupButton
                 color="red"
                 text="white"
@@ -86,7 +85,6 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
           )}
           {isLeader && (
             <GroupApplyButtons>
-              {/* TODO: 색깔 상수로 바꾸기 */}
               <GroupButton color="#00BBC6" text="white" onClick={toManagePage}>
                 모임 관리하기
               </GroupButton>

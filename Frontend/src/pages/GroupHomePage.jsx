@@ -31,6 +31,7 @@ const GroupHomePage = () => {
       },
       (error) => {
         console.log(error)
+        // TODO-ERROR-JAMES
         return <ServerError />
       },
     )
@@ -45,6 +46,7 @@ const GroupHomePage = () => {
       },
       (error) => {
         console.log(error)
+        // TODO-ERROR-JAMES
         return <ServerError />
       },
     )

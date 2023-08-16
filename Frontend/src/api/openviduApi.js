@@ -1,6 +1,6 @@
 import { jwtBackApiInstance } from './http'
 
-const additionalBaseUrl = `/api/openvidu/sessions/`
+const additionalBaseUrl = `/api/groups/meetings/sessions/`
 
 const api = jwtBackApiInstance()
 

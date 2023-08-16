@@ -7,7 +7,10 @@ function isActivatedMeeting(meeting) {
   const meetingActivatedTime = computeMeetingActivatedTime(meeting.startedAt)
   const now = new Date()
 
-  return meeting.closedAt === '' && now >= meetingActivatedTime
+  return (
+    meeting.closedAt === '' ||
+    (meeting.closedAt === null && now >= meetingActivatedTime)
+  )
 }
 
 /**

@@ -3,6 +3,12 @@ import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import { isActivatedMeeting } from './dateCalculator'
 
+function joinMeeting() {
+  window.location.href = '/testMeeting'
+}
+
+const [COMPLETED, ONGOING, SCHEDULED] = [0, 1, 2]
+
 const buttonStyle = [
   {
     // completed
@@ -35,7 +41,10 @@ const MeetingsByDate = ({ date, meetings }) => {
           return (
             <MeetingContainer key={index}>
               <MeetingTitle>{meeting.title}</MeetingTitle>
-              <Button color={buttonStyle[type].color}>
+              <Button
+                color={buttonStyle[type].color}
+                onClick={type === ONGOING ? joinMeeting : undefined}
+              >
                 {buttonStyle[type].label}
               </Button>
             </MeetingContainer>

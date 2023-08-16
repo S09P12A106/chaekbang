@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { styled } from 'styled-components'
 import ScreenContainer from '../components/meeting/waiting/ScreenContainer'
 import ContextContainer from '../components/meeting/waiting/ContextContainer'
@@ -20,30 +20,17 @@ function MeetWaiting({
   toggleCam,
   joinMeetingRoom,
 }) {
-  const navigate = useNavigate()
   const [meetingInfo, setMeetingInfo] = meetingInfoState
   const isTokenRequested = useRef(false)
   const ovObj = useMemo(() => {
-    CONSOLE.info('Openvidu init!!')
     const ov = new OpenVidu()
     return { OV: ov }
   }, [])
   const OV = ovObj.OV
 
-  CONSOLE.reRender('리렌더링')
-
-  const handleRefresh = (e) => {
-    CONSOLE.info('beforeunload event occured!!')
-    e.preventDefault()
-    e.returnValue = '' // 이 줄은 일부 브라우저에서 경고 메시지를 표시하지 않도록 합니다.
-    if (meetingInfo.publisher) {
-      meetingInfo.publisher.off()
-    }
-    if (mySession) {
-      CONSOLE.event('event - disconnected!!')
-      mySession.disconnect()
-    }
-  }
+  const loggedInUserNickname = useSelector((state) => {
+    return state.rootReducer.loginReducer.user.nickname
+  })
 
   // meetingInfo의 첫번째 변경
   useEffect(() => {
@@ -52,11 +39,6 @@ function MeetWaiting({
       ...prevState,
       session: OV.initSession(),
     }))
-    // 처음 저장된 상태 그대로
-    return () => {
-      CONSOLE.info('clean up!!')
-      alert('책방에 참여합니다!')
-    }
   }, [])
 
   /**
@@ -104,16 +86,21 @@ function MeetWaiting({
 
       getToken(meetingInfo.mySessionId).then((token) => {
         const mySession = meetingInfo.session
-        mySession.connect(token, { clientData: 'James' }).then(async () => {
-          const publisher = await OV.initPublisherAsync(undefined, videoOption)
+        mySession
+          .connect(token, { clientData: loggedInUserNickname })
+          .then(async () => {
+            const publisher = await OV.initPublisherAsync(
+              undefined,
+              videoOption,
+            )
 
-          setMeetingInfo((prevState) => ({
-            ...prevState,
-            mainStreamManager: publisher,
-            publisher: publisher,
-            prevPublisher: undefined,
-          }))
-        })
+            setMeetingInfo((prevState) => ({
+              ...prevState,
+              mainStreamManager: publisher,
+              publisher: publisher,
+              prevPublisher: undefined,
+            }))
+          })
       })
     }
   }, [meetingInfo])
@@ -122,7 +109,7 @@ function MeetWaiting({
     <MainLayout>
       <WaitContainer>
         <ScreenContainer
-          nickname="James" // 로그인 사용자의 닉네임 가져오기
+          nickname={loggedInUserNickname} // 로그인 사용자의 닉네임 가져오기
           streamManager={meetingInfo.publisher}
           isTokenRequested={isTokenRequested}
           toggleMic={toggleMic}

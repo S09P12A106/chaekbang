@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import { MdAlarmOn, MdAlarmOff } from 'react-icons/md'
 import '../GroupHomePage/css/groupHomePageStyle.css'
+import { getSessionId } from '../../api/groupHomeApi'
+import { saveSessionId } from '../../store/sessionIdReducer'
+import CONSOLE from '../../utils/consoleColors'
 
 const ACTIVATED = 0
 const DEACTIVATED = 1
@@ -25,6 +29,30 @@ const NOTICE = [
 ]
 
 const CurrentMeeting = ({ currentMeetingInfo }) => {
+  const dispatch = useDispatch()
+  const [sessionId, setSessionId] = useState(null)
+
+  useEffect(() => {
+    if (currentMeetingInfo.isActivatedMeetingExist) {
+      getSessionId(currentMeetingInfo.meetingId)
+        .then(({ data }) => {
+          setSessionId(data.data)
+        })
+        .catch((error) => {
+          CONSOLE.error('sessionId를 가져오던 도중 에러가 발생했습니다.')
+          console.log(error)
+        })
+    }
+  }, [currentMeetingInfo])
+
+  useEffect(() => {
+    dispatch(saveSessionId(sessionId))
+  }, [sessionId])
+
+  function joinMeeting() {
+    window.location.href = '/testMeeting'
+  }
+
   const noticeOption = currentMeetingInfo.isActivatedMeetingExist
     ? NOTICE[ACTIVATED]
     : NOTICE[DEACTIVATED]
@@ -32,7 +60,9 @@ const CurrentMeeting = ({ currentMeetingInfo }) => {
     <CurrentMeetingInfoContainer color={noticeOption.containerColor}>
       {noticeOption.icon}
       <NoticeBox>{noticeOption.message}</NoticeBox>
-      <Button color={noticeOption.btnColor}>{noticeOption.btnMessage}</Button>
+      <Button color={noticeOption.btnColor} onClick={joinMeeting}>
+        {noticeOption.btnMessage}
+      </Button>
     </CurrentMeetingInfoContainer>
   )
 }
@@ -65,6 +95,7 @@ const Button = styled.span`
   border-radius: 0.5rem;
   padding: 0.5rem;
   margin-right: 1rem;
+  cursor: pointer;
 `
 
 export default CurrentMeeting

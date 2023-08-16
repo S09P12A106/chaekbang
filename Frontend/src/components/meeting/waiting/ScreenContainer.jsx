@@ -1,11 +1,5 @@
 import React from 'react'
-import { styled, css } from 'styled-components'
-import SoundBtn from '../buttonMeeting/SoundBtn'
-import CameraBtn from '../buttonMeeting/CameraBtn'
-import ShareBtn from '../buttonMeeting/ShareBtn'
-import EmojiBtn from '../buttonMeeting/EmojiBtn'
-import BackGroundBtn from '../buttonMeeting/BackGroundBtn'
-import SettingBtn from '../buttonMeeting/SettingBtn'
+import { styled } from 'styled-components'
 import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
 import VideoButtonsInWaitingRoom from '../../common/VideoButtonsInWaitingRoom'
 
@@ -16,7 +10,6 @@ function ScreenContainer({
   toggleMic,
   toggleCam,
 }) {
-  console.log(isTokenRequested)
   return (
     <Container>
       {isTokenRequested.current ? (

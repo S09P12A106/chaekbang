@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { styled } from 'styled-components'
 import { OpenVidu } from 'openvidu-browser'
 import MeetWaiting from './MeetWaiting'
@@ -19,6 +20,15 @@ const OV = new OpenVidu()
 
 const MeetingPage = () => {
   CONSOLE.reRender('MeetingPage rendered')
+
+  const sessionId = useSelector((state) => {
+    return state.rootReducer.sessionIdReducer.sessionId
+  })
+
+  const loggedInUser = useSelector((state) => {
+    return state.rootReducer.loginReducer.user
+  })
+
   /*
   - mySessionId : 세션(책방 당 하나)의 아이디
   - myUserName : 내 영상에 표시될 닉네임
@@ -29,10 +39,9 @@ const MeetingPage = () => {
   - subscribers : 나를 제외한 책방에 참여하고 있는 접속자들의 Publisher 객체
   */
   const meetingInfoState = useState(() => {
-    CONSOLE.info('초기값 설정')
     return {
-      mySessionId: 'SessionA',
-      myUserName: 'James',
+      mySessionId: sessionId,
+      myUserName: loggedInUser.userId,
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
@@ -74,7 +83,6 @@ const MeetingPage = () => {
   })
 
   useEffect(() => {
-    CONSOLE.info('video init')
     const newPublisher = OV.initPublisher(undefined, videoOption)
     setMeetingInfo((prevState) => ({
       ...prevState,
@@ -100,6 +108,7 @@ const MeetingPage = () => {
   const [isWaitingState, setIsWaitingState] = useState(true)
 
   function joinMeetingRoom() {
+    alert('책방에 참여합니다!')
     setIsWaitingState(false)
   }
 

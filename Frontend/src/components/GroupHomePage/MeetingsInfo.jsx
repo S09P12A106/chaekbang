@@ -20,11 +20,6 @@ const MeetingsInfo = () => {
   const [stop, setStop] = useState(false)
   const pageNum = useRef(-1)
 
-  const currentMeetingInfo = {
-    isActivatedMeetingExist: true,
-    meetingId: 1,
-  }
-
   const { groupId } = useParams()
 
   // <설정> meetings 데이터가 변경될시
@@ -84,14 +79,17 @@ const MeetingsInfo = () => {
   }, [isLoaded, stop, target])
   if (!meetingsData) return null
 
+  const currentMeetingIndex = findCurrentMeeting(meetingsData)
+
+  const currentMeetingInfo = {
+    isActivatedMeetingExist: currentMeetingIndex !== -1,
+    meetingId: currentMeetingIndex,
+  }
+
   return (
     <MeetingListContainer>
       <CurrentMeeting currentMeetingInfo={currentMeetingInfo} />
-      <MeetingList
-        meetings={meetingsData}
-        // setTarget={setTarget}
-        // isLoaded={isLoaded}
-      />
+      <MeetingList meetings={meetingsData} />
       {isLoaded ? <p>Loading....</p> : <div ref={setTarget}></div>}
     </MeetingListContainer>
   )

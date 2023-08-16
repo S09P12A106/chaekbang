@@ -19,4 +19,8 @@ async function getMeetingList(groupId, pageSize, pageNum) {
   )
 }
 
-export { leaveGroup, getMeetingList }
+async function getSessionId(meetingId) {
+  return await jwtApi.get(`api/groups/meetings/${meetingId}/session-id`)
+}
+
+export { leaveGroup, getMeetingList, getSessionId }

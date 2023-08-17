@@ -29,7 +29,11 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
           setHasApplied(data.data)
         })
         .catch((error) => {
-          navigate('/error')
+          if (error.response && error.response.status === 401) {
+            navigate('/login')
+          } else {
+            navigate('/error')
+          }
         })
     }
   }, [])
@@ -53,7 +57,11 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
             alert('모임 신청이 취소되었습니다.')
             navigate('/')
           } catch (error) {
-            navigate('/error')
+            if (error.response && error.response.status === 401) {
+              navigate('/login')
+            } else {
+              navigate('/error')
+            }
           }
         }
       },

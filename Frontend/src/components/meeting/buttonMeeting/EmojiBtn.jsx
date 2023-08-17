@@ -63,7 +63,7 @@ function EmojiBtn() {
         })
       }
     } catch (error) {
-      navigate('/error')
+      console.log(error)
     }
   }
 

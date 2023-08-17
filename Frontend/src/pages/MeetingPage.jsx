@@ -47,7 +47,11 @@ const MeetingPage = () => {
         CONSOLE.info('getSessionId 완료')
         setSessionId(response.data.data)
       } catch (error) {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       }
     }
     setSession()

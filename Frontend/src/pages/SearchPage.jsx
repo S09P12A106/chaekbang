@@ -6,6 +6,7 @@ import SearchGroupList from '../components/search/SearchGroupList'
 import { getSearchGroupApi, getTagsApi } from '../api/searchApi'
 import MainLayout from '../components/Layout/MainLayout'
 import { useLocation } from 'react-router-dom'
+import LoadingItem from '../components/common/LoadingItem'
 const Container = styled.div``
 
 function SearchPage() {
@@ -101,6 +102,9 @@ function SearchPage() {
     }
     getTags()
   }, [])
+  if (!groupList) {
+    return <LoadingItem></LoadingItem>
+  }
   return (
     <MainLayout>
       <Container>

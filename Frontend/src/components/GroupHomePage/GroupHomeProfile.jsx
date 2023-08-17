@@ -29,7 +29,11 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
           alert('그동안 함께해서 즐거웠습니다!')
           navigate('/')
         } catch (error) {
-          navigate('/error')
+          if (error.response && error.response.status === 401) {
+            navigate('/login')
+          } else {
+            navigate('/error')
+          }
         }
       }
     })

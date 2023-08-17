@@ -2,6 +2,7 @@ import React from 'react'
 import { styled } from 'styled-components'
 import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
 import VideoButtonsInWaitingRoom from '../../common/VideoButtonsInWaitingRoom'
+import LoadingItem from '../../common/LoadingItem'
 
 function ScreenContainer({
   nickname,
@@ -27,7 +28,7 @@ function ScreenContainer({
           />
         </div>
       ) : (
-        <div>로딩 중입니다.</div>
+        <LoadingItem></LoadingItem>
       )}
     </Container>
   )

@@ -44,6 +44,10 @@ function RouterApp() {
             path="/groups/:id/meetings/create"
             element={<MeetingCreatePage />}
           />
+          <Route
+            path="/groups/:groupId/meetings/:meetingId"
+            element={<MeetingDetailPage />}
+          />
           <Route path="/groups/home/:groupId" element={<GroupHomePage />} />
           <Route path="/meeting" element={<MeetingPage />} />
         </Route>

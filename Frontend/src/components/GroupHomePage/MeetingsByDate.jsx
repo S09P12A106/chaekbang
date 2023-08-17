@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import { isActivatedMeeting } from './dateCalculator'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 function joinMeeting(meetingId, groupId) {
   if (meetingId) {
@@ -14,17 +14,17 @@ const [COMPLETED, ONGOING, SCHEDULED] = [0, 1, 2]
 
 const buttonStyle = [
   {
-    // completed
+    // completed : 0
     color: COLORS.THEME_COLOR4,
     label: '상세조회',
   },
   {
-    //ongoing
+    //ongoing : 1
     color: COLORS.THEME_COLOR2,
     label: '참여하기',
   },
   {
-    // scheduled
+    // scheduled : 2
     color: '#7b8489',
     label: '참여하기',
   },
@@ -35,6 +35,12 @@ const MeetingsByDate = ({ date, meetings }) => {
   const ongoingMeetings = meetings.filter(
     (meeting) => findTypeOfMeeting(meeting) === ONGOING,
   )
+  const navigate = useNavigate()
+
+  const goToMeetingDetail = (meetingId) => {
+    const url = `/groups/${groupId}/meetings/${meetingId}`
+    navigate(url)
+  }
 
   return (
     <Container>
@@ -51,11 +57,13 @@ const MeetingsByDate = ({ date, meetings }) => {
               <MeetingTitle>{meeting.title}</MeetingTitle>
               <Button
                 color={buttonStyle[type].color}
-                onClick={() =>
-                  type === ONGOING
-                    ? joinMeeting(ongoingMeetings[0].id, groupId)
-                    : undefined
-                }
+                onClick={() => {
+                  if (type === ONGOING) {
+                    joinMeeting(ongoingMeetings[0].id, groupId)
+                  } else if (type === COMPLETED) {
+                    goToMeetingDetail(meeting.id)
+                  }
+                }}
               >
                 {buttonStyle[type].label}
               </Button>
@@ -86,8 +94,9 @@ function getFormattedDate(date) {
  * @returns {int} 0: completed, 1: ongoing, 2: scheduled
  */
 function findTypeOfMeeting(meeting) {
-  if (meeting.closedAt) return 0
-  else if (isActivatedMeeting(meeting)) return 1
+  if (meeting.closedAt) {
+    return 0
+  } else if (isActivatedMeeting(meeting)) return 1
   else return 2
 }
 

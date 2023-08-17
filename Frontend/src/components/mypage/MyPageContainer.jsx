@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import Modal from '../common/ModalWindow'
 import UpdateModal from './UpdateModal'
 import { useNavigate } from 'react-router-dom'
+import LoadingItem from '../common/LoadingItem'
 
 const Container = styled.div`
   display: flex;
@@ -58,9 +59,15 @@ const UpdateButton = styled.div`
 
 function MyPageContainer() {
   const dummy = getUser()
+  const navigate = useNavigate()
   const userId = useSelector((state) => {
-    return state.rootReducer.loginReducer.user.userId
+    if (state.rootReducer.loginReducer.user) {
+      return state.rootReducer.loginReducer.user.userId
+    } else {
+      return null
+    }
   })
+
   const [modalOpened, setModalOpened] = useState(false)
   const [originUserData, setOriginUserData] = useState({
     userId: null,
@@ -75,13 +82,15 @@ function MyPageContainer() {
   const [myHistory, setMyHistory] = useState(null)
 
   const [nickname, setNickname] = useState(null)
-  const navigate = useNavigate()
 
   const updateUser = () => {
     setModalOpened(true)
   }
 
   useEffect(() => {
+    if (!userId) {
+      navigate('/login')
+    }
     const fetchData = async () => {
       try {
         setOriginUserData({
@@ -109,14 +118,19 @@ function MyPageContainer() {
         setMyGroup(myGroupData.data.data)
         setMyHistory(myHistoryData.data.data)
       } catch (error) {
-        navigate('/error')
+        console.log(error)
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       }
     }
     fetchData()
   }, [])
 
   if (!Object.values(originUserData).every((elem) => elem !== null)) {
-    return null
+    return <LoadingItem></LoadingItem>
   }
 
   return (

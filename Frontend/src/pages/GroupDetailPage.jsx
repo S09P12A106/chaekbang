@@ -9,6 +9,7 @@ import MainLayout from '../components/Layout/MainLayout'
 import ServerError from '../components/common/ServerError'
 import { getGroupDetail, getGroupMembers } from '../api/groupDetailApi'
 import { useSelector } from 'react-redux'
+import LoadingItem from '../components/common/LoadingItem'
 
 const menuForUser = ['상세 정보', '인원 정보']
 
@@ -47,6 +48,7 @@ function GroupDetailPage() {
           data.data.leaderId === loggedInUser ||
           data.data.users.map((u) => u.id).indexOf(loggedInUser) >= 0
         ) {
+          navigate('/')
           navigate(`/groups/home/${groupId}`)
         } else {
           setGroupMembers(data.data)
@@ -69,11 +71,7 @@ function GroupDetailPage() {
   }
 
   if (!groupInfo || !groupMembers) {
-    return (
-      <div>
-        <h1>로딩중입니다!!!</h1>
-      </div>
-    )
+    return <LoadingItem></LoadingItem>
   }
 
   return (

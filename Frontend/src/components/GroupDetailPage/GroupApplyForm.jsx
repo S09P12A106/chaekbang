@@ -29,7 +29,11 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
       )
       setModalOpen(false)
     } catch (error) {
-      navigate('/error')
+      if (error.response && error.response.status === 401) {
+        navigate('/login')
+      } else {
+        navigate('/error')
+      }
     }
   }
 

@@ -33,14 +33,17 @@ const MeetingsInfo = () => {
     if (isLoaded) {
       getMeetingList(groupId, PAGE_SIZE, pageNum.current)
         .then(({ data }) => {
-          console.log(data)
           if (data.data.length < PAGE_SIZE) {
             setStop(true)
           }
           setMeetingsData((meetings) => meetings.concat(data.data))
         })
         .catch((error) => {
-          navigate('/error')
+          if (error.response && error.response.status === 401) {
+            navigate('/login')
+          } else {
+            navigate('/error')
+          }
         })
     }
   }, [isLoaded])

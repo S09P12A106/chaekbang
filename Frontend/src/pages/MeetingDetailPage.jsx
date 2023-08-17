@@ -6,6 +6,7 @@ import MeetingTitle from '../components/MeetingDetailPage/MeetingTitle'
 import OpinionBoxes from '../components/MeetingDetailPage/OpinionBoxes'
 import { jwtBackApiInstance } from '../api/http'
 import { useNavigate } from 'react-router-dom'
+import LoadingItem from '../components/common/LoadingItem'
 
 const Container = styled.div`
   margin-top: 5rem;
@@ -29,14 +30,18 @@ function MeetingDetailPage() {
         const response = await jwtHttp.get(URL)
         setMeetingInfo(response.data)
       } catch (error) {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       }
     }
     fetchData()
   }, [])
 
   if (meetingInfo === null) {
-    return null
+    return <LoadingItem></LoadingItem>
   }
 
   return (

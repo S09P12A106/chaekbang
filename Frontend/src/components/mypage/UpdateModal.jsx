@@ -185,8 +185,9 @@ function UpdateModal({ setModalOpened, nickname, imageUrl, userId }) {
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setErroeMessage(error.response.data.message)
+      } else if (error.response && error.response.status === 401) {
+        navigate('/login')
       } else {
-        // 페이지 이동 삽입
         navigate('/error')
       }
     }

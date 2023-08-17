@@ -9,7 +9,7 @@ import { groupApi } from '../components/GroupDetailPage/api/groupApi'
 import ServerError from '../components/common/ServerError'
 import { getGroupDetail, getGroupMembers } from '../api/groupDetailApi'
 import { isUserNotInGroup } from '../utils/userUtil'
-import { createBrowserHistory } from 'history'
+import LoadingItem from '../components/common/LoadingItem'
 
 const menuForMember = ['상세 정보', '인원 정보', '책방 정보']
 
@@ -20,22 +20,6 @@ const GroupHomePage = () => {
   const loggedInUser = useSelector((state) => {
     return state.rootReducer.loginReducer.user
   })
-  const history = createBrowserHistory()
-
-  useEffect(() => {
-    const listenBackEvent = () => {
-      // 뒤로가기 할 때 수행할 동작을 적는다
-      navigate('/')
-    }
-
-    const unlistenHistoryEvent = history.listen(({ action }) => {
-      if (action === 'POP') {
-        listenBackEvent()
-      }
-    })
-
-    return unlistenHistoryEvent
-  }, [])
 
   const [groupInfo, setGroupInfo] = useState(null)
   const [groupMembers, setGroupMembers] = useState(null)
@@ -47,7 +31,11 @@ const GroupHomePage = () => {
         setGroupInfo(data.data)
       },
       (error) => {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       },
     )
     getGroupMembers(
@@ -60,17 +48,17 @@ const GroupHomePage = () => {
         setGroupMembers(data.data)
       },
       (error) => {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       },
     )
   }, [])
 
   if (!groupInfo || !groupMembers) {
-    return (
-      <div>
-        <h1>로딩중입니다!!!</h1>
-      </div>
-    )
+    return <LoadingItem></LoadingItem>
   }
   const groupMemberCount = groupMembers.length
 

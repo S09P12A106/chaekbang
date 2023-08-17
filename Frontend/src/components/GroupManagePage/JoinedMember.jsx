@@ -4,6 +4,7 @@ import JoinedMemberItem from './JoinedMemberItem'
 import Swal from 'sweetalert2'
 import deleteJoinedMember from '../../api/joinedMemberApi'
 import { jwtBackApiInstance } from '../../api/http'
+import LoadingItem from '../common/LoadingItem'
 
 const Container = styled.div`
   display: flex;
@@ -31,7 +32,11 @@ function JoinedMember() {
         const leaderId = response.data.data.leaderId
         setUsers(response.data.data.users.filter((user) => user.id != leaderId))
       } catch (error) {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       }
     }
     fetchUsers()
@@ -52,14 +57,18 @@ function JoinedMember() {
           await deleteJoinedMember(groupId, id)
           setUsers(users.filter((user) => user.id !== id))
         } catch (error) {
-          navigate('/error')
+          if (error.response && error.response.status === 401) {
+            navigate('/login')
+          } else {
+            navigate('/error')
+          }
         }
       }
     })
   }
 
   if (users === null) {
-    return null
+    return <LoadingItem></LoadingItem>
   }
   return (
     <Container>

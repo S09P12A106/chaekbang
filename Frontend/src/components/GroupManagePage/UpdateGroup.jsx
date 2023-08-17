@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import patchGroup from '../../api/modifyGroupApi'
 import { jwtBackApiInstance } from '../../api/http'
+import LoadingItem from '../common/LoadingItem'
 
 const groupId = 1
 
@@ -140,7 +141,11 @@ function UpdateGroup() {
           tagNames: response.data.data.tags.map((tag) => tag.tagName),
         })
       } catch (error) {
-        navigate('/error')
+        if (error.response && error.response.status === 401) {
+          navigate('/login')
+        } else {
+          navigate('/error')
+        }
       }
     }
     fetchGroup()
@@ -269,8 +274,9 @@ function UpdateGroup() {
         } catch (error) {
           if (error.response && error.response.status === 400) {
             setRequestErrorMessage(error.response.data.message)
+          } else if (error.response && error.response.status === 401) {
+            navigate('/login')
           } else {
-            // 페이지 이동 삽입
             navigate('/error')
           }
         }
@@ -292,7 +298,7 @@ function UpdateGroup() {
   }
 
   if (!Object.values(inputs).every((elem) => elem !== null)) {
-    return null
+    return <LoadingItem></LoadingItem>
   }
   return (
     <Container>

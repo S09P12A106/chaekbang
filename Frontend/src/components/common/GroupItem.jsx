@@ -5,6 +5,7 @@ import COLORS from '../../constants/colors'
 import EyeIcon from '../../assets/Eye.svg'
 import convertShortNumber from '../../utils/convertShortNumber'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Container = styled.div`
   width: 220px;
@@ -59,9 +60,9 @@ const ViewCount = styled.div`
 
 function GroupItem({ group }) {
   const groupId = group.groupId
+
   const navigate = useNavigate()
   const toDetailPage = (e) => {
-    console.log(groupId)
     navigate(`/groups/detail/${groupId}`)
   }
 

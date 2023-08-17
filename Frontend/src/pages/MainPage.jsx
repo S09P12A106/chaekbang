@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { clearToken } from '../utils/tokenUtil'
 import { logoutAction } from '../store/LoginUser'
 
+import LoadingItem from '../components/common/LoadingItem'
+
 const Container = styled.div``
 
 const InnerContainer = styled.div`
@@ -61,7 +63,9 @@ function MainPage() {
       getMyGroup()
     }
   }, [])
-
+  if (!popularGroup || !recommendGroup) {
+    return <LoadingItem></LoadingItem>
+  }
   return (
     <MainLayout>
       <Container>

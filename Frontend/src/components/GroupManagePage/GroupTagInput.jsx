@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import LoadingItem from '../common/LoadingItem'
 
 const FormContainer = styled.div`
   display: flex;
@@ -180,7 +181,7 @@ function GroupTagInput(props) {
     }
   }
   if (props.inputs.tagNames === null) {
-    return null
+    return <LoadingItem></LoadingItem>
   }
   return (
     <FormContainer>

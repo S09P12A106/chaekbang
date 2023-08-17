@@ -37,12 +37,14 @@ const MeetingPage = () => {
   const navigate = useNavigate()
   //세션 id 받기
   useEffect(() => {
+    CONSOLE.useEffectIn('MeetingPage_none---(for getSessionId api)')
     const queryParams = new URLSearchParams(location.search)
     const meetingId = queryParams.get('meetingId')
 
     const setSession = async () => {
       try {
         const response = await getSessionId(meetingId)
+        CONSOLE.info('getSessionId 완료')
         setSessionId(response.data.data)
       } catch (error) {
         navigate('/error')
@@ -77,6 +79,43 @@ const MeetingPage = () => {
   })
 
   const [meetingInfo, setMeetingInfo] = meetingInfoState
+  const [isTogglePossible, setIsTogglePossible] = useState(true)
+
+  useEffect(() => {
+    CONSOLE.info(`isTogglePossible changed! --> ${isTogglePossible}`)
+    if (!isTogglePossible && meetingInfo.mySessionId) {
+      // toggle이 false 이면
+      if (meetingInfo.prevPublisher) {
+        // 이전 pulisher가 있으면
+        meetingInfo.session.unpublish(meetingInfo.prevPublisher).then((res) => {
+          meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
+            console.log(res)
+            CONSOLE.setCalled('meetingInfo')
+            setMeetingInfo((prevState) => ({
+              ...prevState,
+              prevPublisher: meetingInfo.publisher,
+            }))
+          })
+        })
+      } else {
+        // 이전 pulisher가 없으면
+        meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
+          console.log(res)
+          CONSOLE.setCalled('meetingInfo')
+          setMeetingInfo((prevState) => ({
+            ...prevState,
+            prevPublisher: meetingInfo.publisher,
+          }))
+        })
+      }
+    }
+  }, [isTogglePossible])
+
+  useEffect(() => {
+    CONSOLE.useEffectIn('MeetingPage_meetingInfo.prevPublisher')
+    CONSOLE.setCalled('istoggle')
+    setIsTogglePossible(true)
+  }, [meetingInfo.prevPublisher])
 
   /**
    * 미디어 소스를 담고 있는 객체를 Promise로 반환합니다.
@@ -109,7 +148,11 @@ const MeetingPage = () => {
   })
 
   useEffect(() => {
+    CONSOLE.useEffectIn('MeetingPage_videoOption')
     const newPublisher = OV.initPublisher(undefined, videoOption)
+    CONSOLE.info('newPublisher!')
+    console.log(newPublisher)
+    CONSOLE.setCalled('meetingInfo')
     setMeetingInfo((prevState) => ({
       ...prevState,
       mainStreamManager: newPublisher,
@@ -118,6 +161,12 @@ const MeetingPage = () => {
   }, [videoOption])
 
   function toggleMic() {
+    CONSOLE.funcIn('toggleMic')
+    if (!isTogglePossible) {
+      CONSOLE.warn('toggleMic refused')
+      return
+    }
+    CONSOLE.setCalled('mic')
     setVideoOption((prevOption) => ({
       ...prevOption,
       publishAudio: !prevOption.publishAudio,
@@ -125,6 +174,12 @@ const MeetingPage = () => {
   }
 
   function toggleCam() {
+    CONSOLE.funcIn('toggleCam')
+    if (!isTogglePossible) {
+      CONSOLE.warn('toggleCam refused')
+      return
+    }
+    CONSOLE.setCalled('cam')
     setVideoOption((prevOption) => ({
       ...prevOption,
       publishVideo: !prevOption.publishVideo,
@@ -156,6 +211,7 @@ const MeetingPage = () => {
               videoOption={videoOption}
               toggleMic={toggleMic}
               toggleCam={toggleCam}
+              setIsTogglePossible={setIsTogglePossible}
             />
           )}
           {/* <h1>책방 입니다.</h1> */}

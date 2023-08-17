@@ -22,6 +22,7 @@ function MeetingRoomPage({
   videoOption,
   toggleMic,
   toggleCam,
+  setIsTogglePossible,
 }) {
   CONSOLE.reRender('MeetingRoomPage rendered!')
   const [meetingInfo, setMeetingInfo] = meetingInfoState
@@ -30,15 +31,21 @@ function MeetingRoomPage({
 
   // MeetingRoom에 들어오거나 Publisher가 변경되었을 때 접속자 본인 영상 publish
   useEffect(() => {
+    CONSOLE.useEffectIn('MeetingRoomPage_meetingInfo.publisher')
+    CONSOLE.setCalled('isToggle')
+    setIsTogglePossible(false)
     // 이전 접속자 본인의 publisher가 있다면
-    if (meetingInfo.prevPublisher) {
-      meetingInfo.session.unpublish(meetingInfo.prevPublisher)
-    }
-    meetingInfo.session.publish(meetingInfo.publisher)
-    setMeetingInfo((prevState) => ({
-      ...prevState,
-      prevPublisher: meetingInfo.publisher,
-    }))
+    // if (meetingInfo.prevPublisher) {
+    //   meetingInfo.session.unpublish(meetingInfo.prevPublisher)
+    // }
+    // meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
+    //   console.log(res)
+    //   CONSOLE.setCalled('meetingInfo')
+    //   setMeetingInfo((prevState) => ({
+    //     ...prevState,
+    //     prevPublisher: meetingInfo.publisher,
+    //   }))
+    // })
   }, [meetingInfo.publisher])
 
   // -------------- socket 관한 코드 --------------

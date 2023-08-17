@@ -4,6 +4,9 @@ const msgStyle = {
   warn: 'color: orange; font-weight: bold',
   event: 'color: magenta; font-weight: bold',
   reRender: 'color: dimgray; font-weight: bold; font-size:1.5rem',
+  useEffectIn: 'color: blueviolet; font-weight: bold',
+  funcIn: 'color: indianred; font-weight: bold',
+  setCalled: 'color: tomato; font-weight: bold',
   brown: 'color: sienna',
 }
 
@@ -25,6 +28,15 @@ const CONSOLE = {
   },
   brown: function (msg) {
     coloredMsg(msgStyle.brown, msg)
+  },
+  useEffectIn: function (msg) {
+    coloredMsg(msgStyle.useEffectIn, `useEffectIn -> ${msg}`)
+  },
+  funcIn: function (msg) {
+    coloredMsg(msgStyle.funcIn, `function In -> ${msg}`)
+  },
+  setCalled: function (msg) {
+    coloredMsg(msgStyle.setCalled, `set **$${msg}** called!`)
   },
 }
 

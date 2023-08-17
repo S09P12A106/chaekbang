@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import BannerUrl from '../../assets/Banner.png'
 
 const Container = styled.div`
   width: 100%;
@@ -7,17 +8,15 @@ const Container = styled.div`
   padding: 0px 10px;
   img {
     width: 100%;
-    max-height: 600px;
+    max-height: 400px;
     min-height: 300px;
     object-fit: cover;
   }
 `
 function Banner() {
-  const dummyUrl =
-    'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/09/reading-book-1296x728-header.jpg?w=1155&h=1528'
   return (
     <Container>
-      <img src={dummyUrl} alt="banner" />
+      <img src={BannerUrl} alt="banner" />
     </Container>
   )
 }

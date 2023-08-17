@@ -31,7 +31,8 @@ public class SessionIdValidator {
     }
 
     public String getSessionId(Long meetingId) {
-        String profile = environment.getDefaultProfiles()[0];
+        String profile = findEnvironment();
+
         StringBuilder sb = new StringBuilder();
         return sb.append(PREFIX)
                  .append(DELIMITER)
@@ -39,6 +40,17 @@ public class SessionIdValidator {
                  .append(DELIMITER)
                  .append(meetingId).toString();
     }
+
+    private String findEnvironment() {
+        String[] profiles = environment.getDefaultProfiles();
+        for (String profile : profiles) {
+            if (profile.startsWith("dev")) {
+                return "dev";
+            }
+        }
+        return "prod";
+    }
+
 
     /**
      * openvidu-{env}-{meetingId} 형식의 sessionId를 받아서 meetingId를 Long type으로 반환합니다.

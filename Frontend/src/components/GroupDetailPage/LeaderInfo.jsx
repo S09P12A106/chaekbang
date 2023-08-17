@@ -31,7 +31,7 @@ const LeaderInfo = ({ leader }) => {
           return (
             key,
             (
-              <span>
+              <span key={key}>
                 {line}
                 <br />
               </span>

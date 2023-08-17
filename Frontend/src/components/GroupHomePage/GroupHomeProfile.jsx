@@ -74,8 +74,8 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
           {!isLeader && (
             <GroupApplyButtons>
               <GroupButton
-                color="red"
-                text="white"
+                $color={COLORS.RED_ACTIVE}
+                $text={COLORS.BLACK}
                 onClick={handleLeaveBtnClick}
               >
                 모임 나가기
@@ -84,12 +84,16 @@ const GroupHomeProfile = ({ group, membersInfo, isLeader }) => {
           )}
           {isLeader && (
             <GroupApplyButtons>
-              <GroupButton color="#00BBC6" text="white" onClick={toManagePage}>
+              <GroupButton
+                $color="#00BBC6"
+                $text="white"
+                onClick={toManagePage}
+              >
                 모임 관리하기
               </GroupButton>
               <GroupButton
-                color="#00BBC6"
-                text="white"
+                $color="#00BBC6"
+                $text="white"
                 onClick={toCreateMeetingPage}
               >
                 책방 생성하기
@@ -164,8 +168,8 @@ const GroupApplyButtons = styled.div`
 const GroupButton = styled.span`
   display: inline-block;
   padding: 0.5rem 0.8rem;
-  background-color: ${(props) => props.color};
-  color: ${(props) => props.text};
+  background-color: ${(props) => props.$color};
+  color: ${(props) => props.$text};
   text-align: center;
   margin-left: 1rem;
   border-radius: 0.5rem;

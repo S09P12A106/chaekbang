@@ -52,16 +52,16 @@ const GroupApplyForm = ({ question, setModalOpen }) => {
       </InputLengthInfo>
       <FormButtonContainer>
         <FormButton
-          color={COLORS.WHITE}
-          text={COLORS.MODAL_CANCEL_GREY}
-          border
+          $color={COLORS.WHITE}
+          $text={COLORS.MODAL_CANCEL_GREY}
+          $border
           onClick={() => setModalOpen(false)}
         >
           취소
         </FormButton>
         <FormButton
-          color={COLORS.THEME_COLOR2}
-          text={COLORS.WHITE}
+          $color={COLORS.THEME_COLOR2}
+          $text={COLORS.WHITE}
           onClick={handleSubmit}
         >
           신청하기
@@ -97,15 +97,15 @@ const FormButton = styled.div`
   margin-right: 0.5rem;
   display: inline-block;
   justify-self: center;
-  background-color: ${(props) => props.color};
-  color: ${(props) => props.text};
+  background-color: ${(props) => props.$color};
+  color: ${(props) => props.$text};
   width: 7rem;
   height: 3rem;
   line-height: 3rem;
   border-radius: 0.5rem;
   text-align: center;
   border: ${(props) =>
-    props.border === undefined
+    props.$border === undefined
       ? 'none'
       : `1px solid ${COLORS.MODAL_CANCEL_BORDER}`};
   cursor: pointer;

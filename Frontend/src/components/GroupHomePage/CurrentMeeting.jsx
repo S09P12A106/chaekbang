@@ -46,10 +46,10 @@ const CurrentMeeting = ({ currentMeetingInfo, meetings, groupId }) => {
     ? NOTICE[ACTIVATED]
     : NOTICE[DEACTIVATED]
   return (
-    <CurrentMeetingInfoContainer color={noticeOption.containerColor}>
+    <CurrentMeetingInfoContainer $color={noticeOption.containerColor}>
       {noticeOption.icon}
       <NoticeBox>{noticeOption.message}</NoticeBox>
-      <Button color={noticeOption.btnColor} onClick={joinMeeting}>
+      <Button $color={noticeOption.btnColor} onClick={joinMeeting}>
         {noticeOption.btnMessage}
       </Button>
     </CurrentMeetingInfoContainer>
@@ -62,7 +62,7 @@ const CurrentMeetingInfoContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.$color};
   border-radius: 1rem;
   text-align: center;
   margin: 2.5rem auto;
@@ -79,7 +79,7 @@ const Button = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.$color};
   height: 2rem;
   border-radius: 0.5rem;
   padding: 0.5rem;

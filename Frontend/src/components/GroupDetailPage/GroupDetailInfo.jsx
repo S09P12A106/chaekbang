@@ -12,7 +12,7 @@ const GroupDetailInfo = ({ detail }) => {
           return (
             key,
             (
-              <span>
+              <span key={key}>
                 {line}
                 <br />
               </span>

@@ -94,8 +94,8 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
             (hasApplied ? (
               <GroupApplyButtons>
                 <GroupButton
-                  color={COLORS.RED}
-                  text="white"
+                  $color={COLORS.RED}
+                  $text="white"
                   onClick={handleCancelBtnClick}
                 >
                   신청 취소
@@ -104,8 +104,8 @@ const GroupProfile = ({ group, membersInfo, setModalOpen }) => {
             ) : (
               <GroupApplyButtons>
                 <GroupButton
-                  color={COLORS.THEME_COLOR4}
-                  text="white"
+                  $color={COLORS.THEME_COLOR4}
+                  $text="white"
                   onClick={() => setModalOpen(true)}
                 >
                   신청하기
@@ -181,8 +181,8 @@ const GroupApplyButtons = styled.div`
 const GroupButton = styled.span`
   display: inline-block;
   padding: 0.5rem 1.3rem;
-  background-color: ${(props) => props.color};
-  color: ${(props) => props.text};
+  background-color: ${(props) => props.$color};
+  color: ${(props) => props.$text};
   text-align: center;
   border-radius: 0.5rem;
   font-size: 1rem;

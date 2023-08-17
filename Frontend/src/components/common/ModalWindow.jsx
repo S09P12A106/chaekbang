@@ -11,7 +11,7 @@ const Modal = ({ isOpen, width, children }) => {
       {isOpen && (
         <div>
           <ModalBackdrop></ModalBackdrop>
-          <ModalContainer width={width}>
+          <ModalContainer $width={width}>
             <div>{children}</div>
           </ModalContainer>
         </div>
@@ -22,7 +22,7 @@ const Modal = ({ isOpen, width, children }) => {
 
 const ModalContainer = styled.div`
   /* 모달창 크기 */
-  width: ${(props) => props.width};
+  width: ${(props) => props.$width};
   /* height: 35rem; */
 
   /* 최상단 위치 */

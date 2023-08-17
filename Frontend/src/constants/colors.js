@@ -30,5 +30,6 @@ const COLORS = {
   ORANGE: '#FFBD6F',
   PINK: '#F5B3EA',
   RED: '#FA9090',
+  RED_ACTIVE: '#F97878',
 }
 export default COLORS

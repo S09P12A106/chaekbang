@@ -10,6 +10,7 @@ function ScreenContainer({
   isTokenRequested,
   toggleMic,
   toggleCam,
+  isTogglePossible,
 }) {
   return (
     <Container>
@@ -25,6 +26,7 @@ function ScreenContainer({
           <VideoButtonsInWaitingRoom
             toggleCam={toggleCam}
             toggleMic={toggleMic}
+            isTogglePossible={isTogglePossible}
           />
         </div>
       ) : (

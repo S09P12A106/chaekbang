@@ -3,11 +3,11 @@ import { BoardContext } from '../context/BoardContext'
 import { styled } from 'styled-components'
 import VideoButtons from '../../common/VideoButtons'
 
-function BottomBtns() {
+function BottomBtns({isTogglePossible}) {
   const { toggleMic, toggleCam } = useContext(BoardContext)
   return (
     <>
-      <VideoButtons toggleMic={toggleMic} toggleCam={toggleCam} />
+      <VideoButtons toggleMic={toggleMic} toggleCam={toggleCam} isTogglePossible={isTogglePossible} />
     </>
   )
 }

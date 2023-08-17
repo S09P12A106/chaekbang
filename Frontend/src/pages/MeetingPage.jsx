@@ -23,6 +23,9 @@ const OV = new OpenVidu()
 const MeetingPage = () => {
   CONSOLE.reRender('MeetingPage rendered')
 
+  const [isTogglePossible, setIsTogglePossible] = useState(true)
+  CONSOLE.info(isTogglePossible)
+
   // url에서 meetingId 받기
   const [sessionId, setSessionId] = useState(null)
 
@@ -49,8 +52,6 @@ const MeetingPage = () => {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate('/login')
-        } else {
-          navigate('/error')
         }
       }
     }
@@ -83,7 +84,6 @@ const MeetingPage = () => {
   })
 
   const [meetingInfo, setMeetingInfo] = meetingInfoState
-  const [isTogglePossible, setIsTogglePossible] = useState(true)
 
   useEffect(() => {
     CONSOLE.info(`isTogglePossible changed! --> ${isTogglePossible}`)
@@ -207,6 +207,7 @@ const MeetingPage = () => {
               videoOption={videoOption}
               toggleMic={toggleMic}
               toggleCam={toggleCam}
+              isTogglePossible={isTogglePossible}
               joinMeetingRoom={joinMeetingRoom}
             />
           ) : (
@@ -215,6 +216,7 @@ const MeetingPage = () => {
               videoOption={videoOption}
               toggleMic={toggleMic}
               toggleCam={toggleCam}
+              isTogglePossible={isTogglePossible}
               setIsTogglePossible={setIsTogglePossible}
             />
           )}

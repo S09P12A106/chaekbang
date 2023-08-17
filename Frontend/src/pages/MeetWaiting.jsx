@@ -18,6 +18,7 @@ function MeetWaiting({
   videoOption,
   toggleMic,
   toggleCam,
+  isTogglePossible,
   joinMeetingRoom,
 }) {
   const [meetingInfo, setMeetingInfo] = meetingInfoState
@@ -114,8 +115,11 @@ function MeetWaiting({
           isTokenRequested={isTokenRequested}
           toggleMic={toggleMic}
           toggleCam={toggleCam}
+          isTogglePossible={isTogglePossible}
         ></ScreenContainer>
-        <ContextContainer joinMeetingRoom={joinMeetingRoom}></ContextContainer>
+        <ContextContainer
+          joinMeetingRoom={joinMeetingRoom}
+        ></ContextContainer>
       </WaitContainer>
     </MainLayout>
   )

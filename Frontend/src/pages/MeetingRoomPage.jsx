@@ -22,6 +22,7 @@ function MeetingRoomPage({
   videoOption,
   toggleMic,
   toggleCam,
+  isTogglePossible,
   setIsTogglePossible,
 }) {
   CONSOLE.reRender('MeetingRoomPage rendered!')
@@ -33,19 +34,7 @@ function MeetingRoomPage({
   useEffect(() => {
     CONSOLE.useEffectIn('MeetingRoomPage_meetingInfo.publisher')
     CONSOLE.setCalled('isToggle')
-    setIsTogglePossible(false)
-    // 이전 접속자 본인의 publisher가 있다면
-    // if (meetingInfo.prevPublisher) {
-    //   meetingInfo.session.unpublish(meetingInfo.prevPublisher)
-    // }
-    // meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
-    //   console.log(res)
-    //   CONSOLE.setCalled('meetingInfo')
-    //   setMeetingInfo((prevState) => ({
-    //     ...prevState,
-    //     prevPublisher: meetingInfo.publisher,
-    //   }))
-    // })
+    setIsTogglePossible(false) // MeetingPage의 useEffect(()=>{},[isTogglePossible]) 로 갑니다!
   }, [meetingInfo.publisher])
 
   // -------------- socket 관한 코드 --------------
@@ -120,7 +109,7 @@ function MeetingRoomPage({
             <TopSpace></TopSpace>
             {/* 스크린을 보여주는 컴포넌트 > 그리드가 있어야함 */}
             <ScreenShot></ScreenShot>
-            <BottomBtns></BottomBtns>
+            <BottomBtns isTogglePossible={isTogglePossible}></BottomBtns>
           </ScreenContainer>
         </Container>
       </SocketContext.Provider>

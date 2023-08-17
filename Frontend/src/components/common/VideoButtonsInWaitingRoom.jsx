@@ -7,13 +7,23 @@ import EmojiBtnInWaitingRoom from '../meeting/buttonMeeting/EmojiBtnInWaitingRoo
 import BackGroundBtn from '../meeting/buttonMeeting/BackGroundBtn'
 import SettingBtn from '../meeting/buttonMeeting/SettingBtn'
 
-const VideoButtonsInWaitingRoom = ({ toggleCam, toggleMic }) => {
+const VideoButtonsInWaitingRoom = ({
+  toggleCam,
+  toggleMic,
+  isTogglePossible,
+}) => {
   return (
     <Buttons>
       {/* 카메라 버튼 */}
-      <CameraBtn toggleCam={toggleCam}></CameraBtn>
+      <CameraBtn
+        toggleCam={toggleCam}
+        isTogglePossible={isTogglePossible}
+      ></CameraBtn>
       {/* 소리 버튼 */}
-      <SoundBtn toggleMic={toggleMic}></SoundBtn>
+      <SoundBtn
+        toggleMic={toggleMic}
+        isTogglePossible={isTogglePossible}
+      ></SoundBtn>
       {/* 화면공유 버튼 */}
       <ShareBtn></ShareBtn>
       {/* 이모지 버튼 */}

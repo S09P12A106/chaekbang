@@ -7,13 +7,16 @@ import { getSearchGroupApi, getTagsApi } from '../api/searchApi'
 import MainLayout from '../components/Layout/MainLayout'
 import { useLocation } from 'react-router-dom'
 import LoadingItem from '../components/common/LoadingItem'
+import CONSOLE from '../utils/consoleColors'
 const Container = styled.div``
 
 function SearchPage() {
   const [tags, setTags] = useState(null)
   const [stop, setStop] = useState(false) // 마지막 데이터 까지 다 불러온 경우, 더 이상 요청 안보내게 함
   const [isLoaded, setIsLoaded] = useState(false) // 로딩 시 처리. (데이터 비동기)
-  const [pageNum, setPageNum] = useState(0)
+  // const [pageNum, setPageNum] = useState(0)
+  const pageNum = useRef(-1)
+  const isSearchOptionChanged = useRef(false)
   const [groupList, setGroupList] = useState([])
   const [input, setInput] = useState('')
 
@@ -22,9 +25,9 @@ function SearchPage() {
 
   let tagId = location.state === null ? null : location.state.tagId
   // 12개로 고정.
-  const pageSize = 12
+  const PAGE_SIZE = 12
 
-  const option = {
+  const intersectionOption = {
     root: null,
     rootMargin: '1px',
     threshold: 1.0,
@@ -39,19 +42,10 @@ function SearchPage() {
 
   // input 창 핸들링 작업
   const onSubmit = async () => {
-    setPageNum(0)
-    let query
-    if (input) {
-      query = `pageNum=0&pageSize=12&keyword=${input}`
-    } else if (tagId) {
-      query = `pageNum=0&pageSize=12&tags=${tagId}`
-    } else {
-      query = `pageNum=0&pageSize=12&keyword=`
-    }
-    const response = await getSearchGroupApi(query)
-    setGroupList(response.data)
-    setPageNum(1)
+    pageNum.current = 0
     setStop(false)
+    isSearchOptionChanged.current = true
+    setIsLoaded(true)
   }
   const onHandlerKeyUp = (e) => {
     if (e.key === 'Enter') {
@@ -59,49 +53,77 @@ function SearchPage() {
     }
   }
 
-  const observerHandler = useCallback(
-    async (entries, observer) => {
-      const target = entries[0]
-      if (target.isIntersecting) {
-        setPageNum((prev) => prev + 1)
-        let initQuery
-        if (input) {
-          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&keyword=${input}`
-        } else if (tagId) {
-          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&tags=${tagId}`
-        } else {
-          initQuery = `pageNum=${pageNum}&pageSize=${pageSize}&keyword=`
-        }
+  // <설정> meetings 데이터가 변경될시
+  useEffect(() => {
+    setIsLoaded(false)
+    pageNum.current++
+  }, [groupList])
 
-        const data = await getSearchGroupApi(initQuery)
-        setGroupList((prev) => prev.concat(data.data))
-        if (data.data.length < pageSize) {
-          //페이지 사이즈보다 작은 경우 -> 마지막 데이터
-          setStop(true)
-        }
-        observer.unobserve(targetRef.current)
+  // <설정> isLoaded가 true이면 데이터를 받아온다.
+  useEffect(() => {
+    if (isLoaded) {
+      let initQuery
+      if (input) {
+        initQuery = `pageNum=${pageNum.current}&pageSize=${PAGE_SIZE}&keyword=${input}`
+      } else if (tagId) {
+        initQuery = `pageNum=${pageNum.current}&pageSize=${PAGE_SIZE}&tags=${tagId}`
+      } else {
+        initQuery = `pageNum=${pageNum.current}&pageSize=${PAGE_SIZE}&keyword=`
       }
-    },
-    [pageNum],
-  )
 
-  useEffect(() => {
-    if (stop) {
-      return
+      getSearchGroupApi(initQuery)
+        .then(({ data }) => {
+          if (data.length < PAGE_SIZE) {
+            //페이지 사이즈보다 작은 경우 -> 마지막 데이터
+            setStop(true)
+          }
+          if (isSearchOptionChanged.current) {
+            isSearchOptionChanged.current = false
+            setGroupList(data)
+          } else {
+            setGroupList((prev) => prev.concat(data))
+          }
+        })
+        .catch((error) => {
+          CONSOLE.error('데이터를 가져오는 도중 오류 발생')
+          console.log(error)
+        })
     }
-    const observer = new IntersectionObserver(observerHandler, option)
-    if (targetRef.current) observer.observe(targetRef.current)
-    return () => observer.disconnect()
-  }, [observerHandler])
+  }, [isLoaded])
 
-  // 페이지 시작시, 초기 데이터 받아오고 obser 시작.
+  // 1. 초기 데이터를 가져온다.
   useEffect(() => {
+    // 모임들 가져오기
+    setIsLoaded(true)
+
+    // 인기 태그
     async function getTags() {
       const data = await getTagsApi()
       setTags(data.data)
     }
     getTags()
   }, [])
+
+  // 2. 감지할 시 실행될 콜백함수 정의
+  const onIntersect = ([entry], observer) => {
+    if (entry.isIntersecting) {
+      observer.unobserve(entry.target)
+      // 데이터 불러오기
+      setIsLoaded(true)
+      observer.observe(entry.target)
+    }
+  }
+
+  // 3. IntersectionObserver 설정
+  useEffect(() => {
+    let observer
+    if (targetRef.current && !stop) {
+      observer = new IntersectionObserver(onIntersect, intersectionOption)
+      observer.observe(targetRef.current)
+    }
+    return () => observer && observer.disconnect()
+  }, [isLoaded, stop])
+
   if (!groupList) {
     return <LoadingItem></LoadingItem>
   }
@@ -117,7 +139,7 @@ function SearchPage() {
           onChange={onChange}
         ></SearchInputBlock>
         <SearchGroupList groups={groupList}></SearchGroupList>
-        <div ref={targetRef}></div>
+        {!isLoaded && <div ref={targetRef}></div>}
       </Container>
     </MainLayout>
   )

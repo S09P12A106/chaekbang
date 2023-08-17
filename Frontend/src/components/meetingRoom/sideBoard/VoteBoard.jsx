@@ -32,9 +32,6 @@ function VoteBoard() {
   // 데이터 받아서 voteHistory에 넣기
   useEffect(() => {
     setVoteHistory([voteInfo])
-
-    console.log('voteHistory###########################')
-    console.log(voteHistory)
   }, [voteInfo])
 
   const VoteBoardComponents = {

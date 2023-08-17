@@ -1,5 +1,5 @@
-export const emojiSUB = (client, callback) => {
-  client.current.subscribe(`/topic/meeting/1/emoji`, (message) => {
+export const emojiSUB = (client, callback, meetingId) => {
+  client.current.subscribe(`/topic/meeting/${meetingId}/emoji`, (message) => {
     const getEmojiInfo = JSON.parse(message.body)
     callback(getEmojiInfo)
     console.log('emojiSUB!!!!!!!!!!!!!!!!!')

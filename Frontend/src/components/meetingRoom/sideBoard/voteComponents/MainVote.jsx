@@ -4,7 +4,6 @@ import COLORS from '../../../../constants/colors'
 import { VoteBoardContext } from '../../context/VoteBoardContext'
 import { VoteHistoryContext } from '../../context/VoteHistoryContext'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
-import { BsFillPersonFill } from 'react-icons/bs'
 import ActiveBtn from './voteBtn/ActiveBtn'
 import ClosedBtn from './voteBtn/ClosedBtn'
 
@@ -23,21 +22,13 @@ function MainVote() {
     setWhichVoteContext(num)
   }
 
-  console.log('voteHistory&&&&&&&&&&&&')
-  console.log(voteHistory)
-
   // 활성화된 투표를 눌렀을 때
   const handleActiveVote = (index) => {
-    console.log('userInfo.userId')
-    console.log(userInfo.userId) // 15
-    console.log(voteHistory[0][index].users)
-    const id = 4
     setWhichIndex(index)
     // 투표한 유저들 중 내가 있나? 판단
-    const isVote = voteHistory[0][index].users.includes(id)
+    const isVote = voteHistory[0][index].users.includes(userInfo.userId)
     // 이미 내가 투표를 완료한 투표면 클릭 시 바로 결과 페이지로
     isVote ? setWhichVoteContext(3) : setWhichVoteContext(2)
-    // setWhichVoteContext(2)
   }
 
   // 투표가 종료된 투표면 결과 페이지로

@@ -4,6 +4,7 @@ import BtnCustom from './_Btn'
 import COLORS from '../../../constants/colors'
 import { styled, keyframes } from 'styled-components'
 import { SocketContext } from '../../../modules/SocketContext'
+import { BoardContext } from '../../meetingRoom/context/BoardContext'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -11,6 +12,7 @@ function EmojiBtn() {
   const [isOpen, setIsOpen] = useState(false)
   const [animationQueue, setAnimationQueue] = useState([])
   const { client, EmojiInfo } = useContext(SocketContext)
+  const { meetingId } = useContext(BoardContext)
   const navigate = useNavigate()
 
   const user = useSelector((state) => {
@@ -41,21 +43,19 @@ function EmojiBtn() {
   const toggleEmojiList = () => {
     setIsOpen((prevIsOpen) => {
       const newIsOpen = !prevIsOpen
-      console.log('isOpen after click:', newIsOpen) // 상태 업데이트 이후의 값 확인
-      return newIsOpen // 상태 업데이트 결과를 반환
+      return newIsOpen
     })
   }
 
   // 이모지 선택 후 보내기
   const selectEmoji = (index) => {
-    console.log('isClicked')
     const sentEmoji = emojis[index]
 
     // 보내기
     try {
       if (client) {
         client.publish({
-          destination: `/ws/pub/meeting/1/emoji`,
+          destination: `/ws/pub/meeting/${meetingId}/emoji`,
           body: JSON.stringify({
             nickname: user.nickname,
             emoji: sentEmoji,

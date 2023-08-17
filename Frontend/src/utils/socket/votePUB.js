@@ -1,5 +1,5 @@
-export const votePUB = (client) => {
+export const votePUB = (client, meetingId) => {
   client.current.publish({
-    destination: `/ws/pub/meeting/1/vote/hello`,
+    destination: `/ws/pub/meeting/${meetingId}/vote/hello`,
   })
 }

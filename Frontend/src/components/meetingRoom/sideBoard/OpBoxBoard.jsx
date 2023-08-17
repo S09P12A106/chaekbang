@@ -10,6 +10,7 @@ import { OpBoxHistoryContext } from '../context/OpBoxHistoryContext'
 import COLORS from '../../../constants/colors'
 import { BoardContext } from '../context/BoardContext'
 import { getOpBox } from '../../../api/meetingOpBoxApi'
+import { useLocation } from 'react-router-dom'
 
 function OpBoxBoard() {
   const [whichOpBoxContext, setWhichOpBoxContext] = useState(0)
@@ -20,9 +21,10 @@ function OpBoxBoard() {
   const [isToggleOpen, setIsToggleOpen] = useState(false)
 
   // url에서 params 뜯어내기
-  const currentUrlSplited = window.location.href.split('/')
-  const group_id = '1'
-  const meeting_id = '2'
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const group_id = queryParams.get('group_id')
+  const meeting_id = queryParams.get('meetingId')
 
   useEffect(() => {
     const fetchOpBox = async () => {

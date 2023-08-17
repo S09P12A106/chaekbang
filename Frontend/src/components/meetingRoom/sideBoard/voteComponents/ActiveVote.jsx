@@ -4,10 +4,12 @@ import { styled } from 'styled-components'
 import { VoteBoardContext } from '../../context/VoteBoardContext'
 import { VoteHistoryContext } from '../../context/VoteHistoryContext'
 import { SocketContext } from '../../../../modules/SocketContext'
+import { BoardContext } from '../../context/BoardContext'
 
 function ActiveVote({ index }) {
   const { whichIndex, setWhichVoteContext } = useContext(VoteBoardContext)
   const { voteHistory, setVoteHistory } = useContext(VoteHistoryContext)
+  const { meetingId } = useContext(BoardContext)
   const [selectedTitle, setSelectedTitle] = useState('')
   const [selectedContent, setSelectedContent] = useState([])
   const [selectedItemIndex, setSelectedItemIndex] = useState(null)
@@ -28,7 +30,7 @@ function ActiveVote({ index }) {
       // 투표한 항목이 소켓으로 이동
       if (client) {
         client.publish({
-          destination: '/ws/pub/meeting/1/vote/sendVote',
+          destination: `/ws/pub/meeting/${meetingId}/vote/sendVote`,
           body: JSON.stringify({
             // voteHistory[index] > 투표하고자 선택한 {투표객체}
             voteId: voteHistory[0][index].voteId,

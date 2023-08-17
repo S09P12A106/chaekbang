@@ -49,29 +49,28 @@ function MeetingRoomPage({
   const [getEmoji, setGetEmoji] = useState([])
   const [getVote, setGetVote] = useState([])
 
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const meetingId = queryParams.get('meetingId')
+
   // socket 연결
   const connectHaner = () => {
     console.log('--------------------' + apiURL)
     client.current = Stomp.over(() => {
-      const sock = new SockJS(
-        'https://e024-175-209-203-255.ngrok.io/ws/chaekbang',
-      )
+      const sock = new SockJS(wsUrl)
       return sock
     })
     console.log('---------------------------')
     client.current.connect(
       {
-        // Authorization: getAccessToken(),
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNzY0MTQ4NTQzfQ.lwDqjLBxK3GRHG9gMWBNhvBDhNesCTlUoFIs04o3-RQ',
+        Authorization: getAccessToken(),
       },
       () => {
-        console.log('!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         // emojiSUB
-        emojiSUB(client, setGetEmoji)
+        emojiSUB(client, setGetEmoji, meetingId)
         // vote
-        voteSUB(client, setGetVote)
-        votePUB(client)
+        voteSUB(client, setGetVote, meetingId)
+        votePUB(client, meetingId)
       },
     )
   }
@@ -94,6 +93,7 @@ function MeetingRoomPage({
         toggleMic,
         toggleCam,
         currentTime,
+        meetingId,
       }}
     >
       <SocketContext.Provider

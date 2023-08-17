@@ -2,14 +2,12 @@ import React, { useContext, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
 import { VoteBoardContext } from '../../context/VoteBoardContext'
-// import { VoteHistoryContext } from '../../context/VoteHistoryContext'
-// import { BoardContext } from '../../context/BoardContext'
+import { BoardContext } from '../../context/BoardContext'
 import { SocketContext } from '../../../../modules/SocketContext'
 
 function CreateVote() {
-  // const { meetingInfoState } = useContext(BoardContext)
-  // const { voteHistory, setVoteHistory } = useContext(VoteHistoryContext)
   const { setWhichVoteContext } = useContext(VoteBoardContext)
+  const { meetingId } = useContext(BoardContext)
   const { client } = useContext(SocketContext)
 
   const [voteTitle, setVoteTitle] = useState('')
@@ -57,7 +55,7 @@ function CreateVote() {
     // 데이터 소켓으로 보내기
     if (client) {
       client.publish({
-        destination: '/ws/pub/meeting/1/vote/createVote',
+        destination: `/ws/pub/meeting/${meetingId}/vote/createVote`,
         body: JSON.stringify(data),
       })
     }

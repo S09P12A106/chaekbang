@@ -4,11 +4,7 @@
     "browser": true,
     "es2021": true
   },
-  "extends": [
-    "plugin:react/recommended",
-    "standard",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["plugin:react/recommended", "plugin:prettier/recommended"],
 
   "parserOptions": {
     "ecmaFeatures": {
@@ -18,5 +14,13 @@
     "sourceType": "module"
   },
   "plugins": ["react"],
-  "rules": {}
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "react/prop-types": 0
+  }
 }

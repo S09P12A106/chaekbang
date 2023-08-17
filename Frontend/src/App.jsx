@@ -1,12 +1,13 @@
-import './App.css'
-import { Router } from 'react-router-dom'
+import RouterApp from './routers/routers'
+import React from 'react'
+import GlobalStyle from './styles/GlobalStyle'
 
 function App() {
   return (
-    <div>
-      111
-      <Router />
-    </div>
+    <>
+      <GlobalStyle />
+      <RouterApp />
+    </>
   )
 }
 

@@ -5,27 +5,24 @@ import { VoteBoardContext } from '../../context/VoteBoardContext'
 import { VoteHistoryContext } from '../../context/VoteHistoryContext'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { SocketContext } from '../../../../modules/SocketContext'
+import { BoardContext } from '../../context/BoardContext'
 
 // index > 투표 배열 중 선택한 순번
 function ResultVote({ index }) {
   const { setWhichVoteContext } = useContext(VoteBoardContext)
   const { voteHistory } = useContext(VoteHistoryContext)
   const { client } = useContext(SocketContext)
-  const [selectedTitle, setSelectedTitle] = useState('')
+  const { meetingId } = useContext(BoardContext)
   const [selectedContent, setSelectedContent] = useState([])
-  const [isCreator, setIsCreator] = useState(false)
   const [tooltipVisible, setTooltipVisible] = useState(false)
+  const [selectedTitle, setSelectedTitle] = useState('')
   const [mouseIndex, setMouseIndex] = useState(-1)
+  const [isCreator, setIsCreator] = useState(false)
 
   // 리덕스에서 가져온 유저정보
   const userInfo = useSelector((state) => {
     return state.rootReducer.loginReducer.user
   })
-
-  // console.log('##########################')
-  // console.log(voteHistory)
-  // console.log(voteHistory[0])
-  // console.log(voteHistory[0][index])
 
   // 제목이랑 내용 세팅
   useEffect(() => {
@@ -33,10 +30,10 @@ function ResultVote({ index }) {
     const title = selectedVote ? selectedVote.title : ''
     const content = selectedVote ? selectedVote.contents : []
 
-    console.log(selectedVote.creator)
-    console.log(userInfo.userId)
     // 선택된 투표 창시자와 여기 들어온 사람이랑 같냐?
-    selectedVote.creator === 4 ? setIsCreator(true) : setIsCreator(false)
+    selectedVote.creator === userInfo.userId
+      ? setIsCreator(true)
+      : setIsCreator(false)
 
     setSelectedTitle(title)
     setSelectedContent(content)
@@ -53,10 +50,13 @@ function ResultVote({ index }) {
     try {
       if (client) {
         client.publish({
-          destination: `/ws/pub/meeting/1/vote/closeVote/${voteId}`,
+          destination: `/ws/pub/meeting/${meetingId}/vote/closeVote/${voteId}`,
         })
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
+    setWhichVoteContext(0)
   }
 
   const handleMouseEnter = (itemIndex) => {
@@ -102,13 +102,24 @@ function ResultVote({ index }) {
           </Tooltip>
         )}
       </ContentBox>
-      {isCreator && (
-        <ClosedBtn onClick={() => handleEndVote()}>투표종료하기</ClosedBtn>
-      )}
-      <BackWardBtn onClick={() => handleVoteComp(0)}>뒤로가기</BackWardBtn>
+
+      <BTNS>
+        {isCreator && (
+          <ClosedBtn onClick={() => handleEndVote()}>투표종료</ClosedBtn>
+        )}
+        <BackWardBtn onClick={() => handleVoteComp(0)}>뒤로가기</BackWardBtn>
+      </BTNS>
     </ResultVoteContainer>
   )
 }
+const BTNS = styled.div`
+  display: flex;
+
+  button {
+    margin: 10px;
+  }
+`
+
 const Title2 = styled.div`
   margin: 5px;
 `
@@ -213,7 +224,7 @@ const ClosedBtn = styled.button`
   height: 36px;
   border-radius: 10px;
 
-  background-color: ${COLORS.RED};
+  background-color: ${COLORS.BRIGHTBLACK};
   font-size: 16px;
   color: ${COLORS.WHITE};
 `

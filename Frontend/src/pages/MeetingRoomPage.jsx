@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 import SideBar from '../components/meetingRoom/SideBar'
 import TopSpace from '../components/meetingRoom/screen/TopSpace'
@@ -16,6 +16,7 @@ import { getAccessToken } from '../utils/tokenUtil'
 import { emojiSUB } from '../utils/socket/emojiSUB'
 import { voteSUB } from '../utils/socket/voteSUB'
 import { votePUB } from '../utils/socket/votePUB'
+import { closeSUB } from '../utils/socket/closeSUB'
 
 function MeetingRoomPage({
   meetingInfoState,
@@ -27,6 +28,7 @@ function MeetingRoomPage({
   const [meetingInfo, setMeetingInfo] = meetingInfoState
   const [whichBtn, setWhichBtn] = useState(0)
   const [currentTime, setCurrentTime] = useState([])
+  const navigate = useNavigate()
 
   // MeetingRoom에 들어오거나 Publisher가 변경되었을 때 접속자 본인 영상 publish
   useEffect(() => {
@@ -49,21 +51,20 @@ function MeetingRoomPage({
   const [getEmoji, setGetEmoji] = useState([])
   const [getVote, setGetVote] = useState([])
 
+  // warn && close
+  const [closedInfo, setClosedInfo] = useState()
+
   // socket 연결
   const connectHaner = () => {
     console.log('--------------------' + apiURL)
     client.current = Stomp.over(() => {
-      const sock = new SockJS(
-        'https://e024-175-209-203-255.ngrok.io/ws/chaekbang',
-      )
+      const sock = new SockJS(wsUrl)
       return sock
     })
     console.log('---------------------------')
     client.current.connect(
       {
-        // Authorization: getAccessToken(),
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNzY0MTQ4NTQzfQ.lwDqjLBxK3GRHG9gMWBNhvBDhNesCTlUoFIs04o3-RQ',
+        Authorization: getAccessToken(),
       },
       () => {
         console.log('!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -72,6 +73,8 @@ function MeetingRoomPage({
         // vote
         voteSUB(client, setGetVote)
         votePUB(client)
+        //warn && close
+        closeSUB(client, setClosedInfo)
       },
     )
   }
@@ -83,6 +86,18 @@ function MeetingRoomPage({
   }, [])
 
   // -------------- socket 끝 --------------
+
+  // 경고 및 종료
+  useEffect(() => {
+    if (closedInfo.type === 'WARNING') {
+      // 임시
+      alert('모임이 10분 뒤 종료됩니다!')
+    } else if (closedInfo.type === 'CLOSE') {
+      alert('모임이 종료됩니다!')
+
+      navigate(`/groups/home/${groupId}`)
+    }
+  }, [closedInfo])
 
   return (
     <BoardContext.Provider

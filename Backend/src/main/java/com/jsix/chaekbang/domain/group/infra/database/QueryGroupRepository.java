@@ -38,7 +38,7 @@ public class QueryGroupRepository {
                               .from(group)
                               .orderBy(group.readCount.desc())
                               .limit(8)
-                .fetch();
+                              .fetch();
     }
 
     public List<Group> findMostReadCount() {
@@ -67,7 +67,7 @@ public class QueryGroupRepository {
     }
 
     private JPQLQuery<Long> getGroupIdsContainsTagName(String tagName) {
-        return JPAExpressions.select(groupTag.group.id)
+        return jpaQueryFactory.select(groupTag.group.id)
                              .from(groupTag)
                              .innerJoin(groupTag.tag, tag)
                              .where(tag.tagName.eq(tagName))
@@ -86,7 +86,7 @@ public class QueryGroupRepository {
     private QHistory history = QHistory.history;
     private QGroupUser groupUser = QGroupUser.groupUser;
 
-    private JPAQuery<Long> findIdsByKeywordAndTags(String keyword, List<Long> tagIds,
+    private List<Long> findIdsByKeywordAndTags(String keyword, List<Long> tagIds,
             Pageable pageable) {
         return jpaQueryFactory.select(
                                       group.id
@@ -96,7 +96,8 @@ public class QueryGroupRepository {
                               .limit(pageable.getPageSize())
                               .where(inMatchingGroups(tagIds), titleContainsKeyword(keyword),
                                       isNotDeleted(), group.opened.eq(true))
-                              .orderBy(group.id.desc());
+                              .orderBy(group.id.desc())
+                              .fetch();
     }
 
     public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable) {

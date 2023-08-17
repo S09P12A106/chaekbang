@@ -28,13 +28,17 @@ class IDTokenValidatorTest {
     @Mock
     KaKaoOauthClient kaKaoOauthClient;
 
+    @Mock
+    KakaoKApiClient kakaoKApiClient;
+
     @BeforeEach
     void setUp() {
         KakaoProperty kakaoProperty = new KakaoProperty();
         kakaoProperty.setIss("Iss");
         kakaoProperty.setAud("aud");
         kakaoIdTokenValidator =
-                new KakaoIDTokenValidator(jwtValidator, kaKaoOauthClient, kakaoProperty);
+            new KakaoIDTokenValidator(jwtValidator, kaKaoOauthClient, kakaoProperty,
+                kakaoKApiClient);
     }
 
     @DisplayName("OAUTH 회사에서 제공한 JWK 중 idToken의 KID가 없으면 예외를 반환한다.")
@@ -44,7 +48,7 @@ class IDTokenValidatorTest {
         String KID_1 = "K_Kid1";
         String KID_2 = "K_Kid2";
         List<OIDCPublicKeyDto> keyDtos = List.of(mockPublicKey(KID_1),
-                mockPublicKey(KID_2));
+            mockPublicKey(KID_2));
         OIDCPublicKeyResponse publicKeyResponse = new OIDCPublicKeyResponse(keyDtos);
         given(kaKaoOauthClient.getKakaoOIDCOpenKeys()).willReturn(publicKeyResponse);
         String NotMatchKid = "NOT_MATCH_KID";
@@ -52,9 +56,9 @@ class IDTokenValidatorTest {
 
         //when then
         assertThatThrownBy(() ->
-                kakaoIdTokenValidator.validateIdTokenAndGetUserInfo("Token")
+            kakaoIdTokenValidator.validateIdTokenAndGetUserInfo("Token")
         ).isInstanceOf(NotMatchKIDException.class)
-         .hasMessage("일치하는 공개키가 없습니다.");
+            .hasMessage("일치하는 공개키가 없습니다.");
     }
 
     private OIDCPublicKeyDto mockPublicKey(String kid) {

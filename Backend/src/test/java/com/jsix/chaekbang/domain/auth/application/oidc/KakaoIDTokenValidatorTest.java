@@ -25,6 +25,8 @@ class KakaoIDTokenValidatorTest {
     KakaoIDTokenValidator kakaoIDTokenValidator;
 
     @Mock
+    KakaoKApiClient kakaoKApiClient;
+    @Mock
     KaKaoOauthClient kaKaoOauthClient;
     @Mock
     JwtValidator jwtValidator;

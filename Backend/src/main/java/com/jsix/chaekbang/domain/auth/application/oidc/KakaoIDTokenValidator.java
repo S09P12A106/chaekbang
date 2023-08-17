@@ -18,12 +18,14 @@ public class KakaoIDTokenValidator extends IDTokenValidator {
     private final String KAKAO_ID_KEY = "sub";
     private final String KAKAO_EMAIL_KEY = "email";
     private final String KAKAO_PROFILE_IMAGE_KEY = "picture";
+    private final KakaoKApiClient kakaoKApiClient;
 
 
     public KakaoIDTokenValidator(JwtValidator jwtValidator, KaKaoOauthClient kaKaoOauthClient,
-            KakaoProperty kakaoProperties) {
+        KakaoProperty kakaoProperties, KakaoKApiClient kakaoKApiClient) {
         super(jwtValidator, kakaoProperties.toOIDCProperty());
         this.kaKaoOauthClient = kaKaoOauthClient;
+        this.kakaoKApiClient = kakaoKApiClient;
     }
 
     @Override
@@ -45,11 +47,11 @@ public class KakaoIDTokenValidator extends IDTokenValidator {
         String profileImage = (String) payload.get(KAKAO_PROFILE_IMAGE_KEY);
 
         return OIDCUser.builder()
-                       .oAuthProvider(OAuthProvider.KAKAO)
-                       .profileImageUrl(profileImage)
-                       .email(email)
-                       .oauthId(oauthId)
-                       .build();
+            .oAuthProvider(OAuthProvider.KAKAO)
+            .profileImageUrl(profileImage)
+            .email(email)
+            .oauthId(oauthId)
+            .build();
     }
 
     private void checkRequireProperty(Map<String, Object> payload) {
@@ -61,6 +63,8 @@ public class KakaoIDTokenValidator extends IDTokenValidator {
         // 선택 항목을 동의하지 않음 --> 카카오는 EMAIL 같은 경우.
         if (payload.get(KAKAO_EMAIL_KEY) == null) {
             //TODO : 회원탈퇴 API를 요청해서 다시 동의하도록 처리해야 한다.
+            String oauthId = (String) payload.get(KAKAO_ID_KEY);
+            kakaoKApiClient.unlink("user_id", oauthId);
             throw new InvalidTokenException("필수 항목 동의가 필요합니다.");
         }
     }

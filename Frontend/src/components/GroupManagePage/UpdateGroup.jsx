@@ -89,7 +89,7 @@ const NotCreateButton = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  cursur: pointer;
+  cursor: pointer;
 `
 
 function UpdateGroup() {

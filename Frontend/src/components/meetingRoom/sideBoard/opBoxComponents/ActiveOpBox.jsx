@@ -3,22 +3,36 @@ import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
 import { OpBoxBoardContext } from '../../context/OpBoxBoardContext'
 import { OpBoxHistoryContext } from '../../context/OpBoxHistoryContext'
+import { sendOpinion } from '../../../../api/meetingOpBoxApi'
 
 function ActiveOpBox({ index }) {
-  const { whichIndex, setWhichOpBoxContext } = useContext(OpBoxBoardContext)
+  const { whichIndex, setWhichOpBoxContext, group_id, meeting_id } =
+    useContext(OpBoxBoardContext)
   const { opBoxHistory } = useContext(OpBoxHistoryContext)
   const [selectedTitle, setSelectedTitle] = useState('')
   const [opBoxContent, setOpBoxContent] = useState('')
 
   useEffect(() => {
     const selectedOpBox = opBoxHistory[index]
-    const title = selectedOpBox ? selectedOpBox.title : ''
+    const title = selectedOpBox ? selectedOpBox.topic : ''
 
     setSelectedTitle(title)
   }, [])
 
+  // 뒤로가기
   const handleOpBoxComp = (num) => {
     setWhichOpBoxContext(num)
+  }
+
+  // 제출하기
+  const handleSendOpinion = async () => {
+    const opinion_box_id = opBoxHistory[0][index].opinionBoxId
+    try {
+      await sendOpinion(group_id, meeting_id, opinion_box_id, opBoxContent)
+      console.log('의견제출완료~~~~~~~~~~~~~~')
+    } catch (error) {
+      console.log('에러요')
+    }
   }
 
   // 입력하면 값 저장
@@ -38,7 +52,7 @@ function ActiveOpBox({ index }) {
           ></TextArea>
         </Content>
 
-        <CompleteBtn onClick={() => handleOpBoxComp(3)}>
+        <CompleteBtn onClick={() => handleSendOpinion()}>
           의견 보내기
         </CompleteBtn>
       </ContentBox>

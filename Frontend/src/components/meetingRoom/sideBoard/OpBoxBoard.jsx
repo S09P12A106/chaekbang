@@ -9,6 +9,7 @@ import { OpBoxBoardContext } from '../context/OpBoxBoardContext'
 import { OpBoxHistoryContext } from '../context/OpBoxHistoryContext'
 import COLORS from '../../../constants/colors'
 import { BoardContext } from '../context/BoardContext'
+import { getOpBox } from '../../../api/meetingOpBoxApi'
 
 function OpBoxBoard() {
   const [whichOpBoxContext, setWhichOpBoxContext] = useState(0)
@@ -17,6 +18,26 @@ function OpBoxBoard() {
 
   const { whichBtn, setWhichBtn } = useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
+
+  // url에서 params 뜯어내기
+  const currentUrlSplited = window.location.href.split('/')
+  const group_id = '1'
+  const meeting_id = '2'
+
+  useEffect(() => {
+    const fetchOpBox = async () => {
+      try {
+        const response = await getOpBox(group_id, meeting_id)
+        // 데이터 받기
+        // opinionBoxId, topic, opinions
+        setOpBoxHistory(response)
+        // setOpBoxHistory([response])
+      } catch (error) {
+        console.log('에러페이지')
+      }
+    }
+    fetchOpBox()
+  }, [])
 
   useEffect(() => {
     if (whichBtn === 2) {
@@ -41,6 +62,8 @@ function OpBoxBoard() {
         setWhichOpBoxContext,
         whichIndex,
         setWhichIndex,
+        group_id,
+        meeting_id,
       }}
     >
       <OpBoxHistoryContext.Provider value={{ opBoxHistory, setOpBoxHistory }}>

@@ -12,11 +12,14 @@ function ResultOpBox({ index }) {
 
   useEffect(() => {
     const selectedOpBox = opBoxHistory[index]
-    const title = selectedOpBox ? selectedOpBox.title : ''
-    const content = selectedOpBox ? selectedOpBox.results : []
+    const title = selectedOpBox ? selectedOpBox.topic : ''
+    const content = selectedOpBox ? selectedOpBox.opinions : []
 
     setSelectedTitle(title)
     setSelectedContent(content)
+
+    console.log('opBoxHistoryinRESSSSSSSSSSSSSSSSSSSSSULT')
+    console.log(opBoxHistory)
   }, [])
 
   const handleOpBoxComp = (num) => {
@@ -29,7 +32,7 @@ function ResultOpBox({ index }) {
       <ContentBox>
         {selectedContent.map((value, index) => (
           <div key={index}>
-            <User>User님의 의견</User>
+            {/* <User>User님의 의견</User> */}
             <Content>
               <p>{value}</p>
             </Content>

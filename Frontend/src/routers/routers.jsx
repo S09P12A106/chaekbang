@@ -44,11 +44,8 @@ function RouterApp() {
             element={<MeetingCreatePage />}
           />
           <Route path="/groups/home/:groupId" element={<GroupHomePage />} />
+          <Route path="/meeting" element={<MeetingPage />} />
         </Route>
-        <Route path="/mr" element={<MeetingRoomPage />} />
-        <Route path="/mw" element={<MeetWaiting />} />
-        <Route path="/testWaiting" element={<TempWaitingPage />} />
-        <Route path="/testMeeting" element={<MeetingPage />} />
         <Route path="/error" element={<ServerErrorPage />} />
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>

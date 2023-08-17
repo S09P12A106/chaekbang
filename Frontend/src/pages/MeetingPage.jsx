@@ -5,6 +5,8 @@ import { OpenVidu } from 'openvidu-browser'
 import MeetWaiting from './MeetWaiting'
 import MeetingRoomPage from './MeetingRoomPage'
 import CONSOLE from '../utils/consoleColors'
+import { getSessionId } from '../api/groupHomeApi'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 /*
 openvidu의 Publisher Type 객체
@@ -21,9 +23,33 @@ const OV = new OpenVidu()
 const MeetingPage = () => {
   CONSOLE.reRender('MeetingPage rendered')
 
-  const sessionId = useSelector((state) => {
-    return state.rootReducer.sessionIdReducer.sessionId
-  })
+  // url에서 meetingId 받기
+  const [sessionId, setSessionId] = useState(null)
+
+  useEffect(() => {
+    setMeetingInfo((prevInfo) => ({
+      ...prevInfo,
+      mySessionId: sessionId,
+    }))
+  }, [sessionId])
+
+  const location = useLocation()
+  const navigate = useNavigate()
+  //세션 id 받기
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search)
+    const meetingId = queryParams.get('meetingId')
+
+    const setSession = async () => {
+      try {
+        const response = await getSessionId(meetingId)
+        setSessionId(response.data.data)
+      } catch (error) {
+        navigate('/error')
+      }
+    }
+    setSession()
+  }, [])
 
   const loggedInUser = useSelector((state) => {
     return state.rootReducer.loginReducer.user
@@ -40,7 +66,7 @@ const MeetingPage = () => {
   */
   const meetingInfoState = useState(() => {
     return {
-      mySessionId: sessionId,
+      mySessionId: null,
       myUserName: loggedInUser.userId,
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
@@ -114,23 +140,27 @@ const MeetingPage = () => {
 
   return (
     <div>
-      {isWaitingState ? (
-        <MeetWaiting
-          meetingInfoState={meetingInfoState}
-          videoOption={videoOption}
-          toggleMic={toggleMic}
-          toggleCam={toggleCam}
-          joinMeetingRoom={joinMeetingRoom}
-        />
-      ) : (
-        <MeetingRoomPage
-          meetingInfoState={meetingInfoState}
-          videoOption={videoOption}
-          toggleMic={toggleMic}
-          toggleCam={toggleCam}
-        />
+      {meetingInfo.mySessionId !== null && (
+        <>
+          {isWaitingState ? (
+            <MeetWaiting
+              meetingInfoState={meetingInfoState}
+              videoOption={videoOption}
+              toggleMic={toggleMic}
+              toggleCam={toggleCam}
+              joinMeetingRoom={joinMeetingRoom}
+            />
+          ) : (
+            <MeetingRoomPage
+              meetingInfoState={meetingInfoState}
+              videoOption={videoOption}
+              toggleMic={toggleMic}
+              toggleCam={toggleCam}
+            />
+          )}
+          {/* <h1>책방 입니다.</h1> */}
+        </>
       )}
-      {/* <h1>책방 입니다.</h1> */}
     </div>
   )
 }

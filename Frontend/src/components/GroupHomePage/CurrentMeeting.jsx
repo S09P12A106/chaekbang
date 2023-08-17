@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import { MdAlarmOn, MdAlarmOff } from 'react-icons/md'
 import '../GroupHomePage/css/groupHomePageStyle.css'
-import { getSessionId } from '../../api/groupHomeApi'
-import { saveSessionId } from '../../store/sessionIdReducer'
 import CONSOLE from '../../utils/consoleColors'
 import { useNavigate } from 'react-router-dom'
 
@@ -29,29 +26,20 @@ const NOTICE = [
   },
 ]
 
-const CurrentMeeting = ({ currentMeetingInfo }) => {
-  const dispatch = useDispatch()
-  const [sessionId, setSessionId] = useState(null)
-  const navigate = useNavigate()
+const CurrentMeeting = ({ currentMeetingInfo, meetings, groupId }) => {
+  CONSOLE.reRender('CurrentMeeting rendered!')
+  const [meetingId, setMeetingId] = useState(null)
 
   useEffect(() => {
-    if (currentMeetingInfo.isActivatedMeetingExist) {
-      getSessionId(currentMeetingInfo.meetingId)
-        .then(({ data }) => {
-          setSessionId(data.data)
-        })
-        .catch((error) => {
-          navigate('/error')
-        })
+    if (currentMeetingInfo.currentMeetingIndex != -1) {
+      setMeetingId(meetings[currentMeetingInfo.currentMeetingIndex].id)
     }
-  }, [currentMeetingInfo])
-
-  useEffect(() => {
-    dispatch(saveSessionId(sessionId))
-  }, [sessionId])
+  }, [currentMeetingInfo.currentMeetingIndex])
 
   function joinMeeting() {
-    window.location.href = '/testMeeting'
+    if (meetingId) {
+      window.location.href = `/meeting?groupId=${groupId}&meetingId=${meetingId}`
+    }
   }
 
   const noticeOption = currentMeetingInfo.isActivatedMeetingExist

@@ -3,10 +3,11 @@ import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
 import { OpBoxBoardContext } from '../../context/OpBoxBoardContext'
 import { OpBoxHistoryContext } from '../../context/OpBoxHistoryContext'
+import { createOpBox } from '../../../../api/meetingOpBoxApi'
 
 function CreateOpBox() {
-  const { setWhichOpBoxContext } = useContext(OpBoxBoardContext)
-  const { opBoxHistory, setOpBoxHistory } = useContext(OpBoxHistoryContext)
+  const { setWhichOpBoxContext, group_id, meeting_id } =
+    useContext(OpBoxBoardContext)
 
   const [opBoxTitle, setOpBoxTitle] = useState('')
 
@@ -19,14 +20,14 @@ function CreateOpBox() {
     console.log(opBoxTitle)
   }
 
-  const completeCreate = () => {
-    const opBox = {
-      title: opBoxTitle,
-      state: 'on',
-      results: [123],
+  // 의견함 생성하기
+  const completeCreate = async () => {
+    try {
+      await createOpBox(group_id, meeting_id, opBoxTitle)
+    } catch (error) {
+      console.log('에러페이지')
     }
 
-    setOpBoxHistory([...opBoxHistory, opBox])
     handleOpBoxComp(0)
   }
 

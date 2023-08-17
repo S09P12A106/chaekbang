@@ -7,12 +7,12 @@ import { isActivatedMeeting } from './dateCalculator'
 import { GROUP_DETAIL_CONTAINER_PADDING } from '../GroupDetailPage/constant/groupDetailConstant'
 import { getMeetingList } from '../../api/groupHomeApi'
 import CONSOLE from '../../utils/consoleColors'
-CONSOLE
 
 const PAGE_SIZE = 5
 let observer
 
 const MeetingsInfo = () => {
+  CONSOLE.reRender('MeetingsInfo rendered!')
   const [meetingsData, setMeetingsData] = useState([])
   const [target, setTarget] = useState(null) // 관찰대상 target
   const [isLoaded, setIsLoaded] = useState(false)
@@ -82,12 +82,16 @@ const MeetingsInfo = () => {
 
   const currentMeetingInfo = {
     isActivatedMeetingExist: currentMeetingIndex !== -1,
-    meetingId: currentMeetingIndex,
+    currentMeetingIndex: currentMeetingIndex,
   }
 
   return (
     <MeetingListContainer>
-      <CurrentMeeting currentMeetingInfo={currentMeetingInfo} />
+      <CurrentMeeting
+        currentMeetingInfo={currentMeetingInfo}
+        meetings={meetingsData}
+        groupId={groupId}
+      />
       <MeetingList meetings={meetingsData} />
       {isLoaded ? <p>Loading....</p> : <div ref={setTarget}></div>}
     </MeetingListContainer>
@@ -100,6 +104,9 @@ const MeetingsInfo = () => {
  * @returns {int}
  */
 function findCurrentMeeting(meetings) {
+  CONSOLE.info('findCurrentMeeting')
+  console.log(meetings)
+  console.log(meetings.findIndex((meeting) => isActivatedMeeting(meeting)))
   return meetings.findIndex((meeting) => isActivatedMeeting(meeting))
 }
 

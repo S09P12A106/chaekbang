@@ -2,9 +2,8 @@ import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
 	
-  // 폰트 순차적으로 선택 > 추후 폰트 바꾸겠습니다.
 	* {
-    font-family: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: "IBM Plex Sans KR";
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0;

@@ -2,9 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import COLORS from '../../constants/colors'
 import { isActivatedMeeting } from './dateCalculator'
+import { useParams } from 'react-router-dom'
 
-function joinMeeting() {
-  window.location.href = '/testMeeting'
+function joinMeeting(meetingId, groupId) {
+  if (meetingId) {
+    window.location.href = `/meeting?groupId=${groupId}&meetingId=${meetingId}`
+  }
 }
 
 const [COMPLETED, ONGOING, SCHEDULED] = [0, 1, 2]
@@ -28,6 +31,11 @@ const buttonStyle = [
 ]
 
 const MeetingsByDate = ({ date, meetings }) => {
+  const { groupId } = useParams()
+  const ongoingMeetings = meetings.filter(
+    (meeting) => findTypeOfMeeting(meeting) === ONGOING,
+  )
+
   return (
     <Container>
       <DateBox>
@@ -43,7 +51,11 @@ const MeetingsByDate = ({ date, meetings }) => {
               <MeetingTitle>{meeting.title}</MeetingTitle>
               <Button
                 color={buttonStyle[type].color}
-                onClick={type === ONGOING ? joinMeeting : undefined}
+                onClick={() =>
+                  type === ONGOING
+                    ? joinMeeting(ongoingMeetings[0].id, groupId)
+                    : undefined
+                }
               >
                 {buttonStyle[type].label}
               </Button>

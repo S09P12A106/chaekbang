@@ -64,8 +64,8 @@ public class MeetingController {
 
     @PostMapping("/{group_id}/meetings")
     public ResponseEntity<?> createMeeting(@JwtLoginUser AuthUser authUser,
-            @PathVariable("group_id") long groupId,
-            @Valid @RequestBody MeetingCreateRequestDto meetingCreateRequestDto) {
+        @PathVariable("group_id") long groupId,
+        @Valid @RequestBody MeetingCreateRequestDto meetingCreateRequestDto) {
         meetingCreateUseCase.createMeeting(authUser, groupId, meetingCreateRequestDto);
         return HttpResponse.ok(HttpStatus.OK, "미팅이 생성되었습니다.");
     }
@@ -73,30 +73,38 @@ public class MeetingController {
     @Validated
     @GetMapping("/{group_id}/meetings")
     public ResponseEntity<?> searchMeeting(@PathVariable("group_id") long groupId,
-            @RequestParam @Min(0) int pageNum, @RequestParam @Min(1) int pageSize) {
+        @RequestParam @Min(0) int pageNum, @RequestParam @Min(1) int pageSize) {
         List<MeetingSearchResponseDto> list = meetingSearchUseCase.searchMeeting(groupId,
-                pageNum, pageSize);
+            pageNum, pageSize);
 
         return HttpResponse.okWithData(HttpStatus.OK, "미팅 조회 성공했습니다.", list);
     }
 
+    @Validated
+    @GetMapping("/{group_id}/meetings/{meetingId}")
+    public ResponseEntity<?> getMeetingOne(@PathVariable("group_id") long groupId,
+        @PathVariable("meetingId") Long meetingId) {
+        return HttpResponse.okWithData(HttpStatus.OK, "미팅 조회 성공했습니다.",
+            meetingSearchUseCase.getDetail(meetingId));
+    }
+
     @PostMapping("/{group_id}/meetings/{meeting_id}/opinion-box")
     public ResponseEntity<?> createOpinionBox(@JwtLoginUser AuthUser authUser,
-            @PathVariable("group_id") long groupId,
-            @PathVariable("meeting_id") long meetingId,
-            @Valid @RequestBody OpinionBoxCreateRequestDto opinionBoxCreateRequestDto) {
+        @PathVariable("group_id") long groupId,
+        @PathVariable("meeting_id") long meetingId,
+        @Valid @RequestBody OpinionBoxCreateRequestDto opinionBoxCreateRequestDto) {
         return HttpResponse.okWithData(HttpStatus.OK, "의견함이 생성되었습니다.",
-                opinionBoxCreateUseCase.createOpinionBox(authUser, groupId, meetingId,
-                        opinionBoxCreateRequestDto));
+            opinionBoxCreateUseCase.createOpinionBox(authUser, groupId, meetingId,
+                opinionBoxCreateRequestDto));
     }
 
     @PostMapping("/{group_id}/meetings/{meeting_id}/opinion-box/{opinion_box_id}/opinion")
     public ResponseEntity<?> createOpinion(@JwtLoginUser AuthUser authUser,
-            @PathVariable("group_id") long groupId, @PathVariable("meeting_id") long meetingId,
-            @PathVariable("opinion_box_id") long opinionBoxId,
-            @Valid @RequestBody OpinionCreateRequestDto opinionCreateRequestDto) {
+        @PathVariable("group_id") long groupId, @PathVariable("meeting_id") long meetingId,
+        @PathVariable("opinion_box_id") long opinionBoxId,
+        @Valid @RequestBody OpinionCreateRequestDto opinionCreateRequestDto) {
         opinionCreateUseCase.createOpinion(authUser, groupId, meetingId, opinionBoxId,
-                opinionCreateRequestDto);
+            opinionCreateRequestDto);
         return HttpResponse.ok(HttpStatus.OK, "의견이 생성되었습니다.");
     }
 

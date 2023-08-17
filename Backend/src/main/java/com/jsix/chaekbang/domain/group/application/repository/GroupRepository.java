@@ -32,4 +32,5 @@ public interface GroupRepository {
 
     boolean existsByGroupIdAndUserId(long userId, long groupId);
 
+    Group findGroupByMeetingId(Long meetingId);
 }

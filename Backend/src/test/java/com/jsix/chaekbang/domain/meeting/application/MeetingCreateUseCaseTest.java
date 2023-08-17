@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import com.jsix.chaekbang.domain.group.application.repository.GroupRepository;
 import com.jsix.chaekbang.domain.group.domain.Group;
+import com.jsix.chaekbang.domain.job.application.MeetingJobRegister;
 import com.jsix.chaekbang.domain.meeting.application.repository.MeetingRepository;
 import com.jsix.chaekbang.domain.meeting.domain.Meeting;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingCreateRequestDto;
@@ -34,6 +35,8 @@ class MeetingCreateUseCaseTest {
     @Mock
     MeetingRepository meetingRepository;
 
+    @Mock
+    MeetingJobRegister meetingJobRegister;
     @Mock
     GroupRepository groupRepository;
 

@@ -71,4 +71,9 @@ public class GroupRepositoryImpl implements GroupRepository {
     public boolean existsByGroupIdAndUserId(long groupId, long userId) {
         return jpaGroupUserRepository.existsByGroup_IdAndStatusAndUser_Id(groupId, UserStatus.WAITING, userId);
     }
+
+    @Override
+    public Group findGroupByMeetingId(Long meetingId) {
+        return groupQueryRepository.findGroupByMeetingId(meetingId);
+    }
 }

@@ -1,6 +1,7 @@
 package com.jsix.chaekbang.global.config.webmvc;
 
 import java.util.List;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -28,6 +29,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(jwtLoginUserArgumentResolver());
+    }
+
+    @Bean
+    public FilterRegistrationBean commonLoggingFilter() {
+        FilterRegistrationBean bean = new FilterRegistrationBean(new HttpLoggingFilter());
+        bean.setOrder(Integer.MIN_VALUE);
+        return bean;
     }
 
 }

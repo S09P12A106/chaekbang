@@ -28,7 +28,7 @@ public class MeetingRepositoryImpl implements MeetingRepository {
 
     @Override
     public List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId,
-            Pageable pageable) {
+        Pageable pageable) {
         return queryMeetingRepository.findByGroupIdWithSlicing(groupId, pageable);
     }
 
@@ -38,6 +38,18 @@ public class MeetingRepositoryImpl implements MeetingRepository {
     }
 
     @Override
+    public void delete(Meeting meeting) {
+        jpaMeetingRepository.delete(meeting);
+    }
+
+    @Override
+    public Optional<Meeting> findByIdWithOpinoionAndUser(Long meetingId) {
+        Meeting byIdWithOpinionAndUser = queryMeetingRepository.findByIdWithOpinionAndUser(
+            meetingId);
+        System.out.println(byIdWithOpinionAndUser);
+        return Optional.ofNullable(byIdWithOpinionAndUser);
+    }
+
     public Meeting findMeetingById(Long id) {
         return queryMeetingRepository.findMeetingById(id);
     }

@@ -1,6 +1,8 @@
 package com.jsix.chaekbang.domain.group.infra.database;
 
 
+import static com.jsix.chaekbang.domain.meeting.domain.QMeeting.meeting;
+
 import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.QGroup;
 import com.jsix.chaekbang.domain.group.domain.QGroupTag;
@@ -12,6 +14,7 @@ import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupParticipantResponseDto;
+import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
 import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
@@ -191,4 +194,11 @@ public class QueryGroupRepository {
                               .fetch();
     }
 
+
+    public Group findGroupByMeetingId(Long meetingId){
+        return jpaQueryFactory.selectFrom(group)
+            .join(group.meetings, meeting)
+            .where(meeting.id.eq(meetingId))
+            .fetchOne();
+    }
 }

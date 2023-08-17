@@ -1,10 +1,12 @@
 package com.jsix.chaekbang.domain.meeting.infra.database;
 
+import static com.jsix.chaekbang.domain.meeting.domain.QMeetingUser.meetingUser;
+import static com.jsix.chaekbang.domain.meeting.domain.QOpinion.opinion1;
 import com.jsix.chaekbang.domain.group.domain.QGroup;
-import com.jsix.chaekbang.domain.group.domain.QGroupUser;
 import com.jsix.chaekbang.domain.meeting.domain.Meeting;
-import com.jsix.chaekbang.domain.meeting.domain.OpinionBox;
 import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
+import com.jsix.chaekbang.domain.group.domain.QGroupUser;
+import com.jsix.chaekbang.domain.meeting.domain.OpinionBox;
 import com.jsix.chaekbang.domain.meeting.domain.QOpinion;
 import com.jsix.chaekbang.domain.meeting.domain.QOpinionBox;
 import com.jsix.chaekbang.domain.meeting.dto.MeetingSearchResponseDto;
@@ -29,50 +31,64 @@ public class QueryMeetingRepository {
     private QOpinion opinion = QOpinion.opinion1;
 
     public List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId,
-            Pageable pageable) {
+        Pageable pageable) {
         return jpaQueryFactory.select(
-                                      new QMeetingSearchResponseDto(meeting.id, meeting.title, meeting.startedAt,
-                                              meeting.closedAt)
-                              )
-                              .from(meeting)
-                              .offset(pageable.getOffset())
-                              .where(meeting.group.id.eq(groupId))
-                              .orderBy(meeting.startedAt.desc())
-                              .orderBy(meeting.closedAt.desc())
-                              .limit(pageable.getPageSize())
-                              .fetch();
+                new QMeetingSearchResponseDto(meeting.id, meeting.title, meeting.startedAt,
+                    meeting.closedAt)
+            )
+            .from(meeting)
+            .offset(pageable.getOffset())
+            .where(meeting.group.id.eq(groupId))
+            .orderBy(meeting.startedAt.desc())
+            .orderBy(meeting.closedAt.desc())
+            .limit(pageable.getPageSize())
+            .fetch();
     }
 
     public Meeting findMeetingById(Long id) {
         return jpaQueryFactory.selectFrom(meeting)
-                              .innerJoin(meeting.group, group)
-                              .fetchJoin()
-                              .innerJoin(group.groupUsers, groupUser)
-                              .fetchJoin()
-                              .innerJoin(groupUser.user, user)
-                              .fetchJoin()
-                              .where(meeting.id.eq(id))
-                              .distinct()
-                              .fetchOne();
+            .innerJoin(meeting.group, group)
+            .fetchJoin()
+            .innerJoin(group.groupUsers, groupUser)
+            .fetchJoin()
+            .innerJoin(groupUser.user, user)
+            .fetchJoin()
+            .where(meeting.id.eq(id))
+            .distinct()
+            .fetchOne();
     }
 
 
     public Long findNotClosedMeetingCountByGroupId(long groupId) {
         return jpaQueryFactory.select(meeting.count())
-                              .from(meeting)
-                              .where(meeting.closedAt.isNull()
-                                                     .and(meeting.group.id.eq(groupId)))
-                              .fetchOne();
+            .from(meeting)
+            .where(meeting.closedAt.isNull()
+                .and(meeting.group.id.eq(groupId)))
+            .fetchOne();
+    }
+
+    // User 쪽 distinct
+    public Meeting findByIdWithOpinionAndUser(Long meetingId) {
+        return jpaQueryFactory.select(meeting)
+            .from(meeting)
+            .leftJoin(meeting.meetingUsers, meetingUser).fetchJoin()
+            .join(meetingUser.user, user).fetchJoin()
+            .leftJoin(meeting.opinionBoxes, opinionBox)
+            .leftJoin(opinionBox.opinions, opinion1)
+            .join(opinion1.user, user)
+            .distinct()
+            .where(meeting.id.eq(meetingId))
+            .fetchOne();
     }
 
     public List<OpinionBox> findByIdWithOpinionBox(long meetingId) {
         return jpaQueryFactory.select(opinionBox)
-                .from(opinionBox)
-                .join(opinionBox.opinions, opinion)
-                .fetchJoin()
-                .where(opinionBox.meeting.id.eq(meetingId))
-                .distinct()
-                .fetch();
+            .from(opinionBox)
+            .join(opinionBox.opinions, opinion)
+            .fetchJoin()
+            .where(opinionBox.meeting.id.eq(meetingId))
+            .distinct()
+            .fetch();
     }
 
 }

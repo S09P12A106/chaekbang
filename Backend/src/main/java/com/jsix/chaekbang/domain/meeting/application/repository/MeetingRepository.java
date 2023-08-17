@@ -17,4 +17,8 @@ public interface MeetingRepository {
     List<MeetingSearchResponseDto> findByGroupIdWithSlicing(long groupId, Pageable pageable);
 
     Long findNotClosedMeetingCountByGroupId(long groupId);
+
+    void delete(Meeting meeting);
+
+    Optional<Meeting> findByIdWithOpinoionAndUser(Long meetingId);
 }

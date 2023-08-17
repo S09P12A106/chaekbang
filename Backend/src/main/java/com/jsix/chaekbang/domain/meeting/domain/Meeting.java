@@ -7,6 +7,7 @@ import com.jsix.chaekbang.global.exception.NotGroupUserException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,7 +45,10 @@ public class Meeting extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meeting", cascade = CascadeType.ALL)
+    private List<MeetingUser> meetingUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
     private List<OpinionBox> opinionBoxes = new ArrayList<>();
 
     public void addOpinionBox(OpinionBox opinionBox) {
@@ -60,12 +64,20 @@ public class Meeting extends BaseEntity {
 
     public static Meeting createMeeting(String title, LocalDateTime startedAt, Group group) {
         Meeting meeting = Meeting.builder()
-                                 .title(title)
-                                 .startedAt(startedAt)
-                                 .group(group)
-                                 .build();
+            .title(title)
+            .startedAt(startedAt)
+            .group(group)
+            .build();
         group.addMeeting(meeting);
         return meeting;
+    }
+
+    public boolean isClose() {
+        return this.closedAt != null;
+    }
+
+    public void close(LocalDateTime closedAt) {
+        this.closedAt = closedAt;
     }
 
     public void validateUser(User user) {

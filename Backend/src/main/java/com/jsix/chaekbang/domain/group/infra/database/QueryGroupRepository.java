@@ -17,8 +17,6 @@ import com.jsix.chaekbang.domain.group.dto.QGroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -53,7 +51,7 @@ public class QueryGroupRepository {
                               .fetch();
     }
 
-    public List<Group> findMostTaggedCountByTagName(String tagName) {
+    public List<Group> findMostTaggedCountByTagId(Long tagId) {
         return jpaQueryFactory.select(group)
                               .from(group)
                               .innerJoin(group.groupTags, groupTag)
@@ -61,18 +59,20 @@ public class QueryGroupRepository {
                               .innerJoin(groupTag.tag, tag)
                               .fetchJoin()
                               .distinct()
-                              .where(group.id.in(getGroupIdsContainsTagName(tagName)),
+                              .where(group.id.in(getGroupIdsContainsTagName(tagId)),
                                       isNotDeleted())
                               .fetch();
     }
 
-    private JPQLQuery<Long> getGroupIdsContainsTagName(String tagName) {
-        return jpaQueryFactory.select(groupTag.group.id)
-                             .from(groupTag)
-                             .innerJoin(groupTag.tag, tag)
-                             .where(tag.tagName.eq(tagName))
-                             .limit(8)
-                             .orderBy(group.readCount.desc());
+    private List<Long> getGroupIdsContainsTagName(Long tagId) {
+        return jpaQueryFactory.select(group.id)
+                              .from(group)
+                              .innerJoin(group.groupTags, groupTag)
+                              .innerJoin(groupTag.tag, tag)
+                              .where(tag.id.eq(tagId))
+                              .orderBy(group.readCount.desc())
+                              .limit(8)
+                              .fetch();
     }
 
     private BooleanExpression isNotDeleted() {

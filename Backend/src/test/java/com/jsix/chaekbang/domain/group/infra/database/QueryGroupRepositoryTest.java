@@ -127,8 +127,8 @@ class QueryGroupRepositoryTest extends IntegrationTestSupport {
         entityManager.clear();
 
         // when
-        Group recommendedGroup = queryGroupRepository.findMostTaggedCountByTagName(
-                                                             recommendedTagName)
+        Group recommendedGroup = queryGroupRepository.findMostTaggedCountByTagId(
+                                                             tags.get(0).getId())
                                                      .get(0);
 
         //then

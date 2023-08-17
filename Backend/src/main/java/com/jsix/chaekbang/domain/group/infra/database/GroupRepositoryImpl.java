@@ -5,7 +5,6 @@ import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
-import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +35,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public List<Group> findMostTaggedCountByTagName(String tagName) {
-        return groupQueryRepository.findMostTaggedCountByTagName(tagName);
+    public List<Group> findMostTaggedCountByTagId(Long tagId) {
+        return groupQueryRepository.findMostTaggedCountByTagId(tagId);
     }
 
     public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable) {

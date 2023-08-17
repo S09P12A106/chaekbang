@@ -51,7 +51,7 @@ public class GroupSearchUseCase {
         }
 
         Tag tag = mostTagged.get();
-        List<Group> groups = groupRepository.findMostTaggedCountByTagName(tag.getTagName());
+        List<Group> groups = groupRepository.findMostTaggedCountByTagId(tag.getId());
         return MostTaggedGroupsResponseDto.fromGroupsAndTag(groups, tag);
     }
 

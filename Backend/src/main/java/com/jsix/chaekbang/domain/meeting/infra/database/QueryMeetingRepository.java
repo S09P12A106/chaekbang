@@ -84,7 +84,7 @@ public class QueryMeetingRepository {
     public List<OpinionBox> findByIdWithOpinionBox(long meetingId) {
         return jpaQueryFactory.select(opinionBox)
             .from(opinionBox)
-            .join(opinionBox.opinions, opinion)
+            .leftJoin(opinionBox.opinions, opinion)
             .fetchJoin()
             .where(opinionBox.meeting.id.eq(meetingId))
             .distinct()

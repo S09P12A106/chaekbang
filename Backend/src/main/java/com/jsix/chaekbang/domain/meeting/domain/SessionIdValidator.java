@@ -43,6 +43,9 @@ public class SessionIdValidator {
 
     private String findEnvironment() {
         String[] profiles = environment.getDefaultProfiles();
+        if (profiles.length == 0) {
+            return "local";
+        }
         for (String profile : profiles) {
             if (profile.startsWith("dev")) {
                 return "dev";
@@ -66,11 +69,7 @@ public class SessionIdValidator {
 
     // sessionId가 {}_{환경}_{숫자} 형식의 sessionId에서 환경이 현재 환경과 맞는지 검증
     private void validateEnvironmentInfo(String sessionId) {
-        String[] environments = environment.getActiveProfiles();
-        String profile = environment.getDefaultProfiles()[0];
-        if (environments.length != 0) {
-            profile = environments[0];
-        }
+        String profile = findEnvironment();
         String environmentInfo = sessionId.split(DELIMITER)[1];
         if (!environmentInfo.equals(profile)) {
             throw new InvalidSessionIdException("유효한 sessionId가 아닙니다.");

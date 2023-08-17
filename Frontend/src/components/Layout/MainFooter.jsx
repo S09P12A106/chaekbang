@@ -33,9 +33,7 @@ function MainFooter() {
 const Footer = styled.div`
   padding: 30px;
   background-color: ${COLORS.BRIGHTGREY};
-  height: 200px;
   margin-top: 30px;
-
   hr {
     width: 150px;
     margin: 8px 0px;

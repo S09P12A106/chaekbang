@@ -49,6 +49,11 @@ const LoginPage = () => {
       dispatch(loginAction(userInfo.data))
       navigate('/')
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        // 401 인증을 받으면 .. 토큰 자체가 잘못되거나 idToken이 잘못된 경우
+        alert(error.response.data.message)
+        return
+      }
       navigate('/error')
     }
   }

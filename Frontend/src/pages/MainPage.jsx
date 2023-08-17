@@ -10,7 +10,9 @@ import {
 } from '../api/mainApi'
 import { useNavigate } from 'react-router-dom'
 import { getMyGroupsApi } from '../api/myGroupApi'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { clearToken } from '../utils/tokenUtil'
+import { logoutAction } from '../store/LoginUser'
 
 const Container = styled.div``
 
@@ -25,6 +27,7 @@ function MainPage() {
   const [myGroup, setMyGroup] = useState(null)
   const [recommendGroup, setRecommendGroup] = useState(null)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state) => {
     return state.rootReducer.loginReducer.user
   })
@@ -41,8 +44,16 @@ function MainPage() {
       setRecommendGroup(groups)
     }
     async function getMyGroup() {
-      const data = await getMyGroupsApi()
-      setMyGroup(data.data)
+      try {
+        const data = await getMyGroupsApi()
+        setMyGroup(data.data)
+      } catch (e) {
+        if (e.response && e.response.status === 401) {
+          // 앞에 user가 있는지 체크했는데, 401 에러가 발생하면.. 로컬 스토리지 && 리덕스 동기화 문제.
+          clearToken()
+          dispatch(logoutAction())
+        }
+      }
     }
     getPopularGroups()
     getRecommendTagAndGroups()

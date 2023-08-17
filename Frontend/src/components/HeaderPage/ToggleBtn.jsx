@@ -62,9 +62,9 @@ function ToggleBtn() {
             <Link to="/mypage">마이페이지</Link>
           </ToggleBarItem>
           <hr />
-          <ToggleBarItem>
+          {/* <ToggleBarItem>
             <Link to="/mygroup">나의 모임</Link>
-          </ToggleBarItem>
+          </ToggleBarItem> */}
           <ToggleBarItem>
             <Link to="/groups/manage">모임 관리</Link>
           </ToggleBarItem>

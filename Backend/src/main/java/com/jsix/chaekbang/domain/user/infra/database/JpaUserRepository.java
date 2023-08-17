@@ -9,4 +9,5 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByOauthProviderAndOauthId(OAuthProvider oauthProvider, String oauthId);
 
+    boolean existsByOauthProviderAndOauthId(OAuthProvider oAuthProvider, String oauthId);
 }

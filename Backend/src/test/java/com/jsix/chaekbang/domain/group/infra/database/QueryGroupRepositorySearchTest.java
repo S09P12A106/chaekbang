@@ -11,6 +11,8 @@ import com.jsix.chaekbang.domain.group.domain.GroupTag;
 import com.jsix.chaekbang.domain.group.domain.GroupUser;
 import com.jsix.chaekbang.domain.group.domain.Tag;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupDetailResponseDto;
 import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.Gender;
 import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
@@ -21,9 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
@@ -68,8 +73,7 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
     void saveGroups() {
         groups = new ArrayList<>();
         for (int idx = 0; idx < 10; idx++) {
-            Group newGroup = Group.createGroup("title" + idx, "detail", "imageURL", "question",
-                    users.get(0));
+            Group newGroup = Group.createGroup("title" + idx, "detail", "imageURL", users.get(0));
             addTags(newGroup, idx);
             Group savedGroup = groupRepository.save(newGroup);
             addGroupUser(savedGroup);
@@ -117,7 +121,6 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         }
     }
 
-
     @DisplayName("키워드와 태그가 주어지지 않으면 전체 그룹 리스트를 반환한다.")
     @Test
     @Transactional
@@ -131,9 +134,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         saveGroups();
 
         entityManager.clear();
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(10);
@@ -154,9 +158,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "title3";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);
@@ -184,9 +189,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
 
         //// savedTagIds : 통합테스트 상 증가된 ID값 3개
         List<Long> savedTagIds = getSavedTagIds();
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, savedTagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, savedTagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(5);
@@ -199,7 +205,6 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         }
 
     }
-
 
     @DisplayName("검색 키워드에 해당하는 그룹 정보가 존재하지 않으면 빈 리스트를 반환한다.")
     @Test
@@ -216,9 +221,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "해당 정보가 없습니다.";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(0);
@@ -241,9 +247,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         List<Long> tagIds = new ArrayList<>(List.of(7L, 8L));
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, tagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(null, tagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(0);
@@ -270,8 +277,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         //// savedTagIds : 통합테스트 상 증가된 값
         List<Long> savedTagIds = getSavedTagIds();
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, savedTagIds);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, savedTagIds, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);
@@ -306,9 +315,10 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         entityManager.clear();
 
         String keyword = "title1";
+        Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null);
+        List<Group> groups = queryGroupRepository.findByKeywordAndTags(keyword, null, pageable);
 
         // then
         assertThat(groups.size()).isEqualTo(1);
@@ -329,6 +339,45 @@ class QueryGroupRepositorySearchTest extends IntegrationTestSupport {
         }
 
         return savedTagId;
+    }
+
+    @DisplayName("그룹 상세정보를 조회할 수 있다.")
+    @Test
+    void 그룹_상세_조회() {
+        //given
+        saveUsers();
+        saveTags();
+        saveGroups();
+        entityManager.clear();
+
+        // groups의 첫번째 그룹을 target으로 지정
+        Group target = groups.get(0);
+
+        // 타겟 그룹의 Leader인 Users의 첫번째 유저 가져옴
+        User targetLeader = users.get(0);
+
+        // 타겟 그룹과 리더 정보로 expectedGroup 생성
+        GroupDetailResponseDto expectedGroup =
+                new GroupDetailResponseDto(target, targetLeader.getProfileImageUrl(),
+                        targetLeader.getAboutMe(),
+                        targetLeader.getNickname());
+
+        // usingRecursiveComparison에서 userCount 값 비교 제외
+        RecursiveComparisonConfiguration configuration
+                = RecursiveComparisonConfiguration.builder()
+                                                  .withIgnoredFields("userCount", "readCount")
+                                                  .build();
+        // when
+        GroupDetailProjectionResponseDto dto =
+                queryGroupRepository.findGroupDetailByGroupId(
+                        target.getId());
+        GroupDetailResponseDto actualGroup = new GroupDetailResponseDto(dto.getGroup(),
+                dto.getLeaderProfileImageUrl(), dto.getLeaderAboutMe(), dto.getLeaderNickname());
+//        then
+        assertThat(actualGroup).usingRecursiveComparison(configuration)
+                               .isEqualTo(expectedGroup);
+        // saveGroups에서 리더, 활동 중인 유저 5명 추가했으므로 6명인지 확인
+        assertThat(actualGroup.getUserCount()).isEqualTo(6);
     }
 
 }

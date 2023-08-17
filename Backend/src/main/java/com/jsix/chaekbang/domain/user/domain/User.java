@@ -1,6 +1,7 @@
 package com.jsix.chaekbang.domain.user.domain;
 
 import com.jsix.chaekbang.global.entity.BaseEntity;
+import com.jsix.chaekbang.global.exception.AuthenticationFailException;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 @Table(
         uniqueConstraints = {
@@ -50,7 +52,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = true, length = 100)
+    @Column(nullable = true, length = 200)
     private String profileImageUrl;
 
     @Column(nullable = false, length = 100)
@@ -58,6 +60,17 @@ public class User extends BaseEntity {
 
     @Column(nullable = false, length = 20)
     private String nickname;
+
+    @Column(length = 200)
+    private String refreshToken;
+
+    @Formula("(select count(*) "
+            + "from group_user gu "
+            + "where gu.user_id = user_id "
+            + "and gu.status = 'ACTIVE')")
+    private int groupCount;
+
+    private static final String defaultImageUrl = "https://chaekbang-bucket.s3.ap-northeast-2.amazonaws.com/user/image/chaekbang_default_image.jpeg";
 
     @Builder
     private User(OAuthProvider oAuthProvider, String oAuthId,
@@ -88,5 +101,30 @@ public class User extends BaseEntity {
                    .aboutMe(aboutMe)
                    .nickname(nickname)
                    .build();
+    }
+
+    public void setRefreshToken(String token) {
+        this.refreshToken = token;
+    }
+
+    public void logout() {
+        if (this.refreshToken == null) {
+            throw new AuthenticationFailException("로그인이 필요합니다.");
+        }
+        this.refreshToken = null;
+    }
+
+
+    public boolean isEqualRefreshToken(String refreshToken) {
+        if (this.refreshToken == null) {
+            throw new AuthenticationFailException("로그인이 필요합니다.");
+        }
+        return this.refreshToken.equals(refreshToken);
+    }
+
+    public void modifyUser(String nickname, String profileImageUrl, boolean imageChanged) {
+        this.nickname = nickname;
+        if (imageChanged)
+            this.profileImageUrl = profileImageUrl == null ? defaultImageUrl : profileImageUrl;
     }
 }

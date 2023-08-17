@@ -28,9 +28,9 @@ function ProfileDropdown() {
       <DropdownItem>
         <Link to="/mygroup">나의 모임</Link>
       </DropdownItem>
-      <DropdownItem>
+      {/* <DropdownItem>
         <Link to="/groups/manage">모임 관리</Link>
-      </DropdownItem>
+      </DropdownItem> */}
       <hr />
       <DropdownItem onClick={handleLogout}>로그아웃</DropdownItem>
     </DropdownContainer>

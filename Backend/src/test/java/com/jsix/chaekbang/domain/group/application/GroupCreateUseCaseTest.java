@@ -1,6 +1,5 @@
 package com.jsix.chaekbang.domain.group.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -16,7 +15,8 @@ import com.jsix.chaekbang.domain.user.application.repository.UserRepository;
 import com.jsix.chaekbang.domain.user.domain.Gender;
 import com.jsix.chaekbang.domain.user.domain.OAuthProvider;
 import com.jsix.chaekbang.domain.user.domain.User;
-import java.lang.reflect.Constructor;
+import com.jsix.chaekbang.global.config.webmvc.AuthUser;
+import com.jsix.chaekbang.infra.aws.S3Uploader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,6 +41,9 @@ class GroupCreateUseCaseTest {
     UserRepository userRepository;
     @Mock
     TagService tagService;
+    @Mock
+    S3Uploader s3Uploader;
+
     @InjectMocks
     GroupCreateUseCase groupCreateUseCase;
 
@@ -63,36 +65,29 @@ class GroupCreateUseCaseTest {
     void 그룹_생성_성공() {
         // given
         Long leaderId = 1L;
+        AuthUser authUser = new AuthUser(leaderId);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(leader));
         given(tagRepository.findByTagNameIn(any(List.class))).willReturn(existedTags);
         given(tagService.getAllTagsRequired(any(List.class), any(List.class)))
                 .willReturn(allTags);
 
         // when
-        groupCreateUseCase.createGroup(leaderId, groupCreateRequestDto);
-        // createGruop 메서드 내부에서 생성된 createdGroup 객체를 가져온다.
-        ArgumentCaptor<Group> groupArgumentCaptor = ArgumentCaptor.forClass(Group.class);
-        verify(groupRepository).save(groupArgumentCaptor.capture());
-        Group createdGroup = groupArgumentCaptor.getValue();
+        groupCreateUseCase.createGroup(authUser, groupCreateRequestDto);
 
         // then
         verify(groupRepository, times(1)).save(any(Group.class));
     }
 
     void setGroupCreateRequestDto() throws Exception {
-        // dto 의 생성 제한을 강제로 바꿔준다.
-        Class<?> clazz = Class.forName("com.jsix.chaekbang.domain.group.dto.GroupCreateRequestDto");
-        Constructor<?> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
 
-        // dto 생성
-        groupCreateRequestDto = (GroupCreateRequestDto) constructor.newInstance();
+        groupCreateRequestDto = new GroupCreateRequestDto();
+
         List<String> tagNames = new ArrayList<>();
         tagNames.add("TAG1");
-        ReflectionTestUtils.setField(groupCreateRequestDto, "title", "TITLE");
-        ReflectionTestUtils.setField(groupCreateRequestDto, "detail", "DETAIL");
-        ReflectionTestUtils.setField(groupCreateRequestDto, "question", "QUESTION");
-        ReflectionTestUtils.setField(groupCreateRequestDto, "tagNames", tagNames);
+        groupCreateRequestDto.setTitle("title");
+        groupCreateRequestDto.setDetail("detail");
+        groupCreateRequestDto.setTagNames(tagNames);
+        groupCreateRequestDto.setImage(null);
     }
 
     void setLeader() {

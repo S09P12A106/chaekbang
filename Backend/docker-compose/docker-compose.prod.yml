@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  prod-spring-app:
+    container_name: prod-spring-app
+    image: joslynn/prod-spring-app:latest
+    environment:
+      PROFILE: prod
+      MYSQL_HOST: prod-mysql
+    expose:
+      - "8080"
+    networks:
+      - chaekbang-prod-net
+
+networks:
+  chaekbang-prod-net:
+    external: true
+    name: "chaekbang-prod-net"

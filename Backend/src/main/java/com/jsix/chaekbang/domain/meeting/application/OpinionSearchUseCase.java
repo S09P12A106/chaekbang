@@ -22,16 +22,8 @@ public class OpinionSearchUseCase {
     private final JpaMeetingUserRepository jpaMeetingUserRepository;
 
     public List<OpinionSearchResponseDto> searchOpinion(AuthUser authUser, long meetingId) {
-        MeetingUser meetingUser = jpaMeetingUserRepository.findByIdAndUser_Id(meetingId,
-                authUser.getUserId());
-        if (meetingUser == null) {
-            throw new NotFoundResourceException("해당 유저가 존재하지 않습니다.");
-        }
-
         List<OpinionBox> opinionBoxes = opinionBoxRepository.findByMeetingId(meetingId);
         return opinionBoxes.stream().map(opinionBox -> OpinionSearchResponseDto.createFromMeeting(
                 opinionBox)).collect(Collectors.toList());
-
     }
-
 }

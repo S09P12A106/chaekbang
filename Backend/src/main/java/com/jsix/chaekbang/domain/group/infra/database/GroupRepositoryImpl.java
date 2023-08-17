@@ -5,6 +5,7 @@ import com.jsix.chaekbang.domain.group.domain.Group;
 import com.jsix.chaekbang.domain.group.domain.UserStatus;
 import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
+import com.jsix.chaekbang.domain.group.dto.GroupWithUserAndTagResponseDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

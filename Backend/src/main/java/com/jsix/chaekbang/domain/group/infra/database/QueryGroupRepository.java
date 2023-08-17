@@ -14,7 +14,6 @@ import com.jsix.chaekbang.domain.group.dto.GroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.GroupParticipantResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupDetailProjectionResponseDto;
 import com.jsix.chaekbang.domain.group.dto.QGroupParticipantResponseDto;
-import com.jsix.chaekbang.domain.meeting.domain.QMeeting;
 import com.jsix.chaekbang.domain.user.domain.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
@@ -34,15 +33,23 @@ public class QueryGroupRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private List<Long> findMostReadCountId() {
+        return jpaQueryFactory.select(group.id)
+                              .from(group)
+                              .orderBy(group.readCount.desc())
+                              .limit(8)
+                .fetch();
+    }
+
     public List<Group> findMostReadCount() {
         return jpaQueryFactory.selectFrom(group)
                               .leftJoin(group.groupTags, groupTag)
                               .fetchJoin()
                               .leftJoin(groupTag.tag, tag)
                               .fetchJoin()
-                              .distinct()
+                              .where(group.id.in(findMostReadCountId()))
                               .orderBy(group.readCount.desc())
-                              .limit(8)
+                              .distinct()
                               .fetch();
     }
 
@@ -63,7 +70,9 @@ public class QueryGroupRepository {
         return JPAExpressions.select(groupTag.group.id)
                              .from(groupTag)
                              .innerJoin(groupTag.tag, tag)
-                             .where(tag.tagName.eq(tagName));
+                             .where(tag.tagName.eq(tagName))
+                             .limit(8)
+                             .orderBy(group.readCount.desc());
     }
 
     private BooleanExpression isNotDeleted() {
@@ -77,20 +86,32 @@ public class QueryGroupRepository {
     private QHistory history = QHistory.history;
     private QGroupUser groupUser = QGroupUser.groupUser;
 
+    private JPAQuery<Long> findIdsByKeywordAndTags(String keyword, List<Long> tagIds,
+            Pageable pageable) {
+        return jpaQueryFactory.select(
+                                      group.id
+                              )
+                              .from(group)
+                              .offset(pageable.getOffset())
+                              .limit(pageable.getPageSize())
+                              .where(inMatchingGroups(tagIds), titleContainsKeyword(keyword),
+                                      isNotDeleted(), group.opened.eq(true))
+                              .orderBy(group.id.desc());
+    }
+
     public List<Group> findByKeywordAndTags(String keyword, List<Long> tagIds, Pageable pageable) {
 
         return jpaQueryFactory.select(group)
                               .from(group)
-                              .offset(pageable.getOffset())
                               .leftJoin(group.groupTags, groupTag)
                               .fetchJoin()
                               .leftJoin(groupTag.tag, tag)
                               .fetchJoin()
+                              .where(
+                                      group.id.in(
+                                              findIdsByKeywordAndTags(keyword, tagIds, pageable))
+                              )
                               .distinct()
-                              .limit(pageable.getPageSize())
-                              .where(inMatchingGroups(tagIds), titleContainsKeyword(keyword),
-                                      isNotDeleted(), group.opened.eq(true))
-                              .orderBy(group.id.desc())
                               .fetch();
     }
 
@@ -195,10 +216,10 @@ public class QueryGroupRepository {
     }
 
 
-    public Group findGroupByMeetingId(Long meetingId){
+    public Group findGroupByMeetingId(Long meetingId) {
         return jpaQueryFactory.selectFrom(group)
-            .join(group.meetings, meeting)
-            .where(meeting.id.eq(meetingId))
-            .fetchOne();
+                              .join(group.meetings, meeting)
+                              .where(meeting.id.eq(meetingId))
+                              .fetchOne();
     }
 }

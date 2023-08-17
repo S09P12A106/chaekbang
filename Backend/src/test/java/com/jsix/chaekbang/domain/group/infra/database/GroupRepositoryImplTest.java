@@ -37,7 +37,7 @@ class GroupRepositoryImplTest extends IntegrationTestSupport {
         User leader = User.createUser(OAuthProvider.GOOGLE, "oAuthId", "email", Gender.M,
                 LocalDate.now(), "profileImageUrl", "aboutMe", "nickName");
         userRepository.save(leader);
-        Group group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        Group group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
 
         // when
         Group savedGroup = groupRepository.save(group);
@@ -58,7 +58,7 @@ class GroupRepositoryImplTest extends IntegrationTestSupport {
         List<Tag> tags = new ArrayList<>(List.of(Tag.createTag("TAG1")));
         tagRepository.saveAll(tags);
 
-        Group group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        Group group = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
         group.addTags(tags);
 
         // when

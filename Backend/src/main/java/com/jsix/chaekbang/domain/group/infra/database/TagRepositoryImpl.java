@@ -37,4 +37,5 @@ public class TagRepositoryImpl implements TagRepository {
     public List<Tag> findTop10ByOrderByTaggedCountDesc() {
         return jpaTagRepository.findTop10ByOrderByTaggedCountDesc();
     }
+
 }

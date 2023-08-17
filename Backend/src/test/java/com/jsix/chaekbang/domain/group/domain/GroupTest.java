@@ -25,7 +25,7 @@ class GroupTest {
         ReflectionTestUtils.setField(leader, "id", 1L);
 
         // when
-        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
 
         // then
         GroupUser createdGroupLeader = createdGroup.getGroupUsers().get(0);
@@ -41,7 +41,7 @@ class GroupTest {
         ReflectionTestUtils.setField(leader, "id", 1L);
 
         // when
-        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
         GroupUser createdGroupLeader = createdGroup.getGroupUsers().get(0);
         // then
         assertThat(createdGroupLeader.getParticipatedAt()).isNotNull();
@@ -60,7 +60,7 @@ class GroupTest {
         ReflectionTestUtils.setField(tag, "id", 1L);
 
         List<Tag> tags = new ArrayList<>(List.of(tag));
-        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", "QUESTION", leader);
+        Group createdGroup = Group.createGroup("TITLE", "DETAIL", "IMAGE_URL", leader);
 
         // when
         createdGroup.addTags(tags);

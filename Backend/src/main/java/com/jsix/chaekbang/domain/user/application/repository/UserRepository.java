@@ -12,4 +12,7 @@ public interface UserRepository {
 
     Optional<User> findByOauthProviderAndOauthId(OAuthProvider oauthProvider, String oauthId);
 
+    boolean existByOauthProviderAndOauthId(OAuthProvider oAuthProvider, String oauthId);
+
+    void delete(User user);
 }

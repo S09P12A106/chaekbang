@@ -15,4 +15,5 @@ public interface TagRepository {
     Optional<Tag> findTopByOrderByTaggedCountDesc();
     
     List<Tag> findTop10ByOrderByTaggedCountDesc();
+
 }

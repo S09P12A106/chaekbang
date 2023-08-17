@@ -3,164 +3,156 @@ import { styled } from 'styled-components'
 import COLORS from '../../../../constants/colors'
 import { OpBoxBoardContext } from '../../context/OpBoxBoardContext'
 import { OpBoxHistoryContext } from '../../context/OpBoxHistoryContext'
-import { sendOpinion } from '../../../../api/meetingOpBoxApi'
+import { getOpBox } from '../../../../api/meetingOpBoxApi'
 
-function ActiveOpBox({ index }) {
-  const { whichIndex, setWhichOpBoxContext, group_id, meeting_id } =
+function MainOpBox() {
+  const { setWhichOpBoxContext, setWhichIndex, group_id, meeting_id } =
     useContext(OpBoxBoardContext)
-  const { opBoxHistory } = useContext(OpBoxHistoryContext)
-  const [selectedTitle, setSelectedTitle] = useState('')
-  const [opBoxContent, setOpBoxContent] = useState('')
+  const { opBoxHistory, setOpBoxHistory } = useContext(OpBoxHistoryContext)
 
-  useEffect(() => {
-    const selectedOpBox = opBoxHistory[index]
-    const title = selectedOpBox ? selectedOpBox.topic : ''
-
-    setSelectedTitle(title)
-  }, [])
-
-  // 뒤로가기
-  const handleOpBoxComp = (num) => {
+  const handleOpBoxComp = (num, index) => {
+    setWhichIndex(index)
     setWhichOpBoxContext(num)
   }
 
-  // 제출하기
-  const handleSendOpinion = async () => {
-    const opinion_box_id = opBoxHistory[0][index].opinionBoxId
-    try {
-      await sendOpinion(group_id, meeting_id, opinion_box_id, opBoxContent)
-      console.log('의견제출완료~~~~~~~~~~~~~~')
-    } catch (error) {
-      console.log('에러요')
+  useEffect(() => {
+    console.log('들어옴????spspd넹')
+    const fetchOpBox = async () => {
+      getOpBox(group_id, meeting_id)
+        .then(({ data }) => {
+          setOpBoxHistory(data.data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
-  }
+    fetchOpBox()
+  }, [])
 
-  // 입력하면 값 저장
-  const handleContentChange = (e) => {
-    setOpBoxContent(e.target.value)
-  }
+  console.log(opBoxHistory[0])
 
   return (
-    <ActiveOpBoxContainer>
-      <Title>{selectedTitle}</Title>
-      <ContentBox>
-        <Content>
-          <TextArea
-            value={opBoxContent}
-            onChange={handleContentChange}
-            placeholder="의견을 입력해주세요"
-          ></TextArea>
-        </Content>
-
-        <CompleteBtn onClick={() => handleSendOpinion()}>
-          의견 보내기
-        </CompleteBtn>
-      </ContentBox>
-      <BackWardBtn onClick={() => handleOpBoxComp(0)}>뒤로가기</BackWardBtn>
-    </ActiveOpBoxContainer>
+    <OpBoxContainer>
+      <Title>의견모집함</Title>
+      <OpBoxBox>
+        {opBoxHistory[0] &&
+          opBoxHistory.map((value, index) => (
+            <BoxContainer key={index}>
+              <Subject>
+                <button>
+                  <TextContainter>
+                    <Movement>
+                      <PK
+                        className="write"
+                        onClick={() => handleOpBoxComp(2, index)}
+                      >
+                        의견쓰기
+                      </PK>
+                      <PK
+                        className="look"
+                        onClick={() => handleOpBoxComp(3, index)}
+                      >
+                        의견보기
+                      </PK>
+                    </Movement>
+                    <Topic>{value.topic}</Topic>
+                  </TextContainter>
+                </button>
+              </Subject>
+            </BoxContainer>
+          ))}
+        <CreateOpBox>
+          <button onClick={() => handleOpBoxComp(1)}>+ 의견함생성하기</button>
+        </CreateOpBox>
+      </OpBoxBox>
+    </OpBoxContainer>
   )
 }
+const Topic = styled.div`
+  flex: 1;
+  width: 80px;
+  padding: 5px;
+`
 
-const ActiveOpBoxContainer = styled.div`
+const TextContainter = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  /* justify-content: center; */
+`
+
+const PK = styled.div`
+  width: 50px;
+  font-size: 12px;
+  margin: 5px;
+  font-weight: bold;
+
+  &.write {
+    color: ${COLORS.BLUE};
+  }
+
+  &.look {
+    color: ${COLORS.THEME_COLOR2};
+  }
+`
+
+const Movement = styled.div``
+
+const OpBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   margin: 20px 10px;
 `
-
 const Title = styled.div`
-  width: 180px;
-  min-height: 48px;
-  border-radius: 10px;
-  background-color: ${COLORS.THEME_COLOR2};
   font-size: 20px;
-  color: ${COLORS.WHITE};
-  border: none;
-  padding: 10px;
 `
-const ContentBox = styled.div`
+const OpBoxBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px 0px;
-
-  flex-grow: 1;
-  width: 180px;
-
-  border-radius: 10px;
-
-  font-size: 20px;
-  color: ${COLORS.BRIGHTBLACK};
-  border: none;
-
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: ${COLORS.BRIGHTBLACK};
-    border-radius: 10px;
-    background-clip: padding-box;
-    border: 2px solid transparent;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: ${COLORS.BRIGHTGREY};
-    border-radius: 10px;
-    box-shadow: inset 0px 0px 5px ${COLORS.WHITE};
-  }
+  width: 100%;
 `
-const Content = styled.div`
+const BoxContainer = styled.div`
+  /* margin: 20px 0px; */
+`
+
+const Subject = styled.div`
   display: flex;
-  width: 100%;
-  padding: 10px;
-`
+  /* align-items: center; */
+  margin-top: 20px;
 
-const TextArea = styled.textarea`
-  font-size: 1rem;
-  width: 100%;
-  height: 200px;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  resize: none;
-  outline-color: ${COLORS.BLACK};
-
-  ::placeholder {
+  button {
+    width: 180px;
+    min-height: 48px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: ${COLORS.WHITE};
+    font-size: 20px;
     color: ${COLORS.BRIGHTBLACK};
   }
+`
+const State = styled.div``
 
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: ${COLORS.BRIGHTBLACK};
+const CreateOpBox = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 20px 0px;
+
+  button {
+    width: 180px;
+    height: 48px;
     border-radius: 10px;
-    background-clip: padding-box;
-    border: 2px solid transparent;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(
+      45deg,
+      ${COLORS.THEME_COLOR2},
+      ${COLORS.THEME_COLOR0}
+    );
+    font-size: 20px;
+    color: ${COLORS.WHITE};
   }
-  &::-webkit-scrollbar-track {
-    background-color: ${COLORS.BRIGHTGREY};
-    border-radius: 10px;
-    box-shadow: inset 0px 0px 5px ${COLORS.WHITE};
-  }
 `
 
-const CompleteBtn = styled.button`
-  width: 100px;
-  height: 36px;
-  border-radius: 10px;
-  margin-top: 10px;
-  background-color: ${COLORS.BLUE};
-  font-size: 16px;
-  color: ${COLORS.WHITE};
-`
-const BackWardBtn = styled.button`
-  width: 80px;
-  height: 36px;
-  border-radius: 10px;
-
-  background-color: ${COLORS.RED};
-  font-size: 16px;
-  color: ${COLORS.WHITE};
-`
-
-export default ActiveOpBox
+export default MainOpBox

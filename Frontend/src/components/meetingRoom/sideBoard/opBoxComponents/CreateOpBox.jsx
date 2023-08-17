@@ -8,7 +8,6 @@ import { createOpBox } from '../../../../api/meetingOpBoxApi'
 function CreateOpBox() {
   const { setWhichOpBoxContext, group_id, meeting_id } =
     useContext(OpBoxBoardContext)
-
   const [opBoxTitle, setOpBoxTitle] = useState('')
 
   const handleOpBoxComp = (num) => {
@@ -21,13 +20,16 @@ function CreateOpBox() {
   }
 
   // 의견함 생성하기
-  const completeCreate = async () => {
-    try {
-      await createOpBox(group_id, meeting_id, opBoxTitle)
-    } catch (error) {
-      console.log('에러페이지')
+  const completeCreate = () => {
+    const sendBox = async () => {
+      try {
+        await createOpBox(group_id, meeting_id, opBoxTitle)
+      } catch (error) {
+        console.log('에러페이지')
+      }
     }
 
+    sendBox()
     handleOpBoxComp(0)
   }
 

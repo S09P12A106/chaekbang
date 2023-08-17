@@ -28,6 +28,7 @@ function backApiInstance() {
 function jwtBackApiInstance() {
   const instance = axios.create({
     baseURL: apiURL,
+    withCredentials: true,
   })
 
   instance.interceptors.request.use(

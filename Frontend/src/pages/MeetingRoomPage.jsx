@@ -59,7 +59,8 @@ function MeetingRoomPage({
     console.log('---------------------------')
     client.current.connect(
       {
-        Authorization: getAccessToken(),
+        Authorization: `Bearer ${getAccessToken()}`,
+        meeting: meetingId,
       },
       () => {
         // emojiSUB

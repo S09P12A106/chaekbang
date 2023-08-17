@@ -117,9 +117,7 @@ function MeetWaiting({
           toggleCam={toggleCam}
           isTogglePossible={isTogglePossible}
         ></ScreenContainer>
-        <ContextContainer
-          joinMeetingRoom={joinMeetingRoom}
-        ></ContextContainer>
+        <ContextContainer joinMeetingRoom={joinMeetingRoom}></ContextContainer>
       </WaitContainer>
     </MainLayout>
   )

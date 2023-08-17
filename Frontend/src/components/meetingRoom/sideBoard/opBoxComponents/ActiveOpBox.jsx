@@ -26,13 +26,16 @@ function ActiveOpBox({ index }) {
 
   // 제출하기
   const handleSendOpinion = async () => {
-    const opinion_box_id = opBoxHistory[0][index].opinionBoxId
+    const opinion_box_id = opBoxHistory[index].opinionBoxId
+    console.log(opBoxContent)
+    console.log(opinion_box_id)
     try {
       await sendOpinion(group_id, meeting_id, opinion_box_id, opBoxContent)
       console.log('의견제출완료~~~~~~~~~~~~~~')
     } catch (error) {
       console.log('에러요')
     }
+    setWhichOpBoxContext(0)
   }
 
   // 입력하면 값 저장

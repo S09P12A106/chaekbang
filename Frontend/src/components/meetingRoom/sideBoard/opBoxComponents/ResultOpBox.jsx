@@ -17,9 +17,6 @@ function ResultOpBox({ index }) {
 
     setSelectedTitle(title)
     setSelectedContent(content)
-
-    console.log('opBoxHistoryinRESSSSSSSSSSSSSSSSSSSSSULT')
-    console.log(opBoxHistory)
   }, [])
 
   const handleOpBoxComp = (num) => {

@@ -23,23 +23,8 @@ function OpBoxBoard() {
   // url에서 params 뜯어내기
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const group_id = queryParams.get('group_id')
+  const group_id = queryParams.get('groupId') // 수정된 부분: 'groupId'를 'group_id'로 변경
   const meeting_id = queryParams.get('meetingId')
-
-  useEffect(() => {
-    const fetchOpBox = async () => {
-      try {
-        const response = await getOpBox(group_id, meeting_id)
-        // 데이터 받기
-        // opinionBoxId, topic, opinions
-        setOpBoxHistory(response)
-        // setOpBoxHistory([response])
-      } catch (error) {
-        console.log('에러페이지')
-      }
-    }
-    fetchOpBox()
-  }, [])
 
   useEffect(() => {
     if (whichBtn === 2) {

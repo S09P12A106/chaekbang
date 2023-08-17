@@ -74,7 +74,7 @@ const MeetingPage = () => {
   const meetingInfoState = useState(() => {
     return {
       mySessionId: null,
-      myUserName: loggedInUser.userId,
+      myUserName: loggedInUser.nickname,
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,

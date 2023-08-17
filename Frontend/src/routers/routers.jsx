@@ -22,6 +22,7 @@ import MeetingPage from '../pages/MeetingPage'
 
 import NotFoundPage from '../pages/NotFoundPage'
 import ServerErrorPage from '../pages/ServerErrorPage'
+import MeetingDetailPage from '../pages/MeetingDetailPage'
 
 function RouterApp() {
   return (
@@ -44,6 +45,15 @@ function RouterApp() {
             element={<MeetingCreatePage />}
           />
           <Route path="/groups/home/:groupId" element={<GroupHomePage />} />
+          <Route
+            path="/groups/:groupId/meetings/:meetingId"
+            element={<MeetingDetailPage />}
+          />
+
+          <Route path="/mr" element={<MeetingRoomPage />} />
+          <Route path="/mw" element={<MeetWaiting />} />
+          <Route path="/testWaiting" element={<TempWaitingPage />} />
+          <Route path="/testMeeting" element={<MeetingPage />} />
           <Route path="/meeting" element={<MeetingPage />} />
         </Route>
         <Route path="/error" element={<ServerErrorPage />} />

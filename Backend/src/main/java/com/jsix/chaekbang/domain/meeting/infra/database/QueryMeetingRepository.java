@@ -72,10 +72,10 @@ public class QueryMeetingRepository {
         return jpaQueryFactory.select(meeting)
             .from(meeting)
             .leftJoin(meeting.meetingUsers, meetingUser).fetchJoin()
-            .join(meetingUser.user, user).fetchJoin()
+            .leftJoin(meetingUser.user, user).fetchJoin()
             .leftJoin(meeting.opinionBoxes, opinionBox)
             .leftJoin(opinionBox.opinions, opinion1)
-            .join(opinion1.user, user)
+            .leftJoin(opinion1.user, user)
             .distinct()
             .where(meeting.id.eq(meetingId))
             .fetchOne();

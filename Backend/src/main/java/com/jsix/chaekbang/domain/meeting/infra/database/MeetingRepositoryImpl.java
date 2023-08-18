@@ -44,10 +44,7 @@ public class MeetingRepositoryImpl implements MeetingRepository {
 
     @Override
     public Optional<Meeting> findByIdWithOpinoionAndUser(Long meetingId) {
-        Meeting byIdWithOpinionAndUser = queryMeetingRepository.findByIdWithOpinionAndUser(
-            meetingId);
-        System.out.println(byIdWithOpinionAndUser);
-        return Optional.ofNullable(byIdWithOpinionAndUser);
+        return jpaMeetingRepository.findById(meetingId);
     }
 
     public Meeting findMeetingById(Long id) {

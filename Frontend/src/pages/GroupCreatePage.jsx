@@ -90,6 +90,9 @@ const MessageContainer = styled.div`
 function GroupCreatePage() {
   const navigate = useNavigate()
 
+  const contentPlaceholder =
+    '[모임의 이름을 입력하세요] \n [장르/주제] \b [참여 방법] [참여 절차] \n [주요 활동 내용] \n [온라인/오프라인 여부] \n [참여 혜택] \n [할인 혜택/독서 관련 자료 제공/특별 이벤트 액세스] \n [날짜] \n [연락처/이메일].'
+
   const [inputs, setInputs] = useState({
     title: '',
     detail: '',
@@ -183,7 +186,6 @@ function GroupCreatePage() {
       }
     }
   }
-
   return (
     <MainLayout>
       <Container>
@@ -199,7 +201,7 @@ function GroupCreatePage() {
         <GroupInfoInput
           info={'모임 소개'}
           errorMessage={detailMessage}
-          placeholder={'모임에 대한 소개를 입력해주세요.'}
+          placeholder={contentPlaceholder}
           height={320}
           onChange={onChangeDetail}
           name={'detail'}

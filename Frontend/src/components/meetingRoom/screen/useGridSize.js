@@ -7,10 +7,8 @@ export function useGridSize() {
   const screenRef = useRef()
 
   useEffect(() => {
-    CONSOLE.info('this is in useGridSize')
     const observer = new ResizeObserver((entries, observer) => {
       for (let entry of entries) {
-        console.log(entry)
         const { width, height } = entry.contentRect
         const newGrid = calculateGridSize(width, height)
         setGridRef(newGrid)
@@ -21,7 +19,6 @@ export function useGridSize() {
     observer.observe(screenRef.current)
 
     return () => {
-      CONSOLE.info('ScreenShow unmount!')
       observer.disconnect() // 컴포넌트가 언마운트되면 ResizeObserver를 해제합니다.
     }
   }, [])

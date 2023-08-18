@@ -35,7 +35,6 @@ function MeetWaiting({
 
   // meetingInfo의 첫번째 변경
   useEffect(() => {
-    CONSOLE.info('세션을 시작합니다.')
     setMeetingInfo((prevState) => ({
       ...prevState,
       session: OV.initSession(),
@@ -49,12 +48,10 @@ function MeetWaiting({
    */
   useEffect(() => {
     if (meetingInfo.session && !isTokenRequested.current) {
-      CONSOLE.info('서버에 토큰을 요청합니다.')
       isTokenRequested.current = true
       mySession = meetingInfo.session
       // On every Stream created...
       mySession.on('streamCreated', (event) => {
-        CONSOLE.event('누군가 참여했습니다!')
         // Subscribe to the Stream to receive it. Second parameter is undefined
         // so OpenVidu doesn't create an HTML video by its own
         const subscriber = mySession.subscribe(event.stream, undefined)
@@ -70,7 +67,6 @@ function MeetWaiting({
 
       // On every Stream destroyed...
       mySession.on('streamDestroyed', (event) => {
-        CONSOLE.event('누군가 나갔습니다!')
         // Remove the stream from 'subscribers' array
         deleteSubscriber(
           event.stream.streamManager,
@@ -81,7 +77,6 @@ function MeetWaiting({
 
       // On every asynchronous exception...
       mySession.on('exception', (exception) => {
-        CONSOLE.event('비동기적 에러가 발생했습니다!')
         console.warn(exception)
       })
 
@@ -141,8 +136,6 @@ async function getToken(newSessionId) {
 }
 
 function processError(error, message) {
-  CONSOLE.error('==== ERROR OCCURED!! ====')
-  CONSOLE.error(message)
   console.log(error)
 }
 

@@ -37,8 +37,6 @@ function ActiveVote({ index }) {
             selectedItemIndex: selectedItemIndex,
           }),
         })
-        console.log('^^^^^^^^^^^^^^^^^^')
-        console.log(selectedItemIndex)
       }
     } catch (error) {
       console.error('에러', error)
@@ -60,12 +58,15 @@ function ActiveVote({ index }) {
 
   return (
     <ActiveVoteContainer>
-      {voteHistory[0][index].isAnonymous ? (
-        <div>무기명투표</div>
-      ) : (
-        <div>기명투표</div>
-      )}
+      <SUBTITLE>
+        {voteHistory[0][index].isAnonymous ? (
+          <div>무기명투표</div>
+        ) : (
+          <div>기명투표</div>
+        )}
+      </SUBTITLE>
       <Title>{selectedTitle}</Title>
+      <hr />
       <ContentBox>
         {selectedContent.map((value, index) => (
           <div key={index}>
@@ -86,6 +87,12 @@ function ActiveVote({ index }) {
     </ActiveVoteContainer>
   )
 }
+const SUBTITLE = styled.div`
+  color: ${COLORS.BRIGHTBLACK};
+  font-size: 20px;
+  text-align: left;
+  margin-left: 5px;
+`
 
 const ActiveVoteContainer = styled.div`
   display: flex;
@@ -93,16 +100,19 @@ const ActiveVoteContainer = styled.div`
   align-items: center;
   width: 100%;
   margin: 20px 10px;
+
+  hr {
+    width: 160px;
+  }
 `
 
 const Title = styled.div`
   width: 180px;
   min-height: 48px;
   border-radius: 10px;
-  background-color: ${COLORS.THEME_COLOR2};
   font-size: 20px;
-  color: ${COLORS.WHITE};
-  border: none;
+  color: ${COLORS.BLACK};
+  border: '2px solid ${COLORS.THEME_COLOR2}';
   padding: 10px;
 `
 const ContentBox = styled.div`
@@ -111,7 +121,7 @@ const ContentBox = styled.div`
   align-items: center;
   margin: 10px 0px;
 
-  flex-grow: 1; /* 남은 높이를 모두 차지하도록 설정합니다. */
+  flex-grow: 1;
   width: 180px;
 
   border-radius: 10px;

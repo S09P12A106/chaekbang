@@ -26,12 +26,15 @@ function ResultOpBox({ index }) {
   return (
     <ResultOpBoxContainer>
       <Title>{selectedTitle}</Title>
+      <hr />
       <ContentBox>
         {selectedContent.map((value, index) => (
           <div key={index}>
             {/* <User>User님의 의견</User> */}
             <Content>
-              <p>{value}</p>
+              <p>
+                #{index + 1} {value}
+              </p>
             </Content>
           </div>
         ))}
@@ -47,16 +50,18 @@ const ResultOpBoxContainer = styled.div`
   align-items: center;
   width: 100%;
   margin: 20px 10px;
+  hr {
+    width: 160px;
+  }
 `
 
 const Title = styled.div`
   width: 180px;
   min-height: 48px;
   border-radius: 10px;
-  background-color: ${COLORS.THEME_COLOR2};
   font-size: 20px;
-  color: ${COLORS.WHITE};
-  border: none;
+  color: ${COLORS.BLACK};
+  border: '2px solid ${COLORS.THEME_COLOR2}';
   padding: 10px;
 `
 const ContentBox = styled.div`
@@ -65,7 +70,7 @@ const ContentBox = styled.div`
   align-items: center;
   margin: 10px 0px;
 
-  flex-grow: 1; /* 남은 높이를 모두 차지하도록 설정합니다. */
+  flex-grow: 1;
   width: 180px;
 
   border-radius: 10px;
@@ -100,14 +105,6 @@ const Content = styled.div`
   align-items: center;
 
   padding: 10px;
-
-  /* p {
-    ma
-  }
-
-  input {
-    margin-right: 10px;
-  } */
 `
 
 const User = styled.div``

@@ -11,6 +11,7 @@ function ActiveOpBox({ index }) {
   const { opBoxHistory } = useContext(OpBoxHistoryContext)
   const [selectedTitle, setSelectedTitle] = useState('')
   const [opBoxContent, setOpBoxContent] = useState('')
+  const [isEmpty, setIsEmpty] = useState(false)
 
   useEffect(() => {
     const selectedOpBox = opBoxHistory[index]
@@ -27,11 +28,20 @@ function ActiveOpBox({ index }) {
   // 제출하기
   const handleSendOpinion = async () => {
     const opinion_box_id = opBoxHistory[index].opinionBoxId
-    console.log(opBoxContent)
-    console.log(opinion_box_id)
+
+    // Trim the opBoxContent to remove leading and trailing whitespace
+    const trimmedContent = opBoxContent.trim()
+
+    // Check if the trimmed content is empty
+    if (trimmedContent === '') {
+      setIsEmpty(true) // Set isEmpty state to true
+      return // Exit the function if content is empty
+    } else {
+      setIsEmpty(false) // Set isEmpty state to false
+    }
+
     try {
       await sendOpinion(group_id, meeting_id, opinion_box_id, opBoxContent)
-      console.log('의견제출완료~~~~~~~~~~~~~~')
     } catch (error) {
       console.log('에러요')
     }
@@ -40,6 +50,7 @@ function ActiveOpBox({ index }) {
 
   // 입력하면 값 저장
   const handleContentChange = (e) => {
+    setIsEmpty(false)
     setOpBoxContent(e.target.value)
   }
 
@@ -58,11 +69,18 @@ function ActiveOpBox({ index }) {
         <CompleteBtn onClick={() => handleSendOpinion()}>
           의견 보내기
         </CompleteBtn>
+        {isEmpty && <WarningText>여러분의 의견을 채워주세요.</WarningText>}
       </ContentBox>
       <BackWardBtn onClick={() => handleOpBoxComp(0)}>뒤로가기</BackWardBtn>
     </ActiveOpBoxContainer>
   )
 }
+
+const WarningText = styled.div`
+  margin-top: 10px;
+  font-size: 15px;
+  color: ${COLORS.RED};
+`
 
 const ActiveOpBoxContainer = styled.div`
   display: flex;
@@ -76,10 +94,9 @@ const Title = styled.div`
   width: 180px;
   min-height: 48px;
   border-radius: 10px;
-  background-color: ${COLORS.THEME_COLOR2};
   font-size: 20px;
-  color: ${COLORS.WHITE};
-  border: none;
+  color: ${COLORS.BLACK};
+  border: '2px solid ${COLORS.THEME_COLOR2}';
   padding: 10px;
 `
 const ContentBox = styled.div`

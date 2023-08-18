@@ -12,7 +12,6 @@ function TimerBoard() {
   const { whichBtn, setWhichBtn, meetingInfoState, client, currentTime } =
     useContext(BoardContext)
   const [isToggleOpen, setIsToggleOpen] = useState(false)
-  const mySessionId = meetingInfoState[0].mySessionId
 
   const {
     hour,
@@ -26,22 +25,6 @@ function TimerBoard() {
     setIsOn,
   } = useHandleTime()
 
-  // 현재시간 받아오기 > MeetingRoomPage에서 받고 받아옴
-  // [시, 분, 초]로 받아옴
-  useEffect(() => {
-    setHour(currentTime[0])
-    setMinute(currentTime[1])
-    setSecond(currentTime[2])
-  }, [currentTime])
-
-  // useEffect(() => {
-  //   // 메시지를 받았을 때 처리할 로직
-  //   client.subscribe('/meeting/timer/currentTime', (message) => {
-  //     const currentTime = JSON.parse(message.body)
-  //     console.log('Received message:', currentTime)
-  //   })
-  // }, [client])
-
   useEffect(() => {
     if (whichBtn === 3) {
       setIsToggleOpen(true)
@@ -53,7 +36,7 @@ function TimerBoard() {
   // 타이머 시작 버튼을 눌렀을 때 > isRunning 중이라면 다시 안눌리도록
   const handleStart = () => {
     setIsRunning(true)
-    const totalTime = convertSecond(hour, minute, second)
+    // const totalTime = convertSecond(hour, minute, second)
     // 백엔드로 시작 이벤트 전송
     if (client) {
       // publish 또는 send
@@ -101,8 +84,7 @@ function TimerBoard() {
 
   // 숫자를 두 자리 수로 바꾸기 위해
   const transformDouble = (time) => {
-    // return `${time.toString().padStart(2, '0')}`
-    return 0
+    return `${time.toString().padStart(2, '0')}`
   }
 
   return (
@@ -200,7 +182,7 @@ const TimerContainer = styled.div`
   }
 `
 const IsNotRunning = styled.div`
-  height: 21.6px;
+  height: 24px;
 `
 
 const Btns = styled.div`

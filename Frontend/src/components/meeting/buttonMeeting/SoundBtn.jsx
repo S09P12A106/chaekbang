@@ -6,8 +6,6 @@ import COLORS from '../../../constants/colors'
 import CONSOLE from '../../../utils/consoleColors'
 
 function SoundBtn({ toggleMic, isTogglePossible }) {
-  CONSOLE.reRender('Sound Btn rendered')
-  CONSOLE.info(`isTogglePossible: ${isTogglePossible}`)
   const [backgroundColor, setBackgroundColor] = useState(COLORS.SKYBLUE)
 
   const handleClick = () => {

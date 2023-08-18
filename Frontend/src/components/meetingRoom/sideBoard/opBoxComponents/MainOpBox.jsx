@@ -16,7 +16,6 @@ function MainOpBox() {
   }
 
   useEffect(() => {
-    console.log('들어옴????spspd넹')
     const fetchOpBox = async () => {
       getOpBox(group_id, meeting_id)
         .then(({ data }) => {
@@ -28,8 +27,6 @@ function MainOpBox() {
     }
     fetchOpBox()
   }, [])
-
-  console.log(opBoxHistory[0])
 
   return (
     <OpBoxContainer>
@@ -144,14 +141,11 @@ const CreateOpBox = styled.div`
     width: 180px;
     height: 48px;
     border-radius: 10px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(
-      45deg,
-      ${COLORS.THEME_COLOR2},
-      ${COLORS.THEME_COLOR0}
-    );
+    box-shadow: 2px 2px 4px rgba(126, 126, 126, 0.3);
+    background-color: ${COLORS.WHITE};
     font-size: 20px;
-    color: ${COLORS.WHITE};
+    color: ${COLORS.BRIGHTBLACK};
+    border-color: ${COLORS.THEME_COLOR2};
   }
 `
 

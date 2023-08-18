@@ -68,9 +68,7 @@ function ChatBoard() {
         data: JSON.stringify(data),
         type: 'cheakbang-chat',
       })
-      .then(() => {
-        console.log('Message successfully sent')
-      })
+      .then(() => {})
       .catch((error) => {
         console.error(error)
       })
@@ -91,7 +89,6 @@ function ChatBoard() {
 
   const handleInputKeyPress = (event) => {
     if (event.key === 'Enter') {
-      console.log('핸들인풋키프레스')
       sendMessage()
       event.target.value = ''
     }

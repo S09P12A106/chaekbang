@@ -85,7 +85,6 @@ function SearchPage() {
           }
         })
         .catch((error) => {
-          CONSOLE.error('데이터를 가져오는 도중 오류 발생')
           console.log(error)
         })
     }

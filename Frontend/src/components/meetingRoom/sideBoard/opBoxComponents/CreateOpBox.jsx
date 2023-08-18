@@ -16,7 +16,6 @@ function CreateOpBox() {
 
   const handleTitleChange = (e) => {
     setOpBoxTitle(e.target.value)
-    console.log(opBoxTitle)
   }
 
   // 의견함 생성하기
@@ -25,10 +24,9 @@ function CreateOpBox() {
       try {
         await createOpBox(group_id, meeting_id, opBoxTitle)
       } catch (error) {
-        console.log('에러페이지')
+        console.log('에러')
       }
     }
-
     sendBox()
     handleOpBoxComp(0)
   }

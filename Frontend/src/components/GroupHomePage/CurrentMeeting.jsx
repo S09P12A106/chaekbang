@@ -27,7 +27,6 @@ const NOTICE = [
 ]
 
 const CurrentMeeting = ({ currentMeetingInfo, meetings, groupId }) => {
-  CONSOLE.reRender('CurrentMeeting rendered!')
   const [meetingId, setMeetingId] = useState(null)
 
   useEffect(() => {

@@ -21,10 +21,7 @@ streamManager.addVideoElement(videoRef.current)
 const OV = new OpenVidu()
 
 const MeetingPage = () => {
-  CONSOLE.reRender('MeetingPage rendered')
-
   const [isTogglePossible, setIsTogglePossible] = useState(true)
-  CONSOLE.info(isTogglePossible)
 
   // url에서 meetingId 받기
   const [sessionId, setSessionId] = useState(null)
@@ -40,14 +37,13 @@ const MeetingPage = () => {
   const navigate = useNavigate()
   //세션 id 받기
   useEffect(() => {
-    CONSOLE.useEffectIn('MeetingPage_none---(for getSessionId api)')
     const queryParams = new URLSearchParams(location.search)
     const meetingId = queryParams.get('meetingId')
 
     const setSession = async () => {
       try {
         const response = await getSessionId(meetingId)
-        CONSOLE.info('getSessionId 완료')
+
         setSessionId(response.data.data)
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -86,15 +82,12 @@ const MeetingPage = () => {
   const [meetingInfo, setMeetingInfo] = meetingInfoState
 
   useEffect(() => {
-    CONSOLE.info(`isTogglePossible changed! --> ${isTogglePossible}`)
     if (!isTogglePossible && meetingInfo.mySessionId) {
       // toggle이 false 이면
       if (meetingInfo.prevPublisher) {
         // 이전 pulisher가 있으면
         meetingInfo.session.unpublish(meetingInfo.prevPublisher).then((res) => {
           meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
-            console.log(res)
-            CONSOLE.setCalled('meetingInfo')
             setMeetingInfo((prevState) => ({
               ...prevState,
               prevPublisher: meetingInfo.publisher,
@@ -104,8 +97,6 @@ const MeetingPage = () => {
       } else {
         // 이전 pulisher가 없으면
         meetingInfo.session.publish(meetingInfo.publisher).then((res) => {
-          console.log(res)
-          CONSOLE.setCalled('meetingInfo')
           setMeetingInfo((prevState) => ({
             ...prevState,
             prevPublisher: meetingInfo.publisher,
@@ -116,8 +107,6 @@ const MeetingPage = () => {
   }, [isTogglePossible])
 
   useEffect(() => {
-    CONSOLE.useEffectIn('MeetingPage_meetingInfo.prevPublisher')
-    CONSOLE.setCalled('istoggle')
     setIsTogglePossible(true)
   }, [meetingInfo.prevPublisher])
 
@@ -152,11 +141,8 @@ const MeetingPage = () => {
   })
 
   useEffect(() => {
-    CONSOLE.useEffectIn('MeetingPage_videoOption')
     const newPublisher = OV.initPublisher(undefined, videoOption)
-    CONSOLE.info('newPublisher!')
-    console.log(newPublisher)
-    CONSOLE.setCalled('meetingInfo')
+
     setMeetingInfo((prevState) => ({
       ...prevState,
       mainStreamManager: newPublisher,
@@ -165,12 +151,10 @@ const MeetingPage = () => {
   }, [videoOption])
 
   function toggleMic() {
-    CONSOLE.funcIn('toggleMic')
     if (!isTogglePossible) {
-      CONSOLE.warn('toggleMic refused')
       return
     }
-    CONSOLE.setCalled('mic')
+
     setVideoOption((prevOption) => ({
       ...prevOption,
       publishAudio: !prevOption.publishAudio,
@@ -178,12 +162,10 @@ const MeetingPage = () => {
   }
 
   function toggleCam() {
-    CONSOLE.funcIn('toggleCam')
     if (!isTogglePossible) {
-      CONSOLE.warn('toggleCam refused')
       return
     }
-    CONSOLE.setCalled('cam')
+
     setVideoOption((prevOption) => ({
       ...prevOption,
       publishVideo: !prevOption.publishVideo,

@@ -6,7 +6,6 @@ import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
 import CONSOLE from '../../../utils/consoleColors'
 
 function GridScreen({ grid }) {
-  CONSOLE.reRender('GridScreen Rerendered!')
   const [columns, rows, rate] = grid
   const [fullHorizontal, setFullHorizontal] = useState(false)
   const { meetingInfoState, videoOption, toggleMic, toggleCam } =
@@ -15,15 +14,11 @@ function GridScreen({ grid }) {
 
   // rate가 row와 column으로 달라지면 fullHorizontal 을 재설정
   useEffect(() => {
-    // console.log(rate)
-    CONSOLE.info(`rows: ${rows}\ncolumns: ${columns}\nrate: ${rate}`)
     const line = (9 * rows) / (5 * columns)
     setFullHorizontal(rate < line)
   }, [rate])
 
-  useEffect(() => {
-    CONSOLE.brown(`rows: ${rows}\ncolumns: ${columns}\nrate: ${rate}`)
-  }, [rows, columns])
+  useEffect(() => {}, [rows, columns])
 
   return (
     <GridContainer rows={rows} columns={columns} mode={fullHorizontal}>

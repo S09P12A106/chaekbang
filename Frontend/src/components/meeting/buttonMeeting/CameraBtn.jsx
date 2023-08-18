@@ -5,8 +5,6 @@ import COLORS from '../../../constants/colors'
 import CONSOLE from '../../../utils/consoleColors'
 
 function CameraBtn({ toggleCam, isTogglePossible }) {
-  CONSOLE.reRender('Camera Btn rendered')
-  CONSOLE.info(`isTogglePossible: ${isTogglePossible}`)
   const [backgroundColor, setBackgroundColor] = useState(COLORS.BLUE)
 
   const handleClick = () => {

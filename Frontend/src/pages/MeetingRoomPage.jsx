@@ -25,15 +25,12 @@ function MeetingRoomPage({
   isTogglePossible,
   setIsTogglePossible,
 }) {
-  CONSOLE.reRender('MeetingRoomPage rendered!')
   const [meetingInfo, setMeetingInfo] = meetingInfoState
   const [whichBtn, setWhichBtn] = useState(0)
   const [currentTime, setCurrentTime] = useState([])
 
   // MeetingRoom에 들어오거나 Publisher가 변경되었을 때 접속자 본인 영상 publish
   useEffect(() => {
-    CONSOLE.useEffectIn('MeetingRoomPage_meetingInfo.publisher')
-    CONSOLE.setCalled('isToggle')
     setIsTogglePossible(false) // MeetingPage의 useEffect(()=>{},[isTogglePossible]) 로 갑니다!
   }, [meetingInfo.publisher])
 
@@ -51,12 +48,10 @@ function MeetingRoomPage({
 
   // socket 연결
   const connectHaner = () => {
-    console.log('--------------------' + apiURL)
     client.current = Stomp.over(() => {
       const sock = new SockJS(wsUrl)
       return sock
     })
-    console.log('---------------------------')
     client.current.connect(
       {
         Authorization: `Bearer ${getAccessToken()}`,
@@ -74,8 +69,6 @@ function MeetingRoomPage({
 
   useEffect(() => {
     connectHaner()
-
-    console.log(client)
   }, [])
 
   // -------------- socket 끝 --------------

@@ -12,7 +12,6 @@ const PAGE_SIZE = 5
 let observer
 
 const MeetingsInfo = () => {
-  CONSOLE.reRender('MeetingsInfo rendered!')
   const [meetingsData, setMeetingsData] = useState([])
   const [target, setTarget] = useState(null) // 관찰대상 target
   const [isLoaded, setIsLoaded] = useState(false)
@@ -107,9 +106,6 @@ const MeetingsInfo = () => {
  * @returns {int}
  */
 function findCurrentMeeting(meetings) {
-  CONSOLE.info('findCurrentMeeting')
-  console.log(meetings)
-  console.log(meetings.findIndex((meeting) => isActivatedMeeting(meeting)))
   return meetings.findIndex((meeting) => isActivatedMeeting(meeting))
 }
 

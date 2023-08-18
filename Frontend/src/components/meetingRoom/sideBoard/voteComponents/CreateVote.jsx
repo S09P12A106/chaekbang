@@ -64,7 +64,6 @@ function CreateVote() {
   // 버튼 와따리가따리
   const handleToggle = () => {
     setIsOn((prevIsOn) => !prevIsOn)
-    console.log(isOn)
   }
 
   return (
@@ -124,17 +123,11 @@ const InputTitle = styled.input`
   width: 180px;
   min-height: 48px;
   border-radius: 10px;
-  /* background-color: ${COLORS.THEME_COLOR2}; */
   background-color: white;
   font-size: 20px;
   color: ${COLORS.BLACK};
   border: '2px solid ${COLORS.THEME_COLOR2}';
   padding: 10px;
-  /* border: none; */
-
-  /* &::placeholder {
-    color: ${COLORS.WHITE};
-  } */
 `
 
 const InputBox = styled.div`

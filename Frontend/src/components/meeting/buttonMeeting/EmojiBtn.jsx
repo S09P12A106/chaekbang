@@ -6,14 +6,13 @@ import { styled, keyframes } from 'styled-components'
 import { SocketContext } from '../../../modules/SocketContext'
 import { BoardContext } from '../../meetingRoom/context/BoardContext'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 
 function EmojiBtn() {
   const [isOpen, setIsOpen] = useState(false)
   const [animationQueue, setAnimationQueue] = useState([])
   const { client, EmojiInfo } = useContext(SocketContext)
   const { meetingId } = useContext(BoardContext)
-  const navigate = useNavigate()
+  const [anim, setAnim] = useState(0)
 
   const user = useSelector((state) => {
     return state.rootReducer.loginReducer.user
@@ -38,7 +37,7 @@ function EmojiBtn() {
       ]
       return newQueue
     })
-  }, [EmojiInfo])
+  }, [anim])
 
   const toggleEmojiList = () => {
     setIsOpen((prevIsOpen) => {
@@ -50,7 +49,6 @@ function EmojiBtn() {
   // 이모지 선택 후 보내기
   const selectEmoji = (index) => {
     const sentEmoji = emojis[index]
-
     // 보내기
     try {
       if (client) {
@@ -65,6 +63,7 @@ function EmojiBtn() {
     } catch (error) {
       console.log(error)
     }
+    setAnim((prev) => prev + 1)
   }
 
   return (
@@ -92,8 +91,6 @@ function EmojiBtn() {
             <ClickedEmoji key={index}>
               {value.emoji}
               {value.nickname}
-              {/* <ShowEmoji>{value.emoji}</ShowEmoji>
-              <ShowNickname>{value.nickname}</ShowNickname> */}
             </ClickedEmoji>
           )
         })}

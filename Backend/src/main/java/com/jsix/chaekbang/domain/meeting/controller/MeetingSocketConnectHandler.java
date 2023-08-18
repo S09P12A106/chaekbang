@@ -109,6 +109,7 @@ public class MeetingSocketConnectHandler implements ChannelInterceptor {
 
             // 비정상 요청으로 커넥션이 실패한 경우
             if (connectUserOptional.isEmpty()) {
+                log.warn("비정상 종료 유저입니다, {}", socketAuthUser);
                 return;
             }
 
@@ -141,6 +142,7 @@ public class MeetingSocketConnectHandler implements ChannelInterceptor {
                 .build();
         }
         meetingUserRepository.save(meetingUser);
+        log.info("Meeting User update Success");
     }
 
     private SocketAuthUser getUser(StompHeaderAccessor accessor) {

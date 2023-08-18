@@ -22,9 +22,10 @@ function OpinionBoxes({ opinionData }) {
       <Title>의견모집함</Title>
       <Hr></Hr>
       <OpinionBoxList>
-        {opinionData.map((opinionBox, index) => (
-          <OpinionBox opinionData={opinionBox} key={index}></OpinionBox>
-        ))}
+        {opinionData &&
+          opinionData.map((opinionBox, index) => (
+            <OpinionBox opinionData={opinionBox} key={index}></OpinionBox>
+          ))}
       </OpinionBoxList>
     </Container>
   )

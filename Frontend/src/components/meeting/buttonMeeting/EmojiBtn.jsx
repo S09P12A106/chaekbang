@@ -12,7 +12,6 @@ function EmojiBtn() {
   const [animationQueue, setAnimationQueue] = useState([])
   const { client, EmojiInfo } = useContext(SocketContext)
   const { meetingId } = useContext(BoardContext)
-  const [anim, setAnim] = useState(0)
 
   const user = useSelector((state) => {
     return state.rootReducer.loginReducer.user
@@ -37,7 +36,7 @@ function EmojiBtn() {
       ]
       return newQueue
     })
-  }, [anim])
+  }, [EmojiInfo.emoji])
 
   const toggleEmojiList = () => {
     setIsOpen((prevIsOpen) => {
@@ -63,7 +62,6 @@ function EmojiBtn() {
     } catch (error) {
       console.log(error)
     }
-    setAnim((prev) => prev + 1)
   }
 
   return (

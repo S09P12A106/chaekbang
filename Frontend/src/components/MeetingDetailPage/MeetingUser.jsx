@@ -21,17 +21,17 @@ const MUContainer = styled.div`
 `
 
 function MeetingUser({ userData }) {
-  console.log(userData)
   return (
     <Container>
       <Title>참여자</Title>
       <Hr></Hr>
       <MeetingUserList>
-        {userData.map((user, index) => (
-          <MUContainer key={index}>
-            <UserItem user={user}></UserItem>
-          </MUContainer>
-        ))}
+        {userData &&
+          userData.map((user, index) => (
+            <MUContainer key={index}>
+              <UserItem user={user}></UserItem>
+            </MUContainer>
+          ))}
       </MeetingUserList>
     </Container>
   )

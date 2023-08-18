@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  prod-mysql:
+    container_name: prod-mysql
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ssafy_junit6_rootpwd_by_jojo!
+      MYSQL_USER: prod
+      MYSQL_PASSWORD: junit6_prod-mysql_passwd_by_jojo!
+      MYSQL_DATABASE: chaekbang_db
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent" ]
+      interval: 10s
+      timeout: 2s
+      retries: 100
+    ports:
+      - 3308:3306
+    volumes:
+      - prod-mysql-data:/var/lib/mysql
+    networks:
+      - chaekbang-prod-net
+  prod-redis:
+    container_name: prod-redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    restart: always
+    command: redis-server --requirepass junit6_prod-redis_passwd_by_jojo!
+    volumes:
+      - ./redis/data/:/data
+    networks:
+      - chaekbang-prod-net
+
+volumes:
+  prod-mysql-data:
+
+networks:
+  chaekbang-prod-net:
+    external: true
+    name: "chaekbang-prod-net"

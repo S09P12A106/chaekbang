@@ -18,6 +18,7 @@ function ResultVote({ index }) {
   const [selectedTitle, setSelectedTitle] = useState('')
   const [mouseIndex, setMouseIndex] = useState(-1)
   const [isCreator, setIsCreator] = useState(false)
+  const [anony, setAnony] = useState(false)
 
   // 리덕스에서 가져온 유저정보
   const userInfo = useSelector((state) => {
@@ -29,12 +30,14 @@ function ResultVote({ index }) {
     const selectedVote = voteHistory[0][index]
     const title = selectedVote ? selectedVote.title : ''
     const content = selectedVote ? selectedVote.contents : []
+    const anonymous = selectedVote ? selectedVote.isAnonymous : false
 
     // 선택된 투표 창시자와 여기 들어온 사람이랑 같냐?
     selectedVote.creator === userInfo.userId
       ? setIsCreator(true)
       : setIsCreator(false)
 
+    setAnony(anonymous)
     setSelectedTitle(title)
     setSelectedContent(content)
   }, [])
@@ -86,7 +89,7 @@ function ResultVote({ index }) {
             </Content>
           </div>
         ))}
-        {tooltipVisible && (
+        {!anony && tooltipVisible && (
           <Tooltip index={index}>
             {voteHistory[0][index].result[mouseIndex].map((value2, index2) => (
               <TooltipInfo key={index2}>

@@ -27,6 +27,10 @@ const TimeContainer = styled.div`
 const Time = styled.div``
 
 function MeetingTitle({ meetingData }) {
+  const arrDateToStringDate = (arr) => {
+    return arr[0] + '.' + arr[1] + '.' + arr[2] + ' ' + arr[3] + ':' + arr[4]
+  }
+
   return (
     <Container>
       <TitleContainer>
@@ -36,7 +40,8 @@ function MeetingTitle({ meetingData }) {
         </Title>
         <TimeContainer>
           <div>
-            {meetingData.startedAt} ~ {meetingData.closedAt}
+            {arrDateToStringDate(meetingData.startedAt)} ~
+            {arrDateToStringDate(meetingData.closedAt)}
           </div>
         </TimeContainer>
       </TitleContainer>

@@ -28,7 +28,7 @@ function MeetingDetailPage() {
         const jwtHttp = jwtBackApiInstance()
         const URL = `api/groups/${groupId}/meetings/${meetingId}`
         const response = await jwtHttp.get(URL)
-        setMeetingInfo(response.data)
+        setMeetingInfo(response.data.data)
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate('/login')

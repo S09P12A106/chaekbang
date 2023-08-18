@@ -6,6 +6,7 @@ import ShareBtn from '../meeting/buttonMeeting/ShareBtn'
 import EmojiBtn from '../meeting/buttonMeeting/EmojiBtn'
 import BackGroundBtn from '../meeting/buttonMeeting/BackGroundBtn'
 import SettingBtn from '../meeting/buttonMeeting/SettingBtn'
+import OutBtn from '../meeting/buttonMeeting/OutBtn'
 
 const VideoButtons = ({ toggleCam, toggleMic, isTogglePossible }) => {
   return (
@@ -28,6 +29,7 @@ const VideoButtons = ({ toggleCam, toggleMic, isTogglePossible }) => {
       <BackGroundBtn></BackGroundBtn>
       {/* 설정 버튼 */}
       <SettingBtn></SettingBtn>
+      <OutBtn></OutBtn>
     </Buttons>
   )
 }

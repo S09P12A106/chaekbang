@@ -31,6 +31,7 @@ public class MeetingSearchUseCase {
     public MeetingDetailResponseDto getDetail(Long meetingId) {
         Meeting meeting = meetingRepository.findByIdWithOpinoionAndUser(meetingId)
             .orElseThrow(() -> new NotFoundResourceException("해당 미팅을 찾을 수 없습니다."));
+        System.out.println(meeting.getId());
         return MeetingDetailResponseDto.from(meeting);
     }
 }

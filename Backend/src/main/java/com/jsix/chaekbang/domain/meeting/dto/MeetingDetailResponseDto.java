@@ -32,15 +32,13 @@ public class MeetingDetailResponseDto {
         List<UserInfoResponseDto> userinfos = new ArrayList<>();
 
         if (meeting.getMeetingUsers().size() > 0) {
-            System.out.println(meeting.getMeetingUsers());
-            System.out.println(meeting.getMeetingUsers().get(0).getUser());
             userinfos = meeting.getMeetingUsers().stream()
                 .map((m) -> UserInfoResponseDto.from(m.getUser())).toList();
         }
 
         List<OpinionBoxDetailResponseDto> opinionBoxDetailResponseDtos = new ArrayList<>();
         if (meeting.getOpinionBoxes().size() > 0) {
-            meeting.getOpinionBoxes()
+            opinionBoxDetailResponseDtos = meeting.getOpinionBoxes()
                 .stream()
                 .map(OpinionBoxDetailResponseDto::from).toList();
         }

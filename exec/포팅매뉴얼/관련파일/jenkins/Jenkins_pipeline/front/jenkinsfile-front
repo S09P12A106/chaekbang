@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                cleanWs()
+                
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: 'main']],
+                    extensions: [
+                        [$class: 'SparseCheckoutPaths', 
+                         sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path:'/Frontend']]]
+                        ],
+                    userRemoteConfigs: [[
+                    credentialsId: 'gitlab_jenkins_token',
+                    url: 'https://lab.ssafy.com/s09-webmobile1-sub2/S09P12A106.git']]]
+                )
+                
+                sh "ls -ltr"
+            }
+        }
+        
+        stage('add .env'){
+            steps {
+                withCredentials([file(credentialsId: 'front_env_file', variable: 'envVars')]) {    
+                    script {
+                        sh 'chmod +w Frontend'
+                        sh 'cp $envVars Frontend/.env'
+                    }
+                }
+            }
+        }
+        
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:lts-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                dir('Frontend'){
+                    sh 'npm install'
+                    sh 'chmod +x ./'
+                    sh 'npm run build'
+                }
+            }
+        }
+      
+        
+    }
+}

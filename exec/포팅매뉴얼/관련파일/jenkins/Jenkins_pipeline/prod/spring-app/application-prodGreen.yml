@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mysql://prod-mysql:3306/chaekbang_db?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: prod
+    password: junit6_prod-mysql_passwd_by_jojo!
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  redis:
+    host: prod-redis
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 0
+    password: junit6_prod-redis_passwd_by_jojo!
+
+server:
+  port: 8082

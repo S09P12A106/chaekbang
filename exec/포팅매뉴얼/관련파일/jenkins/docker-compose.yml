@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  jenkins:
+    container_name: jenkins
+    image: chaekbang-jenkins:0.0.2
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - chaekbang-jenkins-net
+    user: jenkins
+
+volumes:
+  jenkins-data:
+
+networks:
+  chaekbang-jenkins-net:
+    external: true
+    name: "chaekbang-jenkins-net"

@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  dev-spring-app:
+    container_name: dev-spring-app-blue
+    image: joslynn/dev-spring-app:${BUILD_NUMBER}
+    environment:
+        PROFILE: devBlue
+        MYSQL_HOST: dev-mysql
+    expose:
+      - "8081"
+    networks:
+      - chaekbang-dev-net
+networks:
+  chaekbang-dev-net:
+    external: true
+    name: "chaekbang-dev-net"

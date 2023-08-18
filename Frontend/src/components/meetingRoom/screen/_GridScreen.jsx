@@ -6,7 +6,8 @@ import UserVideoComponent from '../../WaitingRoom/UserVideoComponent'
 import CONSOLE from '../../../utils/consoleColors'
 
 function GridScreen({ grid }) {
-  const [columns, rows, rate] = grid
+  CONSOLE.reRender('GridScreen Rerendered!')
+  const [columns, rows, rate, n, m] = grid
   const [fullHorizontal, setFullHorizontal] = useState(false)
   const { meetingInfoState, videoOption, toggleMic, toggleCam } =
     useContext(BoardContext)
@@ -21,9 +22,19 @@ function GridScreen({ grid }) {
   useEffect(() => {}, [rows, columns])
 
   return (
-    <GridContainer rows={rows} columns={columns} mode={fullHorizontal}>
+    <GridContainer
+      rows={rows}
+      columns={columns}
+      mode={fullHorizontal}
+      n={n}
+      m={m}
+    >
       {[meetingInfo.publisher, ...meetingInfo.subscribers].map((sub, i) => (
-        <GridCell key={sub.id} onClick={() => this.handleMainVideoStream(sub)}>
+        <GridCell
+          rows={rows}
+          key={sub.id}
+          onClick={() => this.handleMainVideoStream(sub)}
+        >
           <span>{sub.id}</span>
           <UserVideoComponent streamManager={sub} />
         </GridCell>
@@ -38,19 +49,21 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(${(props) => props.rows}, 1fr);
   /* grid-template-columns: 1fr 1fr 1fr; */
   gap: 10px;
-  background-color: #f0f0f0;
+  // background-color: #f0f0f0;
   padding: 10px;
 
   width: ${(props) => (props.mode ? '100%' : undefined)};
   height: ${(props) => (props.mode ? undefined : '100%')};
   // 비율 나중에 수정
-  aspect-ratio: ${(props) => (props.rows > props.columns ? 27 / 10 : 18 / 15)};
+  aspect-ratio: ${(props) =>
+    props.rows > props.columns
+      ? (9 * props.m) / (5 * props.n)
+      : (9 * props.n) / (5 * props.m)};
 `
 
 const GridCell = styled.div`
   display: flex;
-  width: 20rem;
-  aspect-ratio: 9 / 5;
+  width: 100%;
 `
 
 export default GridScreen

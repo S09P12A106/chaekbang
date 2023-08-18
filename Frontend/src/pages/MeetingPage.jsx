@@ -134,7 +134,7 @@ const MeetingPage = () => {
     videoSource: undefined,
     publishAudio: true,
     publishVideo: true,
-    resolution: '640x480',
+    resolution: '1800x1000',
     frameRate: 30,
     insertMode: 'APPEND',
     mirror: false,

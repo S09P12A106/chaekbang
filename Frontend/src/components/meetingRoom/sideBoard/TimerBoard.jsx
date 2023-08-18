@@ -38,17 +38,17 @@ function TimerBoard() {
     setIsRunning(true)
     // const totalTime = convertSecond(hour, minute, second)
     // 백엔드로 시작 이벤트 전송
-    if (client) {
-      // publish 또는 send
-      // Publish 함수는 (주소, {헤더}, 메세지)로 구성
-      client.publish({
-        destination: '/app/timer/startTimer',
-        body: JSON.stringify({
-          type: 'timer',
-          time: totalTime,
-        }),
-      })
-    }
+    // if (client) {
+    //   // publish 또는 send
+    //   // Publish 함수는 (주소, {헤더}, 메세지)로 구성
+    //   client.publish({
+    //     destination: '/app/timer/startTimer',
+    //     body: JSON.stringify({
+    //       type: 'timer',
+    //       time: totalTime,
+    //     }),
+    //   })
+    // }
   }
 
   // 타이머 일시정지 버튼을 눌렀을 때

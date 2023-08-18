@@ -1,12 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { styled } from 'styled-components'
 import GridScreen from './_GridScreen'
-import { useGridSize } from './useGridSize' // 커스텀 훅 가져오기
+import { useGridSize } from './useGridSize'
 import CONSOLE from '../../../utils/consoleColors'
+import { BoardContext } from '../context/BoardContext'
 
 function ScreenShot() {
-  const { gridRef, screenRef } = useGridSize() // 커스텀 훅 사용
+  CONSOLE.reRender('ScreenShot Rerendered!')
+  const { meetingInfoState } = useContext(BoardContext)
+  const [members, setMembers] = useState(
+    meetingInfoState[0].subscribers.length + 1,
+  )
+  const { gridRef, screenRef } = useGridSize({ number: members })
+  // const [gridRef, setGridRef] = useState()
+  // const [screenRef, setScreenRef] = useState()
+  // 참가 인원
 
+  useEffect(() => {
+    // 참가한 총 인원 수
+    setMembers(meetingInfoState[0].subscribers.length + 1)
+  }, [meetingInfoState])
+
+  // useEffect(() => {
+  //   const { getGridRef, getScreenRef } = useGridSize({ number: members })
+  //   setGridRef(getGridRef)
+  //   setScreenRef(getScreenRef)
+  // }, [members])
+
+  // if (!screenRef || !gridRef) {
+  //   return null
+  // }
   return (
     <Screen ref={screenRef}>
       <GridScreen grid={gridRef}></GridScreen>

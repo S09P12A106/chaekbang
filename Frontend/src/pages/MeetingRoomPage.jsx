@@ -123,8 +123,9 @@ const SideBarContainer = styled.div`
 
 const ScreenContainer = styled.div`
   display: flex;
-  flex-grow: 1;
-  flex-shrink: 0;
+  // flex-grow: 1;
+  // flex-shrink: 0;
+  flex: 1;
   flex-direction: column;
   transition: all 0.5s ease;
 `

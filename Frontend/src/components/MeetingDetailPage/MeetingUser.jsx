@@ -21,7 +21,6 @@ const MUContainer = styled.div`
 `
 
 function MeetingUser({ userData }) {
-  console.log(userData)
   return (
     <Container>
       <Title>참여자</Title>

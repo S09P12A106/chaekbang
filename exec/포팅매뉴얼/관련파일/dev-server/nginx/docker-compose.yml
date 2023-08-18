@@ -1,0 +1,23 @@
+version : '3.8'
+
+services:
+  nginx:
+    container_name: nginx-dev
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy/blue_green:/proxy
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - chaekbang-dev-net
+      - chaekbang-webserver-net
+
+networks:
+  chaekbang-dev-net:
+    external: true
+    name: "chaekbang-dev-net"
+  chaekbang-webserver-net:
+    external: true
+    name: "chaekbang-webserver-net"

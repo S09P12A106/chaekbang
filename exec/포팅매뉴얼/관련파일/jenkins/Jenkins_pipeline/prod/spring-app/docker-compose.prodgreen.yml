@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  prod-spring-app:
+    container_name: prod-spring-app-green
+    image: joslynn/prod-spring-app:${BUILD_NUMBER}
+    environment:
+        PROFILE: prodGreen
+        MYSQL_HOST: prod-mysql
+    expose:
+      - "8082"
+    networks:
+      - chaekbang-prod-net
+networks:
+  chaekbang-prod-net:
+    external: true
+    name: "chaekbang-prod-net"
